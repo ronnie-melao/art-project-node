@@ -102,12 +102,26 @@ export const validateArray = (
   }
 };
 
-export const tryOrPushErr = (errors, input, validator, ...args) => {
+/**
+ * @param {Object[]} errors
+ * @param {Object} inputObj
+ * @param {function} validator
+ * @param {*} args
+ */
+export const tryOrPushErr = (errors, inputObj, validator, ...args) => {
+  if (typeof inputObj !== "object" &&
+    !Array.isArray(inputObj) &&
+    Object.keys(inputObj).length === 1) {
+    throw "Incorrect inputObj type";
+  }
+  // name is the name of the field, as it should show up in the array
+  let [[name, input]] = Object.entries(inputObj);
   try {
     let value = validator(input, ...args);
     return { value };
   } catch (error) {
-    errors.push(error);
+    // push the error to the array under the name of the field
+    errors.push({ [name]: error });
     return null;
   }
 };

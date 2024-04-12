@@ -6,11 +6,11 @@ import { tryOrPushErr, validateArray, validateString } from "./validators.js";
  */
 export const addPost = (title, images, description, keywords, threadID) => {
   let errors = [];
-  title = tryOrPushErr(errors, title, validateString);
-  threadID = tryOrPushErr(errors, threadID, validateString);
-  images = tryOrPushErr(errors, images, validateArray, { validator: validateString });
-  description = tryOrPushErr(errors, description, validateString);
-  keywords = tryOrPushErr(errors, keywords, validateArray, { validator: validateString });
+  title = tryOrPushErr(errors, { title }, validateString);
+  threadID = tryOrPushErr(errors, { threadID }, validateString);
+  images = tryOrPushErr(errors, { images }, validateArray, { validator: validateString });
+  description = tryOrPushErr(errors, { description }, validateString);
+  keywords = tryOrPushErr(errors, { keywords }, validateArray, { validator: validateString });
   if (errors.length > 0) {
     throw errors;
   }
