@@ -101,3 +101,13 @@ export const validateArray = (
     return input.map(validator);
   }
 };
+
+export const tryOrPushErr = (errors, input, validator, ...args) => {
+  try {
+    let value = validator(input, ...args);
+    return { value };
+  } catch (error) {
+    errors.push(error);
+    return null;
+  }
+};
