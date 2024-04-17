@@ -5,6 +5,7 @@ import xss from "xss";
  * @return {*}
  */
 const deepXSS = (any) => {
+  if (any == null) return any;
   if (typeof any === "string") {
     return xss(any);
   }
@@ -16,6 +17,9 @@ const deepXSS = (any) => {
     return result;
   }
   if (typeof any === "object") {
+    if (any instanceof Date) {
+      return any;
+    }
     let result = {};
     for (let [key, val] of Object.entries(any)) {
       result[xss(key)] = deepXSS(val);
