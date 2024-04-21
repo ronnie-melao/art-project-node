@@ -1,27 +1,43 @@
 import { ObjectId } from "mongodb";
 
 /**
- * @param {string} input
- * @param {boolean} lower
- * @param {number[]} length
- * @return {string}
+ * @typedef {(any) => boolean} predicate - function that returns a bool
+ * @typedef {number[]} range - specifies a numeral range:
+ * [] => any number (no bounds)
+ * [number] => just lower bound
+ * [null, number] => just upper bound
+ * [number, number] => lower and upper bound
  */
-export const validateString = (input, { lower = false, length = [1] } = {}) => {
+
+/**
+ * @param {string} input - the string to validate
+ * @param {boolean} lower - if the string should be set to lowercase
+ * @param {number[]} length - length constraints in the form of an array
+ * @param {predicate[]} conditions - additional conditions that take any function string => bool
+ * @return {string} - the validated string (trimmed)
+ */
+export const validateString = (input, { lower = false, length = [1], conditions = [] } = {}) => {
+  // All the fields in the braces are supplied inside an object passed in.
+  // empty strings invalid by default, because length has lower bound of 1
+  // ex: username = validateString(username, { lower: false, length: [1,16] });
   if (typeof input === "string") {
     const res = lower ? input.trim().toLowerCase() : input.trim();
     const [lowBound, highBound] = length;
-    if (res.length < lowBound)
+    if (lowBound != null && res.length < lowBound)
       throw `String Too Small!: (${res.length} < ${lowBound}}`;
     if (highBound != null && res.length > highBound)
       throw `String Too Large!: (${res.length} > ${highBound}}`;
+    if (!conditions.every(predicate => predicate(input))) {
+      throw `String failed a condition: ${conditions}`;
+    }
     return res;
   }
   throw `Not a string! '${JSON.stringify(input)}'`;
 };
 
 /**
- * @param {string} input
- * @return {string}
+ * @param {string} input - id to validate
+ * @return {string} - the validated id
  */
 export const validateId = (input) => {
   input = validateString(input);
@@ -87,7 +103,7 @@ export const validateNumber = (input, { range = [], whole = false } = {}) => {
  * */
 export const validateArray = (
   input,
-  { length = [1], validator = (e) => e } = {}
+  { length = [1], validator = (e) => e } = {},
 ) => {
   if (!Array.isArray(input)) throw `Not an Array: ${JSON.stringify(input)}`;
   if (length != null) {
