@@ -12,7 +12,7 @@ import { ObjectId } from "mongodb";
 /**
  * @param {string} input - the string to validate
  * @param {boolean} lower - if the string should be set to lowercase
- * @param {number[]} length - length constraints in the form of an array
+ * @param {range} length - length constraints in the form of an array
  * @param {predicate[]} conditions - additional conditions that take any function string => bool
  * @return {string} - the validated string (trimmed)
  */
@@ -77,7 +77,7 @@ export const validateBoolean = (input) => {
 
 /**
  * @param {any} input
- * @param {?[number,number]} range
+ * @param {range} range
  * @param {boolean} whole
  * @return {number}
  * */
@@ -97,7 +97,7 @@ export const validateNumber = (input, { range = [], whole = false } = {}) => {
 
 /**
  * @param {any} input
- * @param {?[number,number]} length
+ * @param {range} length
  * @param {function(Object):Object} validator
  * @return {any[]}
  * */
