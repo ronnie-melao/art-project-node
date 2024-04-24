@@ -4,7 +4,7 @@ import xss from "xss";
  * @param {*} any
  * @return {*}
  */
-const deepXSS = (any) => {
+export const deepXSS = (any) => {
   if (any == null) return any;
   if (typeof any === "string") {
     return xss(any);
@@ -27,4 +27,18 @@ const deepXSS = (any) => {
     return result;
   }
   return any;
+};
+
+/**
+ * @param {string|string[]} args
+ */
+export const getSearchTerms = (...args) => {
+  let result = new Set();
+  for (let terms of args) {
+    if (typeof terms === "string") {
+      terms = terms.split(/\s+/);
+    }
+    terms.forEach(term => result.add(term.trim()));
+  }
+  return [...result];
 };

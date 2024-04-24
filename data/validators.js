@@ -45,6 +45,32 @@ export const validateId = (input) => {
   return input;
 };
 
+export const validateUsername = (input) => {
+  // no whitespace in username, set to all lowercase
+  return validateString(input, { lower: true, conditions: [s => /^\S+$/.test(s)] });
+};
+
+export const validatePassword = (input) => {
+  // Capital, lowercase, number, special symbol, and no spaces.
+  let conditions = [
+    s => /[a-z]/.test(s),
+    s => /[A-Z]/.test(s),
+    s => /[0-9]/.test(s),
+    s => /[!@#$%^&*();:.,?`~+/=<>\\|-]/.test(s),
+  ];
+  return validateString(input, { lower: true, conditions });
+};
+
+export const validateNoNumbers = (input) => {
+  // no numbers in username
+  return validateString(input, { conditions: [s => /^\D+$/.test(s)] });
+};
+
+export const validateEmail = (input) => {
+  // roughly email format
+  return validateString(input, { conditions: [s => /^\S+@\S+\.\S+$/.test(s)] });
+};
+
 /**
  * @param {string} input
  * @return {string}
@@ -133,8 +159,7 @@ export const tryOrPushErr = (errors, inputObj, validator, ...args) => {
   // name is the name of the field, as it should show up in the array
   let [[name, input]] = Object.entries(inputObj);
   try {
-    let value = validator(input, ...args);
-    return { value };
+    return validator(input, ...args);
   } catch (error) {
     // push the error to the array under the name of the field
     errors.push({ [name]: error });
