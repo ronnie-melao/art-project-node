@@ -48,4 +48,3 @@ export const getPostsFromSearch = async (query) => {
     searchTerms: { $all: queryTerms },
   }).toArray().map((post) => post._id);
 };
-console.log("");
