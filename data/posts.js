@@ -1,6 +1,6 @@
 import { tryOrPushErr, validateArray, validateId, validateString } from "./validators.js";
 import { getPostCollection } from "../config/mongoCollections.js";
-import { getSearchTerms } from "./util.js";
+import { deepXSS, getSearchTerms } from "./util.js";
 import { getUserById } from "./users.js";
 
 /**
@@ -36,6 +36,7 @@ export const addPost = async (poster, title, images, description, keywords, thre
     comments: [],
     isEdited: false,
   };
+  post = deepXSS(post);
   const newInsertInformation = await posts.insertOne(post);
   if (!newInsertInformation.insertedId) throw "Posting failed!";
   return newInsertInformation.insertedId;

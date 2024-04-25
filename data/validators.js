@@ -55,8 +55,8 @@ export const validateId = (input) => {
 };
 
 export const validateUsername = (input) => {
-  // no whitespace in username, set to all lowercase
-  return validateString(input, { lower: true, conditions: [/^\S+$/] });
+  // alphanumeric username, set to all lowercase, length 2-16
+  return validateString(input, { lower: true, length: [2, 16], conditions: [/^\w+$/] });
 };
 
 export const validatePassword = (input) => {
