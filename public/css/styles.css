@@ -7,33 +7,47 @@ header, .header {
     background-color: #e0e0e0;
     left: 0;
     top: 0;
+    padding: 5px 5px 5px 50px;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    #searchbar input {
-        padding: 5px;
-        border-radius: 10px 0 0 10px;
+    #title {
+        font-size: 20pt;
+        font-weight: bold;
     }
 
     #searchbar {
         display: flex;
+
+        input {
+            padding: 5px;
+            border-radius: 10px 0 0 10px;
+            border-width: 0;
+        }
+
+        button:disabled {
+            background-color: lightblue;
+        }
+
+        button {
+            background-color: blue;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 0 10px 10px 0;
+        }
     }
 
-    #searchbar button:disabled {
-        background-color: lightblue;
+    #icons {
+        margin-left: 50px;
+        width: 100px;
+        display: flex;
+        height: 15pt;
+        justify-content: center;
+        align-items: center;
     }
-
-    #searchbar button {
-        background-color: #0000ff;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        border-radius: 0 10px 10px 0;
-    }
-
-    color: black;
 }
 
 .header-link {

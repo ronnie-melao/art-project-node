@@ -8,20 +8,22 @@
 <body>
 
 <header>
-  <div id="title">{{title}}</div>
+  <div id="title">Art Site</div>
   <div class="header">
     <form id="searchbar" method="post" action="/search">
       <label for="search-input"></label>
       <input id="search-input" name="query" maxlength="32" placeholder="Search">
       <button type="submit" id="search-button" disabled>→</button>
     </form>
-    <!-- placeholder -->
+    <div id="icons">
     {{#if user}}
+      <!-- placeholder -->
       <a class="icon" href="/commissions">🔔</a>
       <a class="icon" href="/profile">🟡</a>
     {{else}}
       <a href="/login" class="header-link">Sign In</a>
     {{/if}}
+    </div>
   </div>
 </header>
 
