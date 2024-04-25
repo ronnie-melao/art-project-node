@@ -42,3 +42,5 @@ export const getSearchTerms = (...args) => {
   }
   return [...result];
 };
+
+export const DUPLICATE_ID_ERROR_CODE = 11000;

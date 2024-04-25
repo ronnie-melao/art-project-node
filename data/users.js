@@ -10,6 +10,7 @@ import {
 } from "./validators.js";
 import { ObjectId } from "mongodb";
 import bcrypt from "bcryptjs";
+import { deepXSS, DUPLICATE_ID_ERROR_CODE } from "./util.js";
 
 
 export const getUserById = async (id) => {
@@ -39,7 +40,7 @@ export const addUser = async (username, firstName, lastName, email, phoneNumber,
   plainTextPassword = validatePassword(plainTextPassword);
   isArtist = validateBoolean(isArtist);
   let dateJoined = new Date().getTime();
-  let password = bcrypt.hash(plainTextPassword, 12);
+  let password = await bcrypt.hash(plainTextPassword, 12);
   let user = {
     username,
     firstName,
@@ -58,8 +59,18 @@ export const addUser = async (username, firstName, lastName, email, phoneNumber,
     incomingCommissions: [],
     outgoingCommissions: [],
   };
+  user = deepXSS(user);
   const users = await getUserCollection();
-  const newInsertInformation = await users.insertOne(user);
+  // mongoDB will fail if duplicate name
+  let newInsertInformation;
+  try {
+    newInsertInformation = await users.insertOne(user);
+  } catch (error) {
+    if (error?.code === DUPLICATE_ID_ERROR_CODE && error?.keyPattern?.username) {
+      throw "Username already taken!";
+    }
+    throw error;
+  }
   if (!newInsertInformation.insertedId) throw "Posting failed!";
   return newInsertInformation.insertedId.toString();
 };

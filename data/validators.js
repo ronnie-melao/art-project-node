@@ -13,7 +13,7 @@ import { ObjectId } from "mongodb";
  * @param {string} input - the string to validate
  * @param {boolean} lower - if the string should be set to lowercase
  * @param {range} length - length constraints in the form of an array
- * @param {predicate[]} conditions - additional conditions that take any function string => bool
+ * @param {(predicate|string[]|RegExp)[]} conditions - additional conditions to follow
  * @return {string} - the validated string (trimmed)
  */
 export const validateString = (input, { lower = false, length = [1], conditions = [] } = {}) => {
@@ -27,12 +27,21 @@ export const validateString = (input, { lower = false, length = [1], conditions 
       throw `String Too Small!: (${res.length} < ${lowBound}}`;
     if (highBound != null && res.length > highBound)
       throw `String Too Large!: (${res.length} > ${highBound}}`;
-    if (!conditions.every(predicate => predicate(input))) {
+    if (!conditions.every(cond => conditionToPredicate(cond)(input))) {
       throw `String failed a condition: ${conditions}`;
     }
     return res;
   }
   throw `Not a string! '${JSON.stringify(input)}'`;
+};
+
+let conditionToPredicate = (condition) => {
+  if (condition instanceof RegExp) {
+    return s => condition.test(s);
+  } else if (Array.isArray(condition)) {
+    return s => condition.includes(s);
+  }
+  return condition;
 };
 
 /**
@@ -47,49 +56,29 @@ export const validateId = (input) => {
 
 export const validateUsername = (input) => {
   // no whitespace in username, set to all lowercase
-  return validateString(input, { lower: true, conditions: [s => /^\S+$/.test(s)] });
+  return validateString(input, { lower: true, conditions: [/^\S+$/] });
 };
 
 export const validatePassword = (input) => {
-  // Capital, lowercase, number, special symbol, and no spaces.
+  // at least one Capital, lowercase, number, special symbol, and no spaces.
   let conditions = [
-    s => /[a-z]/.test(s),
-    s => /[A-Z]/.test(s),
-    s => /[0-9]/.test(s),
-    s => /[!@#$%^&*();:.,?`~+/=<>\\|-]/.test(s),
+    /^\S+$/,
+    /[a-z]/,
+    /[A-Z]/,
+    /[0-9]/,
+    /[!@#$%^&*();:.,?`~+/=<>\\|-]/,
   ];
   return validateString(input, { lower: true, conditions });
 };
 
 export const validateNoNumbers = (input) => {
-  // no numbers in username
-  return validateString(input, { conditions: [s => /^\D+$/.test(s)] });
+  // no numbers in field
+  return validateString(input, { conditions: [/^\D+$/] });
 };
 
 export const validateEmail = (input) => {
   // roughly email format
-  return validateString(input, { conditions: [s => /^\S+@\S+\.\S+$/.test(s)] });
-};
-
-/**
- * @param {string} input
- * @return {string}
- */
-export const validateDate = (input) => {
-  if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(input)) {
-    throw `Date invalid '${input}'`;
-  }
-  let [monthS, dayS, yearS] = input.split("/");
-  let date = new Date(+yearS, +monthS - 1, +dayS);
-  if (
-    date > new Date() ||
-    date.getFullYear() !== +yearS ||
-    date.getMonth() !== +monthS - 1 ||
-    date.getDate() !== +dayS
-  ) {
-    throw `Date invalid '${input}'`;
-  }
-  return input;
+  return validateString(input, { conditions: [/^\S+@\S+\.\S+$/] });
 };
 
 /**
@@ -109,7 +98,7 @@ export const validateBoolean = (input) => {
  * */
 export const validateNumber = (input, { range = [], whole = false } = {}) => {
   if (typeof input === "number") {
-    let [lower, upper] = range;
+    let [lower, upper] = range ?? [];
     if ((lower != null && input < lower) || (upper != null && input > upper)) {
       throw `${input} is not in range [${lower ?? ""},${upper ?? ""}]`;
     }
@@ -132,16 +121,14 @@ export const validateArray = (
   { length = [1], validator = (e) => e } = {},
 ) => {
   if (!Array.isArray(input)) throw `Not an Array: ${JSON.stringify(input)}`;
-  if (length != null) {
-    let [lower, upper] = length;
-    if (
-      (lower != null && lower > input.length) ||
-      (upper != null && upper < input.length)
-    ) {
-      throw `Array length (${input.length}) not in range [${lower ?? ""},${upper ?? ""}]`;
-    }
-    return input.map(validator);
+  let [lower, upper] = length ?? [];
+  if (
+    (lower != null && lower > input.length) ||
+    (upper != null && upper < input.length)
+  ) {
+    throw `Array length (${input.length}) not in range [${lower ?? ""},${upper ?? ""}]`;
   }
+  return input.map(validator);
 };
 
 /**

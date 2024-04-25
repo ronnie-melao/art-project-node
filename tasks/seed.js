@@ -11,7 +11,7 @@ let id = await users.addUser("Slackow", "Andrew", "Turcan", "s@a.com", "201-123-
 try {
   await users.addUser("Slackow", "Diff", "NamePleaseFail", "s@a.com", "201-123-1324", "dude, a fella even2", "Yeah great", "D0nt3nter!2", true);
 } catch (err) {
-  console.log("Encountered expected error, duplicate username");
+  console.log("Encountered expected error:", err);
 }
 
 await posts.addPost(id, "Post", ["https://i.imgur.com/MMjejSF.jpeg"], "caption", ["keyword"], "");
