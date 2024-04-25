@@ -16,8 +16,12 @@
       <button type="submit" id="search-button" disabled>→</button>
     </form>
     <!-- placeholder -->
-    <div class="icon">🔔</div>
-    <div class="icon">🟡</div>
+    {{#if user}}
+      <a class="icon" href="/commissions">🔔</a>
+      <a class="icon" href="/profile">🟡</a>
+    {{else}}
+      <a href="/login" class="header-link">Sign In</a>
+    {{/if}}
   </div>
 </header>
 
