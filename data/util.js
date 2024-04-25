@@ -38,9 +38,10 @@ export const getSearchTerms = (...args) => {
     if (typeof terms === "string") {
       terms = terms.split(/\s+/);
     }
-    terms.forEach(term => result.add(term.trim()));
+    terms.forEach(term => result.add(term.trim().toLowerCase()));
   }
   return [...result];
 };
 
 export const DUPLICATE_ID_ERROR_CODE = 11000;
+export const SALT_ROUNDS = 12;

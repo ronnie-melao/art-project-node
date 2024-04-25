@@ -40,3 +40,12 @@ export const addPost = async (poster, title, images, description, keywords, thre
   if (!newInsertInformation.insertedId) throw "Posting failed!";
   return newInsertInformation.insertedId;
 };
+
+export const getPostsFromSearch = async (query) => {
+  let queryTerms = getSearchTerms(query);
+  let posts = await getPostCollection();
+  return await posts.find({
+    searchTerms: { $all: queryTerms },
+  }).toArray().map((post) => post._id);
+};
+console.log("");

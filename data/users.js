@@ -10,7 +10,7 @@ import {
 } from "./validators.js";
 import { ObjectId } from "mongodb";
 import bcrypt from "bcryptjs";
-import { deepXSS, DUPLICATE_ID_ERROR_CODE } from "./util.js";
+import { deepXSS, DUPLICATE_ID_ERROR_CODE, SALT_ROUNDS } from "./util.js";
 
 
 export const getUserById = async (id) => {
@@ -40,7 +40,7 @@ export const addUser = async (username, firstName, lastName, email, phoneNumber,
   plainTextPassword = validatePassword(plainTextPassword);
   isArtist = validateBoolean(isArtist);
   let dateJoined = new Date().getTime();
-  let password = await bcrypt.hash(plainTextPassword, 12);
+  let password = await bcrypt.hash(plainTextPassword, SALT_ROUNDS);
   let user = {
     username,
     firstName,
