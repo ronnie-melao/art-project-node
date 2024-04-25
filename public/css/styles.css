@@ -2,3 +2,37 @@
 * {
     font-family: 'Georgia', sans-serif;
 }
+
+header, .header {
+    background-color: #e0e0e0;
+    left: 0;
+    top: 0;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    #searchbar input {
+        padding: 5px;
+        margin-right: 5px;
+    }
+
+    #searchbar button:disabled {
+        background-color: lightblue;
+    }
+
+    #searchbar button {
+
+        background-color: #0000ff;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+    }
+
+    color: black;
+}
+
+.icon {
+    margin: 0 5px;
+    padding: 5px;
+}

@@ -6,7 +6,21 @@
   <link rel="stylesheet" href="/public/css/styles.css">
 </head>
 <body>
-<h1>{{title}}</h1>
+
+<header>
+  <div id="title">{{title}}</div>
+  <div class="header">
+    <form id="searchbar" method="post" action="/search">
+      <label for="search-input"></label>
+      <input id="search-input" name="query" maxlength="32" placeholder="Search">
+      <button type="submit" id="search-button" disabled>→</button>
+    </form>
+    <!-- placeholder -->
+    <div class="icon">🔔</div>
+    <div class="icon">🟡</div>
+  </div>
+</header>
+
 <main>{{{body}}}</main>
 <footer><p>Contact: 1-800-ART-SITE</p></footer>
 <script src="https://code.jquery.com/jquery-3.5.1.js"

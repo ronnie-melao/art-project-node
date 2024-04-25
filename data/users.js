@@ -31,12 +31,12 @@ export const getUserByUsername = async (username) => {
 
 export const addUser = async (username, firstName, lastName, email, phoneNumber, bio, statement, plainTextPassword, isArtist) => {
   username = validateUsername(username);
-  firstName = validateNoNumbers(firstName);
-  lastName = validateNoNumbers(lastName);
+  firstName = validateNoNumbers(firstName, { length: [2, 16] });
+  lastName = validateNoNumbers(lastName, { length: [2, 16] });
   email = validateEmail(email);
   phoneNumber = validateString(phoneNumber);
-  bio = validateString(bio, { length: [0] });
-  statement = validateString(statement, { length: [0] });
+  bio = validateString(bio, { length: [] });
+  statement = validateString(statement, { length: [] });
   plainTextPassword = validatePassword(plainTextPassword);
   isArtist = validateBoolean(isArtist);
   let dateJoined = new Date().getTime();
