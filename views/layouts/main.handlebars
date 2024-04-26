@@ -4,11 +4,16 @@
   <meta charset="utf-8">
   <title>{{title}}</title>
   <link rel="stylesheet" href="/public/css/styles.css">
+  <link rel="icon" href="/public/icon/logo.svg">
 </head>
 <body>
 
 <header>
-  <div id="title">Art Site</div>
+  <div id="title">
+    <a class="no-dec" href="/">
+      <img alt="Art-Site Logo" src="/public/icon/logo.svg" id="logo">
+      <span>Art-Site</span>
+    </a></div>
   <div class="header">
     <form id="searchbar" method="post" action="/search">
       <label for="search-input"></label>
@@ -18,8 +23,8 @@
     <div id="icons">
     {{#if user}}
       <!-- placeholder -->
-      <a class="icon" href="/commissions">🔔</a>
-      <a class="icon" href="/profile">🟡</a>
+      <a class="icon no-dec" href="/commissions">🔔</a>
+      <a class="icon no-dec" href="/profile">🟡</a>
     {{else}}
       <a href="/login" class="header-link">Sign In</a>
     {{/if}}

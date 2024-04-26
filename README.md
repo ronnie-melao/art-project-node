@@ -2,6 +2,6 @@
 
 ## Getting Started
 
-- `npm i`
+- `npm install`
 - `npm start`
 - goto [localhost:3000](http://localhost:3000)

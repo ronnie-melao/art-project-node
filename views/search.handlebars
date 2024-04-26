@@ -1,0 +1,17 @@
+<!-- This should get abstracted to a sublayout or view or whatever it's called-->
+<h1>Results ({{results.length}})</h1>
+<div class="results">
+  {{#each results}}
+    <div class="post search-post">
+      <h2>{{this.title}}</h2>
+      <div class="post-images">
+        {{#each this.images}}
+          <img src="{{this}}" alt="{{this.title}} #{{@index}}" class="thumbnail">
+        {{/each}}
+      </div>
+      <p>{{this.description}}</p>
+    </div>
+  {{else}}
+    <strong id="no-results">No Results Found.</strong>
+  {{/each}}
+</div>

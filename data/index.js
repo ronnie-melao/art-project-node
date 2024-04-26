@@ -1,5 +1,5 @@
-import postData from "./posts.js";
-import userData from "./users.js";
-import commissionData from "./commissions.js";
+import * as postData from "./posts.js";
+import * as userData from "./users.js";
+import * as commissionData from "./commissions.js";
 
 export { postData, userData, commissionData };

@@ -47,5 +47,5 @@ export const getPostsFromSearch = async (query) => {
   let posts = await getPostCollection();
   return await posts.find({
     searchTerms: { $all: queryTerms },
-  }).toArray().map((post) => post._id);
+  }).toArray();
 };

@@ -1,4 +1,5 @@
 import xss from "xss";
+import c from "ansi-colors";
 
 /**
  * @param {*} any
@@ -41,6 +42,21 @@ export const getSearchTerms = (...args) => {
     terms.forEach(term => result.add(term.trim().toLowerCase()));
   }
   return [...result];
+};
+
+/**
+ * @param {string} s
+ */
+export const prettyHttpMethod = (s) => {
+  // based on PostMan's color scheme
+  const colorFuncs = {
+    GET: c.greenBright,
+    POST: c.yellowBright,
+    PUT: c.cyan,
+    PATCH: c.magentaBright,
+    DELETE: c.redBright,
+  };
+  return (colorFuncs[s.toUpperCase()] ?? c.blueBright)(s);
 };
 
 export const DUPLICATE_ID_ERROR_CODE = 11000;
