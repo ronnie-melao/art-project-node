@@ -71,7 +71,7 @@ export const validatePassword = (input) => {
   return validateString(input, { lower: true, conditions });
 };
 
-export const validateNoNumbers = (input, { conditions: extra, ...args } = {}) => {
+export const validateNoNumbers = (input, { conditions: extra = [], ...args } = {}) => {
   // no numbers in field
   return validateString(input, { conditions: [/^\D+$/, ...extra], ...args });
 };

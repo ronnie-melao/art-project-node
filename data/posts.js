@@ -7,7 +7,7 @@ import { getUserById } from "./users.js";
  * Makes a post given the parameters within an object
  * Errors are thrown in an array, that array lists all the errors.
  */
-export const addPost = async (poster, title, images, description, keywords, thread) => {
+export const addPost = async (poster, title, images, description, keywords, thread = "") => {
   let errors = [];
   poster = tryOrPushErr(errors, { poster }, validateId);
   title = tryOrPushErr(errors, { title }, validateString);
