@@ -2,7 +2,7 @@
 * {
     font-family: 'Georgia', sans-serif;
     /* uncomment this to see a wireframe of the site */
-    /* outline: red 1px solid; */
+    /* outline: red 1px solid;*/
 }
 
 header, .header {
@@ -86,8 +86,24 @@ a.no-dec {
     border: gray 1px solid;
     border-radius: 15px;
     padding: 2px 10px;
+    margin: 5px;
     width: auto;
-    display: inline-block;
     box-shadow: gray 1px 1px 4px;
     background-color: rgb(230, 230, 230);
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+
+    * {
+        margin: 2px;
+    }
+}
+
+.search-post {
+    width: 230px;
+    height: 400px;
+}
+
+.results {
+    display: flex;
 }

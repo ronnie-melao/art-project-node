@@ -2,6 +2,7 @@
 
 ## Getting Started
 
+Clone the repo
 - `npm install`
 - `npm run seed`
 - `npm start`

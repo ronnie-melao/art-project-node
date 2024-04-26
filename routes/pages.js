@@ -15,7 +15,7 @@ router.route("/login").get(async (req, res) => {
 router.route("/search").post(async (req, res) => {
   let query = req.body?.query;
   let results = await postData.getPostsFromSearch(query);
-  res.render("search", { title: "Search Results", results });
+  res.render("search", { title: "Search Results", results, query });
 });
 
 export default router;
