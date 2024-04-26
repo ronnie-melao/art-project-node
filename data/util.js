@@ -59,5 +59,28 @@ export const prettyHttpMethod = (s) => {
   return (colorFuncs[s.toUpperCase()] ?? c.blueBright)(s);
 };
 
+// adapted from  https://stackoverflow.com/a/52810852
+const relativeTimePeriods = {
+  year: 31536000,
+  month: 2419200,
+  week: 604800,
+  day: 86400,
+  hour: 3600,
+  minute: 60,
+  second: 1,
+};
+export const relativeTime = (date) => {
+  // number of milliseconds to date
+  if (!(date instanceof Date)) date = new Date(date);
+  const seconds = (new Date() - date) / 1000;
+  for (let [name, secondsPer] of Object.entries(relativeTimePeriods)) {
+    if (seconds >= secondsPer) {
+      const amount = Math.floor(seconds / secondsPer);
+      return `${amount} ${name}${amount !== 1 ? "s" : ""} ago`;
+    }
+  }
+  return "Just now";
+};
+
 export const DUPLICATE_ID_ERROR_CODE = 11000;
 export const SALT_ROUNDS = 12;

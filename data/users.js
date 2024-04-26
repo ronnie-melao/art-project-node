@@ -13,19 +13,21 @@ import bcrypt from "bcryptjs";
 import { deepXSS, DUPLICATE_ID_ERROR_CODE, SALT_ROUNDS } from "./util.js";
 
 
-export const getUserById = async (id) => {
+export const getUserById = async (id, includePassword = false) => {
   id = validateId(id);
   const users = await getUserCollection();
   const user = await users.findOne({ _id: new ObjectId(id) });
   if (!user) throw "Error: User not found";
+  if (!includePassword) delete user.password;
   return user;
 };
 
-export const getUserByUsername = async (username) => {
+export const getUserByUsername = async (username, includePassword = false) => {
   username = validateUsername(username);
   const users = await getUserCollection();
   const user = await users.findOne({ username });
   if (!user) throw "Error: User not found";
+  if (!includePassword) delete user.password;
   return user;
 };
 

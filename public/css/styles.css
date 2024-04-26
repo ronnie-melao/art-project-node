@@ -80,6 +80,8 @@ a.no-dec {
 
 .thumbnail {
     width: 200px;
+    height: 200px;
+    object-fit: cover;
 }
 
 .post {
@@ -97,11 +99,17 @@ a.no-dec {
     * {
         margin: 2px;
     }
+
+    h2 {
+        white-space: nowrap;
+        width: 90%;
+        font-size: 14pt;
+    }
 }
 
 .search-post {
-    width: 230px;
-    height: 400px;
+    width: 210px;
+    height: 300px;
 }
 
 .results {
