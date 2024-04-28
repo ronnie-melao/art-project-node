@@ -1,0 +1,22 @@
+<article class="post">
+    {{#each post}}
+    <h1>{{ this.title }}</h1>
+
+    <p>Likes</p>
+    <div>
+        {{#each this.images}}
+        {{!-- Need to resize images --}}
+            <img src={{this}} class="thumbnail">
+        {{/each}}
+    </div>  
+    <address>Posted by {{this.poster.displayName}}</address>
+    <p>{{ this.post.description }}</p>
+
+    <h2>Comments</h2>
+    {{#if hasComments}}
+        
+    {{else}}
+    <p>No comments yet.</p>
+    {{/if}}
+    {{/each}}
+</article>

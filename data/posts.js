@@ -2,6 +2,7 @@ import { tryOrPushErr, validateArray, validateId, validateString } from "./valid
 import { getPostCollection } from "../config/mongoCollections.js";
 import { deepXSS, getSearchTerms, relativeTime } from "./util.js";
 import { getUserById } from "./users.js";
+import { ObjectId } from "mongodb";
 
 /**
  * Makes a post given the parameters within an object
@@ -69,3 +70,12 @@ export const getPostsFromSearch = async (query) => {
   }).toArray();
   return addPosterToPosts(results);
 };
+
+export const getPostById = async (id) => {
+  id = validateId(id);
+  let posts = await getPostCollection();
+  let post = []
+  post.push(await posts.findOne({_id: new ObjectId(id)}));
+  if (!post) throw 'Error: Post not found';
+  return addPosterToPosts(post);
+}; 
