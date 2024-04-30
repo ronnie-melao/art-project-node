@@ -1,4 +1,4 @@
-import { tryOrPushErr, validateArray, validateId, validateString } from "./validators.js";
+import { tryOrPushErr, validateArray, validateId, validateString, validateUsername } from "./validators.js";
 import { getPostCollection } from "../config/mongoCollections.js";
 import { deepXSS, getSearchTerms, relativeTime } from "./util.js";
 import { getUserById } from "./users.js";
@@ -79,3 +79,37 @@ export const getPostById = async (id) => {
   if (!post) throw 'Error: Post not found';
   return addPosterToPosts(post);
 }; 
+
+//Add comment to a post via the post ID
+export const addComment = async (postId, username, content) => {
+  postId = validateId(postId);
+  username = validateUsername(username);
+  content = validateString(content);
+
+  let comment = {
+    username : username,
+    comment: content,
+    replies: []
+  }
+
+  comment = deepXSS(comment);
+  comment._id = new ObjectId();
+  let posts = await getPostCollection();
+
+  //check post exists
+  const post = await posts.findOne(
+    {_id: new ObjectId(postId)}
+  )
+  if (!post) {
+    throw 'Could not update product successfully';
+  }
+
+  let updatedPost = await posts.updateOne(
+    {_id: new ObjectId(postId)}, 
+    {$push: {comments: comment}}
+  )
+  if (!updatedPost) throw 'Error: Update failed';
+  comment._id = comment._id.toString();
+  console.log(updatedPost);
+  return comment._id;
+}
