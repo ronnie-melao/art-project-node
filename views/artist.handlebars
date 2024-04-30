@@ -1,0 +1,8 @@
+<h2>Artist Page</h2>
+
+@{{user.username}}
+
+{{#if isSelf}}
+  <br><a href="/settings">Preferences</a>
+  <br><a href="/logout">Log Out</a>
+{{/if}}

@@ -68,7 +68,7 @@ export const validatePassword = (input) => {
     /[0-9]/,
     /[!@#$%^&*();:.,?`~+/=<>\\|-]/,
   ];
-  return validateString(input, { lower: true, conditions });
+  return validateString(input, { lower: false, conditions });
 };
 
 export const validateNoNumbers = (input, { conditions: extra = [], ...args } = {}) => {

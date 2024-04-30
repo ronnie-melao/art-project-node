@@ -57,7 +57,7 @@ header, .header {
         margin-left: 50px;
         width: 100px;
         display: flex;
-        height: 15pt;
+        height: 20pt;
         justify-content: center;
         align-items: center;
     }
@@ -70,7 +70,14 @@ header, .header {
 
 .icon {
     margin: 0 5px;
-    padding: 5px;
+    width: 30px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+
+    * {
+        aspect-ratio: 1;
+    }
 }
 
 a.no-dec {
@@ -129,6 +136,7 @@ a.no-dec {
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
+    box-shadow: gray 1px 1px 4px;
 }
 
 /* Styling for form labels */
@@ -142,23 +150,11 @@ a.no-dec {
 #signup-form input[type="text"],
 #signup-form input[type="password"],
 #signup-form input[type="checkbox"] {
-    width: 100%;
+    width: calc(100% - 20px);
     padding: 8px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-}
-
-/* Styling for the registration submit button */
-#submitButton {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: #fff;
-    font-size: 16px;
-    cursor: pointer;
 }
 
 /* Styling for error message */
@@ -181,11 +177,12 @@ a.no-dec {
 /* Styling for the form container */
 #signin-form {
     max-width: 300px;
-    margin: 0 auto;
+    margin: 50px auto;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f9f9f9;
+    box-shadow: gray 1px 1px 4px;
     }
 
 /* Styling for form labels */

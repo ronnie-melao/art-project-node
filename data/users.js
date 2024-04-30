@@ -83,7 +83,7 @@ export const loginUser = async (username, password) => {
 
   const users = await getUserCollection();
   const user = await users.findOne({username});
-  if (user === null) throw new Error("Either the username or password is invalid.");
+  if (user == null) throw new Error("Either the username or password is invalid.");
 
   // comparing password to database
   let passwordMatch = await bcrypt.compare(password, user.password);

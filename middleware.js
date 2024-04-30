@@ -25,4 +25,24 @@ router.route("*").all((req, res, next) => {
   next();
 });
 
+const nonUsersOnlyMDWare = async (req, res, next) => {
+  if (req.session?.user) {
+    res.redirect("/");
+  } else {
+    next();
+  }
+};
+router.route("/login").get(nonUsersOnlyMDWare);
+router.route("/register").get(nonUsersOnlyMDWare);
+const userOnlyMDWare = async (req, res, next) => {
+
+  if (req.session?.user) {
+    next();
+  } else {
+    res.redirect("/login");
+  }
+};
+router.route("/logout").get(userOnlyMDWare);
+router.route("/profile").get(userOnlyMDWare);
+
 export default router;

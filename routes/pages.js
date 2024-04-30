@@ -1,16 +1,23 @@
 import { Router } from "express";
-import { loginUser, addUser } from "../data/users.js";
-import { validatePassword, validateUsername, validateBoolean, validateEmail, validateNoNumbers,validateString } from "../data/validators.js";
+import { addUser, loginUser } from "../data/users.js";
+import {
+  validateBoolean,
+  validateEmail,
+  validateNoNumbers,
+  validatePassword,
+  validateString,
+  validateUsername,
+} from "../data/validators.js";
 import { postData } from "../data/index.js";
 
 let router = new Router();
 
 router.route("/").get(async (req, res) => {
-  res.render("home", { title: "Art Site" });
+  res.render("home", { title: "Art Site", user: req.session?.user });
 });
 
 router.route("/login").get(async (req, res) => {
-  res.render("login", { title: "Art Site", user: {} });
+  res.render("login", { title: "Art Site" });
 });
 
 router.route("/login").post(async (req, res) => {
@@ -22,8 +29,8 @@ router.route("/login").post(async (req, res) => {
 
   try {
 
-    validateUsername(username);
-    validatePassword(password);
+    username = validateUsername(username);
+    password = validatePassword(password);
 
     const user = await loginUser(username, password);
     
@@ -46,14 +53,7 @@ router.route("/login").post(async (req, res) => {
       incomingCommissions: user.incomingCommissions,
       outgoingCommissions: user.outgoingCommissions
     };
-
-  res.cookie('AuthenticationState', true);
-
-  if (user.isArtist) {
-    res.redirect('/artist');
-  } else {
-      res.redirect('/user');
-    }
+    res.redirect("/profile");
 
   } catch (e) {
     if (e.message === "Either the username or password is invalid.") {
@@ -68,7 +68,7 @@ router.route("/login").post(async (req, res) => {
 });
 
 router.route("/register").get(async (req, res) => {
-  res.render("register", { title: "Art Site", user: {} });
+  res.render("register", { title: "Art Site" });
 });
 
 router.route("/register").post(async (req, res) => {
@@ -90,18 +90,18 @@ router.route("/register").post(async (req, res) => {
     // converts isArtist to boolean
     if (isArtist === 'true')
       isArtist = true;
-    else
+    else if (isArtist === "false")
       isArtist = false;
 
-    validateUsername(username);
-    validateNoNumbers(firstName, { length: [2, 16] });
-    validateNoNumbers(lastName, { length: [2, 16] });
-    validateEmail(email);
-    validateString(phoneNumber);
-    validateString(bio, { length: [] });
-    validateString(statement, { length: [] });
-    validatePassword(password);
-    validateBoolean(isArtist);
+    username = validateUsername(username);
+    firstName = validateNoNumbers(firstName, { length: [2, 16] });
+    lastName = validateNoNumbers(lastName, { length: [2, 16] });
+    email = validateEmail(email);
+    phoneNumber = validateString(phoneNumber);
+    bio = validateString(bio, { length: [] });
+    statement = validateString(statement, { length: [] });
+    password = validatePassword(password);
+    isArtist = validateBoolean(isArtist);
 
     const user = await addUser(username, firstName, lastName, email, phoneNumber, bio, statement, password, isArtist);
     
@@ -115,18 +115,20 @@ router.route("/register").post(async (req, res) => {
     }
 });
 
+router.route("/logout").get(async (req, res) => {
+  req.session.destroy();
+  res.redirect("/");
+});
+
 router.route("/search").post(async (req, res) => {
   let query = req.body?.query;
   let results = await postData.getPostsFromSearch(query);
-  res.render("search", { title: "Search Results", results, query });
+  res.render("search", { title: "Search Results", results, query, user: req.session?.user });
 });
 
-router.route("/user").get(async (req, res) => {
-  res.render("user", { title: "Art Site", user: {} });
-});
-
-router.route("/artist").get(async (req, res) => {
-  res.render("artist", { title: "Art Site", user: {} });
+router.route("/profile").get(async (req, res) => {
+  let page = req.session.user.isArtist ? "artist" : "user";
+  res.render(page, { title: "Art Site", user: req.session?.user, isSelf: true });
 });
 
 export default router;
