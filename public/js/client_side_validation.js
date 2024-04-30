@@ -15,7 +15,7 @@ if (loginForm) {
     let loginErrorDiv = document.getElementById('login_error');
 
     try {
-      loginErrorDiv.hidden = false;
+      loginErrorDiv.hidden = true;
 
       // username input validation
       if (!username) throw "Username not found.";
