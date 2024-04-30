@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { loginUser } from "../data/users.js";
-import { validatePassword, validateUsername } from "../data/validators.js";
+import { loginUser, addUser } from "../data/users.js";
+import { validatePassword, validateUsername, validateBoolean, validateEmail, validateNoNumbers,validateString } from "../data/validators.js";
 import { postData } from "../data/index.js";
 
 let router = new Router();
@@ -67,10 +67,66 @@ router.route("/login").post(async (req, res) => {
 
 });
 
+router.route("/register").get(async (req, res) => {
+  res.render("register", { title: "Art Site", user: {} });
+});
+
+router.route("/register").post(async (req, res) => {
+  
+  let {
+    firstName,
+    lastName,
+    username,
+    password,
+    email,
+    phoneNumber,
+    bio,
+    statement,
+    isArtist
+    } = req.body;
+
+  try {
+    
+    // converts isArtist to boolean
+    if (isArtist === 'true')
+      isArtist = true;
+    else
+      isArtist = false;
+
+    validateUsername(username);
+    validateNoNumbers(firstName, { length: [2, 16] });
+    validateNoNumbers(lastName, { length: [2, 16] });
+    validateEmail(email);
+    validateString(phoneNumber);
+    validateString(bio, { length: [] });
+    validateString(statement, { length: [] });
+    validatePassword(password);
+    validateBoolean(isArtist);
+
+    const user = await addUser(username, firstName, lastName, email, phoneNumber, bio, statement, password, isArtist);
+    
+    if (user)
+        res.status(200).redirect('/login');
+    else
+      throw "That username is already taken! Please try another one.";
+
+  } catch (e) {
+      res.status(400).render('register', { e: e });
+    }
+});
+
 router.route("/search").post(async (req, res) => {
   let query = req.body?.query;
   let results = await postData.getPostsFromSearch(query);
   res.render("search", { title: "Search Results", results, query });
+});
+
+router.route("/user").get(async (req, res) => {
+  res.render("user", { title: "Art Site", user: {} });
+});
+
+router.route("/artist").get(async (req, res) => {
+  res.render("artist", { title: "Art Site", user: {} });
 });
 
 export default router;

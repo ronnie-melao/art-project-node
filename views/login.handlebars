@@ -11,10 +11,15 @@
 </form>
 
 
+<div id="login_error" hidden>
+    <p></p>
+</div>
+
 {{#if e}}
     <div id="login_error">
         <p>{{e}}</p>
     </div>
 {{/if}}
 
-<a href="/register">Click here to register!</a>
+<p id="login-link">New to Art Site?</p>
+<a id="login-link" href="/register">Create An Account</a>

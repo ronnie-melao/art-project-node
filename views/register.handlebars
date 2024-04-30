@@ -1,0 +1,58 @@
+<form id="signup-form" name="signup-form" action="/register" method="POST" class="form">
+    <div>
+      <label for="firstName" class="form">First Name:</label>
+      <input type="text" id="firstName" name="firstName">
+    </div>
+    <div>
+      <label for="lastName">Last Name:</label>
+      <input type="text" id="lastName" name="lastName">
+    </div>
+    <div>
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username">
+    </div>
+    <div>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password">
+    </div>
+    <div>
+      <label for="password">Confirm Password:</label>
+      <input type="password" id="confirmPassword" name="confirmPassword">
+    </div>
+    <div>
+      <label for="email">Email:</label>
+      <input type="text" id="email" name="email">
+    </div>
+    <div>
+      <label for="phoneNumber">Phone Number:</label>
+      <input type="text" id="phoneNumber" name="phoneNumber">
+    </div>
+    <div>
+      <label for="bio">Bio:</label>
+      <input type="text" id="bio" name="bio">
+    </div>
+    <div>
+      <label for="statement">Artist Statement:</label>
+      <input type="text" id="statement" name="statement">
+    </div>
+    <div>
+      <label for="isArtist">Making an Artist's Account? </label>
+      <input type="checkbox" id="isArtist" name="isArtist" value="true">
+    </div>
+    <button type="submit" id="submitButton" name="submitButton" class="button">Submit</button>
+</form>
+
+
+<div id="registration_error" hidden>
+    <p></p>
+</div>
+
+{{#if e}}
+    <div id="registration_error">
+        <p>{{e}}</p>
+    </div>
+{{/if}}
+
+
+<p id="register-link">Already have an account?</p>
+<a id="register-link" href="/login">Sign In</a>
