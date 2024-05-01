@@ -74,11 +74,11 @@ export const getPostsFromSearch = async (query) => {
 export const getPostById = async (id) => {
   id = validateId(id);
   let posts = await getPostCollection();
-  let post = []
-  post.push(await posts.findOne({_id: new ObjectId(id)}));
-  if (!post) throw 'Error: Post not found';
+  let post = [];
+  post.push(await posts.findOne({ _id: new ObjectId(id) }));
+  if (!post) throw "Error: Post not found";
   return addPosterToPosts(post);
-}; 
+};
 
 //Add comment to a post via the post ID
 export const addComment = async (postId, username, content) => {
@@ -87,10 +87,10 @@ export const addComment = async (postId, username, content) => {
   content = validateString(content);
 
   let comment = {
-    username : username,
+    username: username,
     comment: content,
-    replies: []
-  }
+    replies: [],
+  };
 
   comment = deepXSS(comment);
   comment._id = new ObjectId();
@@ -98,18 +98,18 @@ export const addComment = async (postId, username, content) => {
 
   //check post exists
   const post = await posts.findOne(
-    {_id: new ObjectId(postId)}
-  )
+    { _id: new ObjectId(postId) },
+  );
   if (!post) {
-    throw 'Could not update product successfully';
+    throw "Could not update product successfully";
   }
 
   let updatedPost = await posts.updateOne(
-    {_id: new ObjectId(postId)}, 
-    {$push: {comments: comment}}
-  )
-  if (!updatedPost) throw 'Error: Update failed';
+    { _id: new ObjectId(postId) },
+    { $push: { comments: comment } },
+  );
+  if (!updatedPost) throw "Error: Update failed";
   comment._id = comment._id.toString();
   console.log(updatedPost);
   return comment._id;
-}
+};

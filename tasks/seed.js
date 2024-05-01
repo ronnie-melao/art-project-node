@@ -19,8 +19,8 @@ await posts.addPost(id, "YouTube thumbnails", ["https://img.youtube.com/vi/77Psq
 
 //Post with comments
 let comment = await posts.addPost(id, "Comment Post", ["https://img.youtube.com/vi/77PsqaWzwG0/0.jpg", "https://img.youtube.com/vi/QsnkNYnsn2c/0.jpg"], "caption", ["keyword"]);
-await posts.addComment(comment.toString(), 'User1', 'This is really great work.');
-await posts.addComment(comment.toString(), 'User2', 'A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment.')
+await posts.addComment(comment.toString(), "User1", "This is really great work.");
+await posts.addComment(comment.toString(), "User2", "A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment.");
 
 //Post with replies
 //await posts.addPost(id, "Replies Post", ["https://img.youtube.com/vi/77PsqaWzwG0/0.jpg", "https://img.youtube.com/vi/QsnkNYnsn2c/0.jpg"], "caption", ["keyword"]);

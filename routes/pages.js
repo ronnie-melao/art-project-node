@@ -21,11 +21,11 @@ router.route("/login").get(async (req, res) => {
 });
 
 router.route("/login").post(async (req, res) => {
-  
+
   let {
     username,
-    password
-    } = req.body;
+    password,
+  } = req.body;
 
   try {
 
@@ -33,7 +33,7 @@ router.route("/login").post(async (req, res) => {
     password = validatePassword(password);
 
     const user = await loginUser(username, password);
-    
+
     if (!user) throw "User is not in the database!";
     req.session.user = {
       username: user.username,
@@ -51,17 +51,17 @@ router.route("/login").post(async (req, res) => {
       threads: user.threads,
       likedPosts: user.likedPosts,
       incomingCommissions: user.incomingCommissions,
-      outgoingCommissions: user.outgoingCommissions
+      outgoingCommissions: user.outgoingCommissions,
     };
     res.redirect("/profile");
 
   } catch (e) {
     if (e.message === "Either the username or password is invalid.") {
-      res.status(400).render('login', {
-        e: "Please register before logging in."
+      res.status(400).render("login", {
+        e: "Please register before logging in.",
       });
     } else {
-    res.status(400).render('login', {e: 'Invalid username or password. Please try again.'});
+      res.status(400).render("login", { e: "Invalid username or password. Please try again." });
     }
   }
 
@@ -72,7 +72,7 @@ router.route("/register").get(async (req, res) => {
 });
 
 router.route("/register").post(async (req, res) => {
-  
+
   let {
     firstName,
     lastName,
@@ -82,11 +82,11 @@ router.route("/register").post(async (req, res) => {
     phoneNumber,
     bio,
     statement,
-    isArtist
-    } = req.body;
+    isArtist,
+  } = req.body;
 
   try {
-    
+
     // converts isArtist to boolean
     isArtist = isArtist === "true";
 
@@ -101,15 +101,15 @@ router.route("/register").post(async (req, res) => {
     isArtist = validateBoolean(isArtist);
 
     const user = await addUser(username, firstName, lastName, email, phoneNumber, bio, statement, password, isArtist);
-    
+
     if (user)
-        res.status(200).redirect('/login');
+      res.status(200).redirect("/login");
     else
       throw "That username is already taken! Please try another one.";
 
   } catch (e) {
     res.status(400).render("register", { e });
-    }
+  }
 });
 
 router.route("/logout").get(async (req, res) => {
