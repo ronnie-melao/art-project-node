@@ -17,7 +17,7 @@ router.route("/").get(async (req, res) => {
 });
 
 router.route("/login").get(async (req, res) => {
-  res.render("login", { title: "Art Site" });
+  res.render("login", { title: "Art Site", layout: "login" });
 });
 
 router.route("/login").post(async (req, res) => {
@@ -68,7 +68,7 @@ router.route("/login").post(async (req, res) => {
 });
 
 router.route("/register").get(async (req, res) => {
-  res.render("register", { title: "Art Site" });
+  res.render("register", { title: "Art Site", layout: "login" });
 });
 
 router.route("/register").post(async (req, res) => {
@@ -88,10 +88,7 @@ router.route("/register").post(async (req, res) => {
   try {
     
     // converts isArtist to boolean
-    if (isArtist === 'true')
-      isArtist = true;
-    else if (isArtist === "false")
-      isArtist = false;
+    isArtist = isArtist === "true";
 
     username = validateUsername(username);
     firstName = validateNoNumbers(firstName, { length: [2, 16] });
@@ -111,7 +108,7 @@ router.route("/register").post(async (req, res) => {
       throw "That username is already taken! Please try another one.";
 
   } catch (e) {
-      res.status(400).render('register', { e: e });
+    res.status(400).render("register", { e });
     }
 });
 

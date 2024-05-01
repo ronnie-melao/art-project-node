@@ -29,7 +29,7 @@ if (loginForm) {
         // Check if the character is not a letter or a number
         if (!((char >= 'a' && char <= 'z') ||
               (char >= 'A' && char <= 'Z') ||
-              (char >= '0' && char <= '9'))) {
+          (char >= "0" && char <= "9") || char === "_")) {
           throw "The username must only contain letters and numbers.";
         }
       }
@@ -42,7 +42,7 @@ if (loginForm) {
       if (password.includes(" ")) throw "The password cannot contain any spaces.";
       if (password.length < 8 ) throw "The password must be at least 8 characters long.";
 
-      const specialCharacters = "!@#$%^&*";
+      const specialCharacters = "!@#$%^&*();:.,?`~+/=<>\\|-";
       let containsSpecialCharacters = false;
       for (let i = 0; i < password.length; i++) {
           if (specialCharacters.includes(password[i])) {
@@ -104,10 +104,7 @@ if (registerForm) {
       registrationErrorDiv.hidden = true;
 
       // converts isArtist to boolean
-      if (isArtist === 'true')
-        isArtist = true;
-      else
-        isArtist = false;
+      isArtist = isArtist === "true";
       
       // username input validation
       if (!username) throw "Username not found.";
@@ -121,8 +118,8 @@ if (registerForm) {
         // Check if the character is not a letter or a number
         if (!((char >= 'a' && char <= 'z') ||
               (char >= 'A' && char <= 'Z') ||
-              (char >= '0' && char <= '9'))) {
-          throw "The username must only contain letters and numbers.";
+          (char >= "0" && char <= "9") || char === "_")) {
+          throw "The username must only contain letters and numbers and underscores.";
         }
       }
 
@@ -134,7 +131,7 @@ if (registerForm) {
       if (password.includes(" ")) throw "The password cannot contain any spaces.";
       if (password.length < 8 ) throw "The password must be at least 8 characters long.";
 
-      const specialCharacters = "!@#$%^&*";
+      const specialCharacters = "!@#$%^&*();:.,?`~+/=<>\\|-";
       let containsSpecialCharacters = false;
       for (let i = 0; i < password.length; i++) {
           if (specialCharacters.includes(password[i])) {
