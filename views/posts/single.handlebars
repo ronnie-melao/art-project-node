@@ -13,20 +13,41 @@
     <p>{{ this.post.description }}</p>
 
     <h2>Comments</h2>
-    <form id="commentForm" action="/post/:id/comment" method="POST">
+    <form id="comment-form">
         <label for="comment">Add a comment:</label>
         <textarea name="comment" id="comment" placeholder="Enter your comment here"></textarea>
         <button type="submit">Post Comment</button>
     </form>
+    <div id="comment-form-error-div" hidden></div>
+    <div id="comment-area">
     {{#if this.hasComments}}
         {{#each this.comments}}
             <div>
                 <h3>{{this.username}}</h3>
                 <p>{{this.comment}}</p>
+                <div id="reply-area">
+                {{#each this.replies}}
+                    <div>
+                        <h4>{{this.username}}</h4>
+                        <p>{{this.comment}}</p>
+                    </div>
+                {{/each}}
+                </div>
+                <a class="reply-link" data-id={{this._id}}>Reply</a>
+                <div class="reply-form-container" hidden>
+                    <form class="reply-form">
+                        <label for="reply">Add a reply:</label>
+                        <textarea name="reply" id="reply" placeholder="Enter your reply here"></textarea>
+                        <button type="submit">Post Reply</button>
+                        <button type="button" class="cancel-reply">Cancel</button>
+                    </form>
+                    <div id="reply-form-error-div" hidden></div>
+                </div>
             </div>
         {{/each}}
     {{else}}
         <p>No comments yet.</p>
     {{/if}}
     {{/each}}
+    </div>
 </article>

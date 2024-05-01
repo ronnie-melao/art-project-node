@@ -23,8 +23,9 @@ await posts.addComment(comment.toString(), "User1", "This is really great work."
 await posts.addComment(comment.toString(), "User2", "A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment. A really long comment.");
 
 //Post with replies
-//await posts.addPost(id, "Replies Post", ["https://img.youtube.com/vi/77PsqaWzwG0/0.jpg", "https://img.youtube.com/vi/QsnkNYnsn2c/0.jpg"], "caption", ["keyword"]);
-
+let replyPost = await posts.addPost(id, "Replies Post", ["https://img.youtube.com/vi/77PsqaWzwG0/0.jpg", "https://img.youtube.com/vi/QsnkNYnsn2c/0.jpg"], "caption", ["keyword"]);
+let commentOnPost = await posts.addComment(replyPost.toString(), "User1", "This is really great work.");
+await posts.addReply(replyPost.toString(), commentOnPost._id.toString(), "username1", 'This should be a reply');
 //Post thread
 
 console.log("Done seeding database");

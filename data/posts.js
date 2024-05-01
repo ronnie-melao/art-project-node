@@ -110,5 +110,45 @@ export const addComment = async (postId, username, content) => {
   );
   if (!updatedPost) throw "Error: Update failed";
   comment._id = comment._id.toString();
-  return comment._id;
+  return comment;
+};
+
+//Add reply to a comment via the post ID and commentID
+export const addReply = async (postId, commentId, username, content) => {
+  postId = validateId(postId);
+  commentId = validateId(commentId);
+  username = validateUsername(username);
+  content = validateString(content);
+
+  let reply = {
+    username: username,
+    comment: content,
+  };
+
+  reply = deepXSS(reply);
+  reply._id = new ObjectId();
+  let posts = await getPostCollection();
+
+  //check post exists
+  const post = await posts.findOne(
+    { _id: new ObjectId(postId) },
+  );
+  if (!post) {
+    throw "Could not update product successfully";
+  }
+  //check comment exists
+  console.log(post);
+  const comment = await posts.findOne(
+    {_id: new ObjectId(postId), "comments._id": new ObjectId(commentId)}
+  );
+  if(!comment) throw 'Could not post reply';
+
+  let updatedPost = await posts.updateOne(
+    { _id: new ObjectId(postId), "comments._id": new ObjectId(commentId)},
+    { $push: { "comments.$.replies": reply } }
+  );
+
+  if (!updatedPost) throw "Error: Reply post failed";
+  reply._id = reply._id.toString();
+  return reply;
 };
