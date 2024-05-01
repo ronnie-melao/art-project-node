@@ -41,7 +41,7 @@ export const getSearchTerms = (...args) => {
     }
     terms.forEach(term => result.add(term.trim().toLowerCase()));
   }
-  return [...result];
+  return [...result].filter(s => s.length > 1);
 };
 
 /**

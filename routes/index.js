@@ -6,7 +6,7 @@ const constructorMethod = (app) => {
   app.use("/posts", posts);
 
   app.use("*", (req, res) => {
-    res.status(404).render("error", { error: "404: route not found" });
+    res.status(404).render("error", { error: "404: route not found", user: req.session?.user });
   });
 };
 
