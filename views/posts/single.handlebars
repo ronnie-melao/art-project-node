@@ -2,7 +2,7 @@
     {{#each post}}
     <h1>{{ this.title }}</h1>
 
-    <p>Likes</p>
+    <p>Likes: {{this.likes}}</p>
     <div>
         {{#each this.images}}
         {{!-- Need to resize images --}}
@@ -13,10 +13,20 @@
     <p>{{ this.post.description }}</p>
 
     <h2>Comments</h2>
-    {{#if hasComments}}
-        
+    <form id="commentForm" action="/post/:id/comment" method="POST">
+        <label for="comment">Add a comment:</label>
+        <textarea name="comment" id="comment" placeholder="Enter your comment here"></textarea>
+        <button type="submit">Post Comment</button>
+    </form>
+    {{#if this.hasComments}}
+        {{#each this.comments}}
+            <div>
+                <h3>{{this.username}}</h3>
+                <p>{{this.comment}}</p>
+            </div>
+        {{/each}}
     {{else}}
-    <p>No comments yet.</p>
+        <p>No comments yet.</p>
     {{/if}}
     {{/each}}
 </article>

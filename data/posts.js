@@ -110,6 +110,5 @@ export const addComment = async (postId, username, content) => {
   );
   if (!updatedPost) throw "Error: Update failed";
   comment._id = comment._id.toString();
-  console.log(updatedPost);
   return comment._id;
 };
