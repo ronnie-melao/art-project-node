@@ -20,7 +20,7 @@ const getCollectionFn = (collection, onStart) => {
 /* Now, you can list your collections here: */
 export const getPostCollection = getCollectionFn("posts", posts => {
   // index search terms
-  posts.createIndex({ searchTerms: 1 });
+  posts.createIndex({ searchTerms: "text" });
 });
 export const getUserCollection = getCollectionFn("users", users => {
   // index usernames and ensure they are unique

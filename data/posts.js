@@ -63,11 +63,11 @@ const addPosterToPosts = async (posts) => {
 
 export const getPostsFromSearch = async (query) => {
   query = validateString(query, { length: [1, 32] });
-  let queryTerms = getSearchTerms(query);
   let posts = await getPostCollection();
-  let results = await posts.find({
-    searchTerms: { $all: queryTerms },
-  }).toArray();
+  let results = await posts.find(
+    { $text: { $search: query } },
+    { sort: { timePosted: -1 } },
+  ).toArray();
   return addPosterToPosts(results);
 };
 
