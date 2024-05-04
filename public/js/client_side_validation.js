@@ -26,22 +26,13 @@ $(document).on('click', '.cancel-reply', function() {
 // Bind submit event to reply forms
 $('.reply-form').submit(function(event) {
   event.preventDefault();
-  console.log('In the AJAX reply post');
-
   let replyFormContainer = $(this).closest('.reply-form-container');
-  console.log(replyFormContainer.parents());
-
   let replyArea = replyFormContainer.closest('.reply-container').siblings('.reply-area');
-console.log(replyArea);
-
   let replyForm = replyFormContainer.find('form');
   let replyInput = replyForm.find('textarea[name="reply"]');
   let reply = replyInput.val();
-  console.log('reply text ', reply);
   let replyFormErrorDiv = replyFormContainer.find('.reply-form-error-div');
-  console.log(replyFormErrorDiv);
   let submitButton = replyForm.find('.post-reply');
-  console.log('submit ',submitButton)
   try{
     if(!reply) throw 'No comment provided.';
     if(typeof reply !== 'string') throw 'Comment must be a string';
@@ -56,10 +47,10 @@ console.log(replyArea);
     return;
   }
   
+  //if theres a reply make the ajax request 
   if(reply){
     let postId = window.location.pathname.split('/').pop();
     let commentId = submitButton.data('id');
-    console.log(commentId);
     let requestConfig = {
       method: 'POST',
       url: '/posts/'+ postId +'/comment/'+commentId +'/reply',

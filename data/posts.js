@@ -137,7 +137,7 @@ export const addReply = async (postId, commentId, username, content) => {
     throw "Could not update product successfully";
   }
   //check comment exists
-  console.log(post);
+  //console.log(post);
   const comment = await posts.findOne(
     {_id: new ObjectId(postId), "comments._id": new ObjectId(commentId)}
   );
