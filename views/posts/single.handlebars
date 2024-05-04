@@ -25,7 +25,7 @@
             <div>
                 <h3>{{this.username}}</h3>
                 <p>{{this.comment}}</p>
-                <div id="reply-area">
+                <div class="reply-area">
                 {{#each this.replies}}
                     <div>
                         <h4>{{this.username}}</h4>
@@ -33,15 +33,17 @@
                     </div>
                 {{/each}}
                 </div>
+                <div class="reply-container">
                 <a class="reply-link" data-id={{this._id}}>Reply</a>
                 <div class="reply-form-container" hidden>
                     <form class="reply-form">
                         <label for="reply">Add a reply:</label>
                         <textarea name="reply" id="reply" placeholder="Enter your reply here"></textarea>
-                        <button type="submit">Post Reply</button>
+                        <button type="submit" class="post-reply" data-id={{this._id}}>Post Reply</button>
                         <button type="button" class="cancel-reply">Cancel</button>
                     </form>
-                    <div id="reply-form-error-div" hidden></div>
+                    <div class="reply-form-error-div" hidden></div>
+                </div>
                 </div>
             </div>
         {{/each}}

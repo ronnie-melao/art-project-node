@@ -26,50 +26,22 @@ $(document).on('click', '.cancel-reply', function() {
 // Bind submit event to reply forms
 $('.reply-form').submit(function(event) {
   event.preventDefault();
-  
-  let replyTextarea = $(this).find('textarea[name="reply"]');
-  let reply = replyTextarea.val().trim();
-  if (!reply) {
-    alert('Please enter a reply');
-    return;
-  }
-  
-  let postId = window.location.pathname.split('/').pop(); // Extract post ID from URL
-  let commentId = $(this).closest('.reply-form').siblings('.reply').data('id'); // Get the comment ID from the reply link
-  
-  let requestConfig = {
-    method: 'POST',
-    url: `/posts/${postId}/comment/${commentId}/reply`,
-    contentType: 'application/json',
-    data: JSON.stringify({ reply: reply })
-  };
-  
-  $.ajax(requestConfig)
-    .then(function(responseMessage) {
-      console.log(responseMessage);
-      // Handle response (e.g., display the new reply)
-      // You can append the new reply to the corresponding comment section
-      replyTextarea.val(''); // Clear the reply textarea
-      // Hide the reply form after successful submission
-      replyTextarea.closest('.reply-form').hide();
-    })
-    .catch(function(error) {
-      console.error('Error:', error);
-      alert('Failed to post reply');
-    });
-});
-
-//reply submission with AJAX
-let replyForm = $('#reply-form');
-let replyInput = $('#reply');
-let replyArea = $('#reply-area');
-let replyFormErrorDiv = $('#reply-form-error-div');
-let replyLink = $('#reply-link');
-replyForm.submit(function(event){
-  event.preventDefault();
-  commentFormErrorDiv.hide()
   console.log('In the AJAX reply post');
+
+  let replyFormContainer = $(this).closest('.reply-form-container');
+  console.log(replyFormContainer.parents());
+
+  let replyArea = replyFormContainer.closest('.reply-container').siblings('.reply-area');
+console.log(replyArea);
+
+  let replyForm = replyFormContainer.find('form');
+  let replyInput = replyForm.find('textarea[name="reply"]');
   let reply = replyInput.val();
+  console.log('reply text ', reply);
+  let replyFormErrorDiv = replyFormContainer.find('.reply-form-error-div');
+  console.log(replyFormErrorDiv);
+  let submitButton = replyForm.find('.post-reply');
+  console.log('submit ',submitButton)
   try{
     if(!reply) throw 'No comment provided.';
     if(typeof reply !== 'string') throw 'Comment must be a string';
@@ -85,9 +57,9 @@ replyForm.submit(function(event){
   }
   
   if(reply){
-    //set up AJAX request config
     let postId = window.location.pathname.split('/').pop();
-    let commentId = replyLink.data('id');
+    let commentId = submitButton.data('id');
+    console.log(commentId);
     let requestConfig = {
       method: 'POST',
       url: '/posts/'+ postId +'/comment/'+commentId +'/reply',
@@ -96,8 +68,7 @@ replyForm.submit(function(event){
         reply: reply,
       })
     }
-
-    //AJAX Call. Gets the returned JSON data, creates the elements, binds the click event to the link and appends the new todo to the page
+  
     $.ajax(requestConfig).then(function (responseMessage) {
       console.log(responseMessage);
 
@@ -109,6 +80,7 @@ replyForm.submit(function(event){
       );
       replyArea.append(element);
       replyInput.val('');
+      replyFormContainer.hide(); 
     }).fail(function(xhr, error){
       if (xhr.status === 401) {
         // Redirect to login page if user is not authenticated
@@ -119,7 +91,8 @@ replyForm.submit(function(event){
       }
     });
   }
-})
+  
+});
 
 //comment submission with AJAX
 let commentForm = $('#comment-form');
@@ -171,7 +144,7 @@ commentForm.submit(function(event){
                     <form>
                         <label for="reply">Add a reply:</label>
                         <textarea name="reply" id="reply" placeholder="Enter your reply here"></textarea>
-                        <button type="submit">Post Reply</button>
+                        <button type="submit" data-id="${responseMessage.newComment._id}">Post Reply</button>
                         <button type="button" class="cancel-reply">Cancel</button>
                     </form>
                 </div>
