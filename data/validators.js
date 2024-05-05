@@ -46,11 +46,12 @@ let conditionToPredicate = (condition) => {
 
 /**
  * @param {string} input - id to validate
+ * @param {?string} paramName
  * @return {string} - the validated id
  */
-export const validateId = (input) => {
+export const validateId = (input, paramName = "") => {
   input = validateString(input);
-  if (!ObjectId.isValid(input)) throw `Not ObjectID: ${input}`;
+  if (!ObjectId.isValid(input)) throw `${paramName && (paramName + ": ")}Not ObjectID: ${input}`;
   return input;
 };
 
