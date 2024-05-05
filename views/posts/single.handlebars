@@ -37,8 +37,8 @@
                 <a class="reply-link" data-id={{this._id}}>Reply</a>
                 <div class="reply-form-container" hidden>
                     <form class="reply-form">
-                        <label for="reply">Add a reply:</label>
-                        <textarea name="reply" id="reply" placeholder="Enter your reply here"></textarea>
+                        <label for={{this._id}}>Add a reply:</label>
+                        <textarea name="reply" id={{this._id}} placeholder="Enter your reply here"></textarea>
                         <button type="submit" class="post-reply" data-id={{this._id}}>Post Reply</button>
                         <button type="button" class="cancel-reply">Cancel</button>
                     </form>

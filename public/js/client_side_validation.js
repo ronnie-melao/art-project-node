@@ -133,8 +133,8 @@ commentForm.submit(function(event){
           <a class="reply-link" data-id="${responseMessage.newComment._id}">Reply</a>
           <div class="reply-form-container" hidden>
                     <form>
-                        <label for="reply">Add a reply:</label>
-                        <textarea name="reply" id="reply" placeholder="Enter your reply here"></textarea>
+                        <label for="${responseMessage.newComment._id}">Add a reply:</label>
+                        <textarea name="reply" id="${responseMessage.newComment._id}" placeholder="Enter your reply here"></textarea>
                         <button type="submit" data-id="${responseMessage.newComment._id}">Post Reply</button>
                         <button type="button" class="cancel-reply">Cancel</button>
                     </form>
