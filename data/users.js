@@ -19,6 +19,7 @@ export const getUserById = async (id, includePassword = false) => {
   const user = await users.findOne({ _id: new ObjectId(id) });
   if (!user) throw "Error: User not found";
   if (!includePassword) delete user.password;
+  user.displayName = (user.isArtist ? "🖌️" : "") + user.username;
   return user;
 };
 

@@ -68,16 +68,15 @@ export const getPostsFromSearch = async (query) => {
     { $text: { $search: query } },
     { sort: { timePosted: -1 } },
   ).toArray();
-  return addPosterToPosts(results);
+  return await addPosterToPosts(results);
 };
 
 export const getPostById = async (id) => {
   id = validateId(id);
   let posts = await getPostCollection();
-  let post = [];
-  post.push(await posts.findOne({ _id: new ObjectId(id) }));
+  let post = await posts.findOne({ _id: new ObjectId(id) });
   if (!post) throw "Error: Post not found";
-  return addPosterToPosts(post);
+  return (await addPosterToPosts([post]))[0];
 };
 
 //Add comment to a post via the post ID
@@ -139,13 +138,13 @@ export const addReply = async (postId, commentId, username, content) => {
   //check comment exists
   //console.log(post);
   const comment = await posts.findOne(
-    {_id: new ObjectId(postId), "comments._id": new ObjectId(commentId)}
+    { _id: new ObjectId(postId), "comments._id": new ObjectId(commentId) },
   );
-  if(!comment) throw 'Could not post reply';
+  if (!comment) throw "Could not post reply";
 
   let updatedPost = await posts.updateOne(
-    { _id: new ObjectId(postId), "comments._id": new ObjectId(commentId)},
-    { $push: { "comments.$.replies": reply } }
+    { _id: new ObjectId(postId), "comments._id": new ObjectId(commentId) },
+    { $push: { "comments.$.replies": reply } },
   );
 
   if (!updatedPost) throw "Error: Reply post failed";

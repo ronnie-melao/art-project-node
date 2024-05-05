@@ -16,9 +16,8 @@ router
     try {
       const post = await postData.getPostById(req.params.id);
       //console.log(post);
-      let hasComments = post[0].comments.length > 0;
-      post[0].hasComments = hasComments;
-      res.render("posts/single", { post: post, user: req.session?.user });
+      post.hasComments = post.comments.length > 0;
+      res.render("posts/single", { post: [post], user: req.session?.user });
     } catch (e) {
       res.status(404).json({ error: e });
     }
