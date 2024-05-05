@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addUser, loginUser } from "../data/users.js";
+import { addUser, getUserByUsername, loginUser } from "../data/users.js";
 import {
   validateBoolean,
   validateEmail,
@@ -54,7 +54,7 @@ router.route("/login").post(async (req, res) => {
       incomingCommissions: user.incomingCommissions,
       outgoingCommissions: user.outgoingCommissions,
     };
-    res.redirect("/profile");
+    res.redirect("/profile/" + user.username);
 
   } catch (e) {
     if (e.message === "Either the username or password is invalid.") {
@@ -124,9 +124,11 @@ router.route("/search").post(async (req, res) => {
   res.render("search", { title: "Search Results", results, query, user: req.session?.user });
 });
 
-router.route("/profile").get(async (req, res) => {
-  let page = req.session.user.isArtist ? "artist" : "user";
-  res.render(page, { title: "Art Site", user: req.session?.user, isSelf: true });
+router.route("/profile/:username").get(async (req, res) => {
+  let user = await getUserByUsername(req.params.username);
+  let page = user.isArtist ? "artist" : "user";
+  let isSelf = req.session?.user?.username === req.params.username;
+  res.render(page, { title: "Art Site", user: user, isSelf: isSelf });
 });
 
 export default router;
