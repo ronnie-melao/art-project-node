@@ -224,7 +224,7 @@ a.no-dec {
     }
 
 /* Styling for error message */
-#login_error {
+#login_error, #create_error {
     margin-top: 10px;
     padding: 10px;
     background-color: #ffcdd2;
@@ -251,4 +251,9 @@ a.no-dec {
         text-align: right;
         display: block;
     }
+}
+
+.red-text {
+    /*lol*/
+    color: red;
 }
