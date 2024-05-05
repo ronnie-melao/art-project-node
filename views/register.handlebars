@@ -16,7 +16,7 @@
       <input type="password" id="password" name="password">
     </div>
     <div>
-      <label for="password">Confirm Password:</label>
+      <label for="confirmPassword">Confirm Password:</label>
       <input type="password" id="confirmPassword" name="confirmPassword">
     </div>
     <div>
@@ -48,11 +48,11 @@
 </div>
 
 {{#if e}}
-    <div id="registration_error">
+  <div class="error">
         <p>{{e}}</p>
     </div>
 {{/if}}
 
 
-<p id="register-link">Already have an account?</p>
-<a id="register-link" href="/login">Sign In</a>
+<p class="register-link">Already have an account?</p>
+<a class="register-link" href="/login">Sign In</a>

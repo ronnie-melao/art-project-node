@@ -7,8 +7,8 @@
 <form id="create-post-form" action="/posts/create" method="POST" class="form" enctype="multipart/form-data">
   <table>
     <tr>
-      <td><label for="title">Title:</label></td>
-      <td><input id="title" name="title" type="text"></td>
+      <td><label for="post-title">Title:</label></td>
+      <td><input id="post-title" name="title" type="text"></td>
     </tr>
     <tr>
       <td colspan="2"><p>Upload up to four images</p></td>
@@ -41,7 +41,7 @@
   </div>
 
 {{#if error}}
-  <div id="create_error" class="error">
+  <div class="error">
     <p>{{error}}</p>
     </div>
   {{/if}}

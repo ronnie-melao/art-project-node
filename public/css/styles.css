@@ -177,7 +177,7 @@ a.no-dec {
 }
 
 /* Styling for the login link */
-#login-link {
+.login-link {
     display: block;
     margin-top: 20px;
     text-align: center;
@@ -234,7 +234,7 @@ a.no-dec {
     }
 
 /* Styling for the register link */
-#register-link {
+.register-link {
     display: block;
     margin-top: 20px;
     text-align: center;
