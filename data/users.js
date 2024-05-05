@@ -4,6 +4,7 @@ import {
   validateEmail,
   validateId,
   validateNoNumbers,
+  validateNumber,
   validatePassword,
   validateString,
   validateUsername,
@@ -92,5 +93,24 @@ export const loginUser = async (username, password) => {
     return user;
   } else {
     throw new Error("Either the username or password is invalid.");
+  }
+};
+
+export const getThreads = async (userID, { skip = 0, limit = 50 } = {}) => {
+  userID = validateId(userID);
+  skip = validateNumber(skip, { range: [0] });
+  limit = validateNumber(limit, { range: [1, 50] });
+  const user = await getUserById(userID);
+  // reversed for most recent first
+  return user.threads.toReversed().slice(skip, skip + limit);
+};
+
+export const getOrAddThread = async (userID, threadName) => {
+  let user = await getUserById(userID);
+  let res = user.threads.find(thread => thread.name === threadName)?._id;
+  if (!res) {
+    const newThread = { _id: new ObjectId(), name: threadName, posts: [] };
+    const users = await getUserCollection();
+    users.updateOne({ _id: new ObjectId(userID), $push: { threads: newThread } });
   }
 };

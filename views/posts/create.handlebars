@@ -1,0 +1,27 @@
+<table>
+  <h1>Create a Post</h1>
+  <form id="signin-form" action="/login" method="POST" class="form">
+    <div>
+      <label for="username" class="form">Username:</label>
+      <input id="username" name="username" type="text">
+    </div>
+    <div>
+      <label for="password" class="form">Password:</label>
+      <input id="password" name="password" type="password">
+    </div>
+    <button id="submitButton" name="submitButton" type="submit" class="button">Submit</button>
+  </form>
+
+
+  <div id="login_error" hidden>
+    <p></p>
+  </div>
+
+  {{#if e}}
+    <div id="login_error">
+      <p>{{e}}</p>
+    </div>
+  {{/if}}
+
+
+</table>
