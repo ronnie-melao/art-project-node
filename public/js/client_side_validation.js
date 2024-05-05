@@ -381,3 +381,8 @@ if (registerForm) {
       }
   });
 }
+
+$("#create-post-form").on("submit", event => {
+  console.log("Lol!");
+  // client side validation here, if bad do event.preventDefault()
+});

@@ -36,6 +36,7 @@ router.route("/login").post(async (req, res) => {
 
     if (!user) throw "User is not in the database!";
     req.session.user = {
+      _id: user._id,
       username: user.username,
       firstName: user.firstName,
       lastName: user.lastName,

@@ -1,6 +1,12 @@
 import xss from "xss";
 import c from "ansi-colors";
+import heic from "heic-convert";
+import { fromBuffer } from "pdf2pic";
+import { ObjectId } from "mongodb";
+import path from "node:path";
+import * as fs from "node:fs";
 
+const __dirname = import.meta.dirname;
 /**
  * @param {*} any
  * @return {*}
@@ -80,6 +86,48 @@ export const relativeTime = (date) => {
     }
   }
   return "Just now";
+};
+
+export const convertHEIC = async (file) => {
+  if (file.mimetype === "image/heic") {
+    // adapted from https://www.npmjs.com/package/heic-convert
+    console.log(heic, Object.keys(heic));
+    file.data = await heic({
+      buffer: file.data,
+      format: "JPEG",
+      quality: 1,
+    });
+    file.mimetype = "image/jpeg";
+  }
+  return file;
+};
+
+export const convertPDF = async (file) => {
+  // most readable code of the year based on https://www.npmjs.com/package/pdf2pic#frombufferbuffer-options
+  // converts only first page.
+  if (file.mimetype === "application/pdf") {
+    file.data = (await fromBuffer(file.data, {
+      format: "png", density: 100,
+    })(1, { responseType: "buffer" }))?.buffer;
+    file.mimetype = "image/png";
+  }
+  return file;
+};
+
+export const imageFilesToLinks = async (files) => {
+  let result = [];
+  try {
+    for (let file of files) {
+      let fName = new ObjectId().toString() + "-" + file.mimetype.replace("/", ".");
+      let filePath = path.join(__dirname, "../public/images/", fName);
+      fs.writeFileSync(filePath, file.data);
+      result.push(`/public/images/${fName}`);
+    }
+  } catch (e) {
+    console.log(e);
+    throw "Error uploading image";
+  }
+  return result;
 };
 
 export const DUPLICATE_ID_ERROR_CODE = 11000;

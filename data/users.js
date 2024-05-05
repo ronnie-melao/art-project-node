@@ -106,11 +106,18 @@ export const getThreads = async (userID, { skip = 0, limit = 50 } = {}) => {
 };
 
 export const getOrAddThread = async (userID, threadName) => {
+  threadName = validateString(threadName);
   let user = await getUserById(userID);
   let res = user.threads.find(thread => thread.name === threadName)?._id;
   if (!res) {
     const newThread = { _id: new ObjectId(), name: threadName, posts: [] };
     const users = await getUserCollection();
-    users.updateOne({ _id: new ObjectId(userID), $push: { threads: newThread } });
+    let insertion = await users.updateOne({ _id: new ObjectId(userID) }, { $push: { threads: newThread } });
+    console.log("Thread", insertion);
+    if (!insertion) {
+      throw "Could not add thread";
+    }
+    return newThread._id.toString();
   }
+  return res;
 };

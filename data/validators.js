@@ -154,3 +154,7 @@ export const tryOrPushErr = (errors, inputObj, validator, ...args) => {
     return null;
   }
 };
+
+export const errorsToString = (errors) => {
+  return errors.map(e => Object.entries(e)).map(([[name, input]]) => `${name}: ${input}`).join("\n");
+};
