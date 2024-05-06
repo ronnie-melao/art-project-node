@@ -17,7 +17,7 @@ router.route("/change-status").post(async (req, res) => {
             throw 'No documents matched the update criteria';
 
     } catch (e) {
-        res.status(500).render('commissions');
+        res.status(500).render("commissions", { user: req.session?.user });
     }
 
 });
