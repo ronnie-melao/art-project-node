@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addUser, getUserByUsername, loginUser, switchAccountType } from "../data/users.js";
+import { addUser, getUserByUsername, loginUser, switchAccountType, addReview } from "../data/users.js";
 import {
   validateBoolean,
   validateEmail,
@@ -123,6 +123,45 @@ router.route("/register").post(async (req, res) => {
   } catch (e) {
     res.status(400).render("register", { e });
   }
+});
+
+router.route("/review/:username").get(async (req, res) => {
+  let profile = await getUserByUsername(req.params.username);
+  res.render("review", { title: "Create Review", profile: profile });
+});
+
+router.route("/review/:username").post(async (req, res) => {
+  let { reviewText } = req.body;
+
+  try {
+    req.session.user.username;
+  } catch (e) {
+    return res.status(401).render("error", { title: "error", error: "Unauthorized", user: req.session?.user });
+  }
+
+  try {
+    let isSelf = req.session?.user?.username === req.params.username;
+    if (isSelf)
+      throw new Error("You cannot write a review for yourself!");
+    
+    let profile = await getUserByUsername(req.params.username);
+    let isArtist = profile.isArtist;
+    if (!isArtist)
+      throw new Error("You cannot write a review for a non-artist account!");
+
+    reviewText = validateString(reviewText, { length: [] });
+
+    const review = await addReview(req.params.username, reviewText, req.session.user.username);
+
+    if (review)
+      res.status(200).redirect(`/profile/${req.params.username}`);
+    else
+      throw "The review could not be added!";
+
+  } catch (e) {
+    res.status(400).render("review", { e });
+  }
+  //res.render("review", { title: "Create Review", profile: profile });
 });
 
 router.route("/logout").get(async (req, res) => {
