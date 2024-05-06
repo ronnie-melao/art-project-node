@@ -142,7 +142,7 @@ a.no-dec {
     align-items: center;
 }
 
-.postLink{
+.postLink {
     text-decoration: none;
     margin: 0;
 }
@@ -201,7 +201,7 @@ a.no-dec {
     margin-top: 20px;
     text-align: center;
 }
-  
+
 /* Styling for the form container */
 #signin-form {
     max-width: 300px;
@@ -211,14 +211,14 @@ a.no-dec {
     border-radius: 5px;
     background-color: #f9f9f9;
     box-shadow: gray 1px 1px 4px;
-    }
+}
 
 /* Styling for form labels */
 #signin-form label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-    }
+}
 
 /* Styling for form inputs */
 #signin-form input[type="text"],
@@ -228,7 +228,7 @@ a.no-dec {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    }
+}
 
 /* Styling for the login submit button */
 #submitButton {
@@ -240,7 +240,7 @@ a.no-dec {
     color: #fff;
     font-size: 16px;
     cursor: pointer;
-    }
+}
 
 /* Styling for error message */
 #login_error, #create_error {
@@ -250,14 +250,14 @@ a.no-dec {
     color: #f44336;
     border: 1px solid #f44336;
     border-radius: 4px;
-    }
+}
 
 /* Styling for the register link */
 .register-link {
     display: block;
     margin-top: 20px;
     text-align: center;
-    }
+}
 
 #contactNumber {
     display: block;

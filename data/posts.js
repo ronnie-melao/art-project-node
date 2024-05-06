@@ -41,7 +41,7 @@ export const addPost = async (poster, title, images, description, keywords, thre
   post = deepXSS(post);
   const newInsertInformation = await posts.insertOne(post);
   if (!newInsertInformation.insertedId) throw "Posting failed!";
-  await addPostToUserPosts(poster, newInsertInformation.insertedId.toString())
+  await addPostToUserPosts(poster, newInsertInformation.insertedId.toString());
   if (threadID) {
     await addPostToThread(poster, threadID, newInsertInformation.insertedId.toString());
   }

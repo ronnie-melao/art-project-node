@@ -1,26 +1,26 @@
 <form id="commission_request-form" action="/commission_request" method="POST" class="form">
-    <div>
-        <label for="artistUsername" class="form">Artist Username</label>
-        <input id="artistUsername" name="artistUsername" type="text">
-    </div>
-    <div>
-        <label for="description" class="form">Description</label>
-        <input id="description" name="description" type="text">
-    </div>
-    <div>
-        <label for="price" class="form">Price</label>
-        <input id="price" name="price" type="text">
-    </div>
-    <button id="submitButton" name="submitButton" type="submit" class="button">Submit</button>
+  <div>
+    <label for="artistUsername" class="form">Artist Username</label>
+    <input id="artistUsername" name="artistUsername" type="text">
+  </div>
+  <div>
+    <label for="description" class="form">Description</label>
+    <input id="description" name="description" type="text">
+  </div>
+  <div>
+    <label for="price" class="form">Price</label>
+    <input id="price" name="price" type="text">
+  </div>
+  <button id="submitButton" name="submitButton" type="submit" class="button">Submit</button>
 </form>
 
 
 <div id="commission_request_error" hidden>
-    <p></p>
+  <p></p>
 </div>
 
 {{#if e}}
-    <div id="commission_request_error_message">
-        <p>{{e}}</p>
-    </div>
+  <div id="commission_request_error_message">
+    <p>{{e}}</p>
+  </div>
 {{/if}}
