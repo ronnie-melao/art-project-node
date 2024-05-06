@@ -108,8 +108,8 @@ a.no-dec {
 }
 
 .full-thumbnail {
-    max-width: 400px;
-    max-height: 225px;
+    max-width: 600px;
+    max-height: 340px;
     object-fit: contain;
     background-color: white;
     border-radius: 15px;
