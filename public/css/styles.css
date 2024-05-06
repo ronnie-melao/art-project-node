@@ -80,6 +80,18 @@ header, .header {
     }
 }
 
+.icon-like {
+    margin: 0 5px;
+    width: 16px;
+    height: 16px;
+    align-items: center;
+    justify-content: center;
+
+    * {
+        aspect-ratio: 1;
+    }
+}
+
 .reviewDate {
     font-size: 13px;
 }

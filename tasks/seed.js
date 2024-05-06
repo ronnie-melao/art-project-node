@@ -36,7 +36,8 @@ for (let i = 1; i <= 5; i++) {
 }
 
 
-let sally = await await users.addUser("sally", "Sally", "Seashell", "sally@a.com", "201-123-1324", "I'm sally", "", "D0nt3nter!2", false);
+
+let sally = await users.addUser("sally", "Sally", "Seashell", "sally@a.com", "201-123-1324", "I'm sally", "", "D0nt3nter!2", false);
 await posts.addLike(comment.toString(), sally);
 await posts.addLike(replyPost.toString(), sally);
 //check removeLike is working

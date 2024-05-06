@@ -188,8 +188,8 @@ export const addLike = async (postId, userId) => {
   let updatedPost = await posts.updateOne({ _id: new ObjectId(postId) }, {$push: {likes: userId}});
   if(!updatedPost) throw 'Could not add like';
   let updatedUser = await addPostToUserLikedPosts(userId, postId);
-  
-  return updatedPost;
+  console.log(updatedPost);
+  return await getPostById(postId);
 };
 
 export const removeLike = async (postId, userId) => {
@@ -205,9 +205,9 @@ export const removeLike = async (postId, userId) => {
   let updatedPost = await posts.updateOne({ _id: new ObjectId(postId) }, {$pull: {likes: userId}});
   if(!updatedPost) throw 'Could not remove like';
   let updatedUser = await removePostFromUserLikedPosts(userId, postId);
-  
-  return updatedPost;
-}
+  console.log(updatedPost);
+  return await getPostById(postId);
+};
 
 export const getPostsFromThread = async (userID, threadID) => {
   let user = await getUserById(userID);

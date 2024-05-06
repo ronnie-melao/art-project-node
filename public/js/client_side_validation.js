@@ -416,3 +416,40 @@ $switchProfileButton.on("click", function() {
       alert("Failed to switch profile");
     });
 });
+
+let likeButton = $("#like-button");
+likeButton.on('click', function(){
+  // Set up AJAX request config
+  console.log("in like button");
+  let postId = likeButton.data('id');
+  let requestConfig = {
+    method: "POST",
+    url: "/posts/" + postId + "/like",
+    contentType: "application/json",
+  };
+
+  // AJAX Call for switching profile
+  $.ajax(requestConfig)
+    .then(function(responseMessage) {
+      console.log(responseMessage);
+      
+      let likeCountElement = $('#like-count');
+      likeCountElement.text('Liked by ' + responseMessage.post.likes.length + ' users');
+      if(responseMessage.newLikedState){
+        likeButton.html('<img class="icon-like" src="/public/icon/like.svg" alt="Liked" title="Unlike" id="like-button-is-liked">');
+      }
+      else{
+        likeButton.html('<img class="icon-like" src="/public/icon/mylikes.svg" alt="Not Liked" title="Like" id="like-button-is-not-liked">');
+      }
+    })
+    .fail(function(xhr, error) {
+      if (xhr.status === 401) {
+        // Redirect to login page if user is not authenticated
+        window.location.href = "/login";
+      }
+      else{
+        console.error("Error liking post:", error);
+        alert("Failed to like post");
+      }
+    });
+})
