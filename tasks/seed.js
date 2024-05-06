@@ -30,7 +30,7 @@ await posts.addReply(replyPost.toString(), commentOnPost._id.toString(), "userna
 
 
 let chris = await users.addUser("chris", "Chris", "Cool", "s@a.com", "201-123-1324", "dude, a fella even5", "Yeah great3", "D0nt3nter!2", true);
-let threadID = await users.getOrAddThread(id, "A Zorua A day");
+let threadID = await users.getOrAddThread(chris, "A Zorua A day");
 for (let i = 1; i <= 5; i++) {
   await posts.addPost(chris, `A Zorua A day ${i}`, [`/public/images/zorua${i}.jpeg`], "", [], threadID);
 }

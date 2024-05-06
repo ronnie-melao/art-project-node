@@ -1,15 +1,17 @@
 <article class="post">
     {{#each post}}
-    <h1>{{ this.title }}</h1>
-
+      <h1>{{ this.title }}</h1><br>
+      {{#if this.thread}}
+        <a href="/posts/thread/{{this.poster._id}}/{{this.thread}}">View Thread</a><br>
+      {{/if}}
     <p>Likes: {{this.likes}}</p>
     <div>
         {{#each this.images}}
         {{!-- Need to resize images --}}
           <img src="{{this}}" class="full-thumbnail" alt="{{this.title}} thumbnail">
         {{/each}}
-    </div>  
-    <address>Posted by {{this.poster.displayName}}</address>
+    </div>
+      <address>Posted by {{this.poster.displayName}} · {{this.formattedTimePosted}}</address>
     <p>{{ this.post.description }}</p>
 
     <h2>Comments</h2>

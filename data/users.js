@@ -113,7 +113,7 @@ export const getOrAddThread = async (userID, threadName) => {
     const newThread = { _id: new ObjectId(), name: threadName, posts: [] };
     const users = await getUserCollection();
     let insertion = await users.updateOne({ _id: new ObjectId(userID) }, { $push: { threads: newThread } });
-    console.log("Thread", insertion);
+    // console.log("Thread", insertion);
     if (!insertion) {
       throw "Could not add thread";
     }
@@ -122,13 +122,13 @@ export const getOrAddThread = async (userID, threadName) => {
   return res;
 };
 
-export const switchAccountType = async (userId, newAccountType) =>{
+export const switchAccountType = async (userId, newAccountType) => {
   userId = validateId(userId);
   console.log(newAccountType);
-  if(typeof newAccountType !== 'boolean') throw 'newAccountType must be a boolean'
+  if (typeof newAccountType !== "boolean") throw "newAccountType must be a boolean";
   const users = await getUserCollection();
-  const update = await users.updateOne({ _id: new ObjectId(userId)}, { $set: {isArtist: newAccountType} });
-  if(!update) throw "Could not update account type";
+  const update = await users.updateOne({ _id: new ObjectId(userId) }, { $set: { isArtist: newAccountType } });
+  if (!update || update.modifiedCount < 1) throw "Could not update account type";
   return update;
 };
 
@@ -136,8 +136,22 @@ export const addPostToUserPosts = async (userId, postId) => {
   userId = validateId(userId);
   postId = validateId(postId);
   const users = await getUserCollection();
-  const update = await users.updateOne({ _id: new ObjectId(userId)}, { $push: {posts: postId} });
-  if(!update) throw 'Could not add post to user';
+  const update = await users.updateOne({ _id: new ObjectId(userId) }, { $push: { posts: postId } });
+  if (!update || update.modifiedCount < 1) throw "Could not add post to user";
+  return update;
+};
+
+export const addPostToThread = async (userId, threadId, postId) => {
+  userId = validateId(userId);
+  postId = validateId(postId);
+  threadId = validateId(threadId);
+  console.log("Adding", userId, threadId, postId);
+  const users = await getUserCollection();
+  const update = await users.updateOne(
+    { _id: new ObjectId(userId), "threads._id": new ObjectId(threadId) },
+    { $push: { "threads.$.posts": postId } },
+  );
+  if (!update || update.modifiedCount < 1) throw "Could not add post to thread";
   return update;
 };
 
@@ -155,7 +169,7 @@ export const addReview = async (reviewee, reviewText, reviewer) => {
     reviewDate: datePosted
   };
   review = deepXSS(review);
-  
+
   const users = await getUserCollection();
   const update = await users.updateOne({username: reviewee}, {$push: {reviews: review}});
   if(!update) throw new Error("Could not add post to user");

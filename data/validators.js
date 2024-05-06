@@ -32,7 +32,7 @@ export const validateString = (input, { lower = false, length = [1], conditions 
     }
     return res;
   }
-  throw `Not a string! '${JSON.stringify(input)}'`;
+  throw new Error(`Not a string! '${JSON.stringify(input)}'`);
 };
 
 let conditionToPredicate = (condition) => {
@@ -51,7 +51,9 @@ let conditionToPredicate = (condition) => {
  */
 export const validateId = (input, paramName = "") => {
   input = validateString(input);
-  if (!ObjectId.isValid(input)) throw `${paramName && (paramName + ": ")}Not ObjectID: ${input}`;
+  if (!ObjectId.isValid(input)) {
+    throw `${paramName && (paramName + ": ")}Not ObjectID: ${input}`;
+  }
   return input;
 };
 

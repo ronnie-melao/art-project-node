@@ -92,10 +92,11 @@ a.no-dec {
 }
 
 .full-thumbnail {
-    width: 400px;
-    height: 225px;
+    max-width: 400px;
+    max-height: 225px;
     object-fit: contain;
-    background: black;
+    background-color: white;
+    border-radius: 15px;
 }
 
 .post {

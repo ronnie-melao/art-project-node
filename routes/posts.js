@@ -2,8 +2,8 @@ import { Router } from "express";
 import { postData } from "../data/index.js";
 import { errorsToString, tryOrPushErr, validateId, validateString } from "../data/validators.js";
 import { convertHEIC, convertPDF, deepXSS, getSearchTerms, imageFilesToLinks } from "../data/util.js";
-import { addPost } from "../data/posts.js";
-import { getOrAddThread, getThreads } from "../data/users.js";
+import { addPost, getPostsFromThread } from "../data/posts.js";
+import { getOrAddThread, getThreads, getUserById } from "../data/users.js";
 
 let router = new Router();
 
@@ -130,6 +130,34 @@ router
       return res.status(400).render("error", { title: "error", error: e, user: req.session?.user });
     }
 
+  });
+
+router
+  .route("/thread/:userId/:threadId")
+  .get(async (req, res) => {
+    let userId, threadId, thread;
+    try {
+      userId = validateId(req.params.userId);
+      threadId = validateId(req.params.threadId);
+      // verify user exists
+      let user = await getUserById(userId);
+      // verify thread exists
+      thread = user.threads.find(thread => thread._id.toString() === threadId);
+      if (!thread) throw "Thread not found";
+    } catch (e) {
+      return res.status(400).render("error", { title: "error", error: e, user: req.session?.user });
+    }
+    try {
+      let posts = await getPostsFromThread(userId, threadId);
+      res.render("posts/thread", { title: "Thread", user: req.session?.user, posts, threadName: thread.name });
+    } catch (e) {
+      console.log(e);
+      return res.status(500).render("error", {
+        title: "error",
+        error: "Internal Server Error",
+        user: req.session?.user,
+      });
+    }
   });
 
 export default router;
