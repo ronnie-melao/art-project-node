@@ -32,7 +32,7 @@ export const addCommission = async (artistUsername, requesterUsername, descripti
 export const getArtistCommissions = async (artistUsername) => {
   if (!artistUsername) throw "No artist associated!";
   const commissions = await getCommissionCollection();
-  const artistCommissions = commissions.find({ username: artistUsername });
+  const artistCommissions = commissions.find({ artistUsername: artistUsername });
   const commissionsArray = await artistCommissions.toArray();
   return commissionsArray;
 };

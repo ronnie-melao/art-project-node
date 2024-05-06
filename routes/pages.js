@@ -194,14 +194,18 @@ router.route("/switchProfile").post(async (req, res) => {
   }
 });
 router.route("/commissions").get(async (req, res) => {
-  let current_username = req.session.user.username;
-  let commissionsArray = getArtistCommissions(current_username);
-  res.render("commissions", {
-    title: "Art Site",
-    user: req.session?.user,
-    script_partial: "commissions_script",
-    commissionsArray: commissionsArray,
-  });
+  try {
+    let current_username = req.session.user.username;
+    let commissionsArray = await getArtistCommissions(current_username);
+    res.render("commissions", {
+      title: "Art Site",
+      user: req.session?.user,
+      script_partial: "commissions_script",
+      commissionsArray: JSON.stringify(commissionsArray)
+    });
+  } catch (e) {
+    res.status(500).render("commissions", {e: "Internal Server Error"});
+  }
 });
 
 router.route("/commission_request").get(async (req, res) => {

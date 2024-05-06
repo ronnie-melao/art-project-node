@@ -3,11 +3,11 @@ function populateCommissionsTable() {
   // Clear existing rows
   tableBody.innerHTML = "";
 
-  // Iterate over requestData and create table rows
+  // Iterate over commissionsArray and create table rows
   commissionsArray.forEach(request => {
     const row = document.createElement("tr");
     row.innerHTML = `
-        <td>${request.name}</td>
+        <td>${request.requesterUsername}</td>
         <td>${request.description}</td>
         <td>${request.price}</td>
         <td>${request.status}</td>

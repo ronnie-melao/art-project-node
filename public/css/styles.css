@@ -330,3 +330,33 @@ a.no-dec {
   #commission_request-form button[type="submit"]:hover {
     background-color: #008bff;
   }
+
+  #incoming_requests, #outgoing_requests {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  #incoming_requests th,
+  #incoming_requests td,
+  #outgoing_requests th,
+  #outgoing_requests td {
+    padding: 8px;
+    border: 1px solid #dddddd;
+    text-align: left;
+  }
+  
+  #incoming_requests th,
+  #outgoing_requests th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  
+  #incoming_requests tbody tr:nth-child(even),
+  #outgoing_requests tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  #incoming_requests tbody tr:hover,
+  #outgoing_requests tbody tr:hover {
+    background-color: #f0f0f0;
+  }
