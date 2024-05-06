@@ -1,15 +1,15 @@
 <h2> Review for {{profile.username}} </h2>
 
 <form id="review-form" name="review-form" action="/review/{{profile.username}}" method="POST" class="form">
-    <div>
-      <label for="reviewText">Review:</label>
-      <input type="text" id="reviewText" name="reviewText">
-    </div>
-    <button type="submit" id="submitButton" name="submitButton" class="button">Submit</button>
+  <div>
+    <label for="reviewText">Review:</label>
+    <input type="text" id="reviewText" name="reviewText">
+  </div>
+  <button type="submit" id="submitButton" name="submitButton" class="button">Submit</button>
 </form>
 
 {{#if e}}
   <div class="error">
-        <p>{{e}}</p>
-    </div>
+    <p>{{e}}</p>
+  </div>
 {{/if}}

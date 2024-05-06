@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addUser, getUserByUsername, loginUser, switchAccountType, addReview } from "../data/users.js";
+import { addReview, addUser, getUserByUsername, loginUser, switchAccountType } from "../data/users.js";
 import {
   validateBoolean,
   validateEmail,
@@ -47,25 +47,7 @@ router.route("/login").post(async (req, res) => {
     const user = await loginUser(username, password);
 
     if (!user) throw "User is not in the database!";
-    req.session.user = {
-      _id: user._id,
-      username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      bio: user.bio,
-      statement: user.statement,
-      password: user.password,
-      dateJoined: user.dateJoined,
-      isArtist: user.isArtist,
-      reviews: user.reviews,
-      posts: user.posts,
-      threads: user.threads,
-      likedPosts: user.likedPosts,
-      incomingCommissions: user.incomingCommissions,
-      outgoingCommissions: user.outgoingCommissions,
-    };
+    req.session.user = { ...user };
     res.redirect("/profile/" + user.username);
 
   } catch (e) {
@@ -143,7 +125,7 @@ router.route("/review/:username").post(async (req, res) => {
     let isSelf = req.session?.user?.username === req.params.username;
     if (isSelf)
       throw new Error("You cannot write a review for yourself!");
-    
+
     let profile = await getUserByUsername(req.params.username);
     let isArtist = profile.isArtist;
     if (!isArtist)
@@ -176,34 +158,40 @@ router.route("/search").post(async (req, res) => {
 });
 
 router.route("/profile/:username").get(async (req, res) => {
-  try{
+  try {
     let profile = await getUserByUsername(req.params.username);
     let isArtist = profile.isArtist;
     let oppositeAccountType = profile.isArtist ? "user" : "artist";
     let isSelf = req.session?.user?.username === req.params.username;
     let posts = [];
     console.log(profile.posts);
-    for(let postId of profile.posts){
-      console.log(postId)
+    for (let postId of profile.posts) {
+      console.log(postId);
       posts.push(await getPostById(postId));
     }
     console.log(posts);
-    res.render('profile', { title: "Art Site", profile: profile, isSelf: isSelf, isArtist: isArtist, oppositeAccountType: oppositeAccountType, user: req.session?.user, posts:posts });
-  }
-  catch(e){
-    res.status(404).render('error', {error: e})
+    res.render("profile", {
+      title: "Art Site",
+      profile: profile,
+      isSelf: isSelf,
+      isArtist: isArtist,
+      oppositeAccountType: oppositeAccountType,
+      user: req.session?.user,
+      posts: posts,
+    });
+  } catch (e) {
+    res.status(404).render("error", { error: e });
   }
 });
 
 router.route("/switchProfile").post(async (req, res) => {
-  try{
+  try {
     const userId = req.session.user._id;
     let newIsArtist = req.body.newIsArtist;
     let profile = await switchAccountType(userId, newIsArtist);
     res.json({ success: true, profile: profile });
-  }
-  catch(e){
-    console.log(e); 
+  } catch (e) {
+    console.log(e);
   }
 });
 router.route("/commissions").get(async (req, res) => {
