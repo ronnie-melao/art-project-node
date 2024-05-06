@@ -15,7 +15,12 @@
   {{#unless isSelf}}
     <a href="/review/{{profile.username}}">Add New Review</a>
   {{/unless}}
-  <p>{{profile.reviews}}</p>
+  {{#each profile.reviews}}
+    <div class="review">
+      <p><em>{{this.reviewer}}: {{this.reviewDate}}</em></p>
+      <p>{{this.reviewText}}</p>
+    </div>
+  {{/each}}
 {{/if}}
 
 {{#if isSelf}}

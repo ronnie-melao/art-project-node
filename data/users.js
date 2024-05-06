@@ -161,17 +161,18 @@ export const addReview = async (reviewee, reviewText, reviewer) => {
   if (reviewee === reviewer) throw new Error("You cannot write a review for yourself!");
 
   reviewText = validateString(reviewText, { length: [] });
-  let datePosted = new Date().getTime();
+  let datePosted = new Date();
+  let dateString = datePosted.toLocaleString();
 
   let review = {
     reviewer: reviewer,
     reviewText: reviewText,
-    reviewDate: datePosted
+    reviewDate: dateString
   };
   review = deepXSS(review);
 
   const users = await getUserCollection();
-  const update = await users.updateOne({username: reviewee}, {$push: {reviews: review}});
+  const update = await users.updateOne({username: reviewee}, {$push: {reviews: {$each: [review], $position: 0 }}});
   if(!update) throw new Error("Could not add post to user");
   return update;
 
