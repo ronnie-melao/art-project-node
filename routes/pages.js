@@ -8,6 +8,7 @@ import {
   validateString,
   validateUsername,
 } from "../data/validators.js";
+import { getTopLikedPosts, getMostRecentPosts } from "../data/posts.js";
 import { postData } from "../data/index.js";
 import { getUserCollection } from "../config/mongoCollections.js";
 import { addCommission, getArtistCommissions } from "../data/commissions.js";
@@ -15,7 +16,17 @@ import { addCommission, getArtistCommissions } from "../data/commissions.js";
 let router = new Router();
 
 router.route("/").get(async (req, res) => {
-  res.render("home", { title: "Art Site", user: req.session?.user });
+  try {
+    const topLikedPosts = await getTopLikedPosts();
+    const mostRecentPosts = await getMostRecentPosts();
+
+    res.render("home", { title: "Art Site", user: req.session?.user, topLikedPosts, mostRecentPosts });
+  } catch (e) {
+    // Handle errors appropriately
+    console.error(e);
+    res.status(500).send('Internal Server Error');
+  }
+
 });
 
 router.route("/login").get(async (req, res) => {

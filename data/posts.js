@@ -79,6 +79,24 @@ export const getPostById = async (id) => {
   return (await addPosterToPosts([post]))[0];
 };
 
+export const getTopLikedPosts = async () => {
+  let posts = await getPostCollection();
+  let results = await posts.find(
+    {},
+    { sort: { likes: -1 } },
+  ).toArray();
+  return await addPosterToPosts(results);
+};
+
+export const getMostRecentPosts = async () => {
+  let posts = await getPostCollection();
+  let results = await posts.find(
+    {},
+    { sort: { timePosted: -1 } },
+  ).toArray();
+  return await addPosterToPosts(results);
+};
+
 //Add comment to a post via the post ID
 export const addComment = async (postId, username, content) => {
   postId = validateId(postId);
