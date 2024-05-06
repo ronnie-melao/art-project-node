@@ -130,4 +130,13 @@ export const switchAccountType = async (userId, newAccountType) =>{
   const update = await users.updateOne({ _id: new ObjectId(userId)}, { $set: {isArtist: newAccountType} });
   if(!update) throw "Could not update account type";
   return update;
+};
+
+export const addPostToPosts = async (userId, postId) => {
+  userId = validateId(userId);
+  postId = validateId(postId);
+  const users = await getUserCollection();
+  const update = await users.updateOne({ _id: new ObjectId(userId)}, { $push: {posts: postId} });
+  if(!update) throw 'Could not add post to user';
+  return update;
 }
