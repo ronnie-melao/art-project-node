@@ -130,6 +130,17 @@ a.no-dec {
     display: flex;
 }
 
+.homeFeeds {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.homeSingleFeed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .postLink{
     text-decoration: none;
     margin: 0;
