@@ -125,9 +125,6 @@ router.route("/review/:username").get(async (req, res) => {
   }
   
   try {
-    let doubleReview = await checkReviewer(req.params.username, req.session.user.username);
-    if (doubleReview) throw new Error ("You cannot write a second review for an account!");
-  
     res.render("review", { title: "Create Review", profile: profile });
   }  catch (e) {
     return res.status(401).render("error", { title: "error", error: e , user: req.session?.user });
@@ -136,10 +133,10 @@ router.route("/review/:username").get(async (req, res) => {
 
 router.route("/review/:username").post(async (req, res) => {
   let profile;
+  let { reviewText } = req.body;
   
   try {
     profile = await getUserByUsername(req.params.username);
-    let { reviewText } = req.body;
   } catch (e) {
     return res.status(401).render("error", { title: "error", error: e , user: req.session?.user });
   }
