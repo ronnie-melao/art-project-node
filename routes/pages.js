@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addReview, addUser, getUserByUsername, loginUser, switchAccountType } from "../data/users.js";
+import { addReview, addUser, getUserByUsername, loginUser, switchAccountType, checkReviewer } from "../data/users.js";
 import {
   validateBoolean,
   validateEmail,
@@ -9,7 +9,7 @@ import {
   validateString,
   validateUsername,
 } from "../data/validators.js";
-import { getMostRecentPosts, getPostById, getTopLikedPosts, getLikedPosts } from "../data/posts.js";
+import { getLikedPosts, getMostRecentPosts, getPostById, getTopLikedPosts } from "../data/posts.js";
 import { postData } from "../data/index.js";
 import { addCommission, getArtistCommissions } from "../data/commissions.js";
 import { getUserCollection } from "../config/mongoCollections.js";
@@ -110,12 +110,36 @@ router.route("/register").post(async (req, res) => {
 });
 
 router.route("/review/:username").get(async (req, res) => {
-  let profile = await getUserByUsername(req.params.username);
-  res.render("review", { title: "Create Review", profile: profile });
+  let profile;
+
+  try {
+    profile = await getUserByUsername(req.params.username);
+  } catch (e) {
+    return res.status(401).render("error", { title: "error", error: "No user found", user: req.session?.user });
+  }
+
+  try {
+    req.session.user.username;
+  } catch (e) {
+    return res.status(401).render("error", { title: "error", error: "Unauthorized", user: req.session?.user });
+  }
+  
+  try {
+    res.render("review", { title: "Create Review", profile: profile });
+  }  catch (e) {
+    return res.status(401).render("error", { title: "error", error: e , user: req.session?.user });
+  }
 });
 
 router.route("/review/:username").post(async (req, res) => {
+  let profile;
   let { reviewText } = req.body;
+  
+  try {
+    profile = await getUserByUsername(req.params.username);
+  } catch (e) {
+    return res.status(401).render("error", { title: "error", error: e , user: req.session?.user });
+  }
 
   try {
     req.session.user.username;
@@ -133,7 +157,7 @@ router.route("/review/:username").post(async (req, res) => {
     if (!isArtist)
       throw new Error("You cannot write a review for a non-artist account!");
 
-    reviewText = validateString(reviewText, { length: [] });
+    reviewText = validateString(reviewText, { length: [1, 1024] });
 
     const review = await addReview(req.params.username, reviewText, req.session.user.username);
 
@@ -143,7 +167,7 @@ router.route("/review/:username").post(async (req, res) => {
       throw "The review could not be added!";
 
   } catch (e) {
-    res.status(400).render("review", { e });
+    res.status(400).render("review", {profile: profile, e });
   }
 });
 
@@ -187,9 +211,11 @@ router.route("/switchProfile").post(async (req, res) => {
     const userId = req.session.user._id;
     let newIsArtist = req.body.newIsArtist;
     let profile = await switchAccountType(userId, newIsArtist);
+    req.session.user.isArtist = newIsArtist;
     res.json({ success: true, profile: profile });
   } catch (e) {
     console.log(e);
+    res.status(401);
   }
 });
 router.route("/commissions").get(async (req, res) => {

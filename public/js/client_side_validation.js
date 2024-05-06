@@ -373,6 +373,32 @@ if (registerForm) {
     }
   });
 }
+
+let reviewForm = document.getElementById("review-form");
+
+if (reviewForm) {
+  reviewForm.addEventListener("submit", (event) => {
+
+    let reviewText = document.getElementById("reviewText").value;
+    let reviewErrorDiv = document.getElementById("review_submission_error");
+
+    try {
+
+      reviewErrorDiv.hidden = true;
+
+      // reviewText input validation
+      reviewText = reviewText.trim();
+      if (typeof (reviewText) !== "string") throw "Your review must be a string.";
+      if (reviewText.length > 1024) throw "Your review must be at most 1024 characters";
+
+    } catch (e) {
+      reviewErrorDiv.hidden = false;
+      reviewErrorDiv.textContent = e;
+      event.preventDefault();
+    }
+  });
+}
+
 let $create_error = $("#create_error");
 
 $("#create-post-form").on("submit", event => {

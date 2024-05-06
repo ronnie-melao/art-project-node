@@ -108,8 +108,8 @@ a.no-dec {
 }
 
 .full-thumbnail {
-    max-width: 400px;
-    max-height: 225px;
+    max-width: 600px;
+    max-height: 340px;
     object-fit: contain;
     background-color: white;
     border-radius: 15px;
@@ -161,6 +161,18 @@ a.no-dec {
 .postLink {
     text-decoration: none;
     margin: 0;
+}
+
+.profile-box {
+    strong {
+        font-size: 14pt;
+    }
+
+    border: coral 4px solid;
+    border-radius: 5px;
+    display: inline-block;
+    padding: 10px;
+    background-color: #EFDFDF;
 }
 
 /* Styling for the form container */
