@@ -259,7 +259,7 @@ a.no-dec {
 }
 
 /* Styling for error message */
-#login_error, #create_error {
+#login_error, #create_error, #commission_request_error_message {
     margin-top: 10px;
     padding: 10px;
     background-color: #ffcdd2;
@@ -292,3 +292,41 @@ a.no-dec {
     /*lol*/
     color: red;
 }
+
+/* Style for commission request form */
+#commission_request-form {
+    width: 300px;
+    margin: 0 auto;
+  }
+  
+  /* Style for form labels */
+  #commission_request-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  /* Style for form inputs */
+  #commission_request-form input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Style for submit button */
+  #commission_request-form button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  /* Hover effect for submit button */
+  #commission_request-form button[type="submit"]:hover {
+    background-color: #008bff;
+  }

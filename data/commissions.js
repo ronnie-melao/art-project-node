@@ -1,13 +1,18 @@
-import { getCommissionCollection } from "../config/mongoCollections.js";
+import { getCommissionCollection, getUserCollection } from "../config/mongoCollections.js";
 import { validateString } from "./validators.js";
 
 export const addCommission = async (artistUsername, requesterUsername, description, price) => {
+  if (!artistUsername) throw "No artist!";
   if (!description) throw "No description!";
   if (!price) throw "No price!";
   description = description.trim();
 
   description = validateString(description);
   if (isNaN(price)) throw "Price must be a number!";
+
+  const users = await getUserCollection();
+  const existingArtist = await users.findOne({username: artistUsername});
+  if (!existingArtist) throw "This artist does not exist!";
 
   const commissions = await getCommissionCollection();
   let commission = {

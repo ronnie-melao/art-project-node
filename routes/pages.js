@@ -12,6 +12,7 @@ import {
 import { getMostRecentPosts, getPostById, getTopLikedPosts } from "../data/posts.js";
 import { postData } from "../data/index.js";
 import { addCommission, getArtistCommissions } from "../data/commissions.js";
+import { getUserCollection } from "../config/mongoCollections.js";
 
 let router = new Router();
 
@@ -216,13 +217,20 @@ router.route("/commission_request").post(async (req, res) => {
   } = req.body;
 
   try {
+    if (!artistUsername) throw "No artist!";
     if (!description) throw "No description!";
     if (!price) throw "No price!";
+    artistUsername = artistUsername.trim();
     description = description.trim();
     price = price.trim();
     price = parseFloat(price);
 
+    description = validateString(description);
     if (isNaN(price)) throw "Price must be a number!";
+    
+    const users = await getUserCollection();
+    const existingArtist = await users.findOne({username: artistUsername});
+    if (!existingArtist) throw "This artist does not exist!";
 
   } catch (e) {
     res.status(400).render("commission_request", { e: e, user: req.session?.user });
