@@ -4,7 +4,7 @@
     {{#if this.thread}}
       <a href="/posts/thread/{{this.poster._id}}/{{this.thread}}">View Thread</a><br>
     {{/if}}
-    <p id="like-count">Liked by {{this.likes.length}} users</p>
+    <p id="like-count">Liked by {{this.likes.length}}</p>
     
     <button id="like-button" data-id="{{this._id}}">
       {{#if isLiked}}

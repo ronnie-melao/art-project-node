@@ -434,7 +434,7 @@ likeButton.on('click', function(){
       console.log(responseMessage);
       
       let likeCountElement = $('#like-count');
-      likeCountElement.text('Liked by ' + responseMessage.post.likes.length + ' users');
+      likeCountElement.text('Liked by ' + responseMessage.post.likes.length);
       if(responseMessage.newLikedState){
         likeButton.html('<img class="icon-like" src="/public/icon/like.svg" alt="Liked" title="Unlike" id="like-button-is-liked">');
       }
