@@ -389,7 +389,7 @@ $("#create-post-form").on("submit", event => {
   let images = [1, 2, 3, 4].map(n => $(`#file${n}`).val());
   console.log("images:", images);
   let errors = [];
-  if (title.length <= 1 || title.length > 32) {
+  if (title.length < 1 || title.length > 32) {
     errors.push("The title must be 1-32 characters long.");
   }
   if (!images.find(i => i)) {

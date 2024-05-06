@@ -54,6 +54,7 @@ router
       // see new post!
       res.redirect(`/posts/${postID}`);
     } catch (err) {
+      console.log(err);
       return res.status(500).render("posts/create", { error: "Internal Server Error", ...p() });
     }
   });

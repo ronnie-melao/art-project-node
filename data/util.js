@@ -1,10 +1,10 @@
 import xss from "xss";
 import c from "ansi-colors";
 import heic from "heic-convert";
-import { fromBuffer } from "pdf2pic";
 import { ObjectId } from "mongodb";
 import path from "node:path";
 import * as fs from "node:fs";
+import { pdf } from "pdf-to-img";
 
 const __dirname = import.meta.dirname;
 /**
@@ -103,13 +103,24 @@ export const convertHEIC = async (file) => {
 };
 
 export const convertPDF = async (file) => {
-  // most readable code of the year based on https://www.npmjs.com/package/pdf2pic#frombufferbuffer-options
-  // converts only first page.
   if (file.mimetype === "application/pdf") {
-    file.data = (await fromBuffer(file.data, {
-      format: "png", density: 100,
-    })(1, { responseType: "buffer" }))?.buffer;
-    file.mimetype = "image/png";
+    try {
+      const dataUrl = `data:application/pdf;base64,${file.data.toString("base64")}`;
+      const doc = await pdf(dataUrl, { scale: 2.0 });
+      if (doc.length > 0) {
+        for await (const page of doc) {
+          console.log(page);
+          file.data = page;
+          file.mimetype = "image/png";
+          break;
+        }
+      } else {
+        console.error("No pages were converted.");
+      }
+    } catch (error) {
+      console.error("Error during PDF conversion:", error);
+      throw "Error during PDF conversion:";
+    }
   }
   return file;
 };
