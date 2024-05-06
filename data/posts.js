@@ -1,7 +1,7 @@
 import { tryOrPushErr, validateArray, validateId, validateString, validateUsername } from "./validators.js";
 import { getPostCollection } from "../config/mongoCollections.js";
 import { deepXSS, getSearchTerms, relativeTime } from "./util.js";
-import { addPostToUserPosts, getUserById } from "./users.js";
+import { addPostToUserLikedPosts, addPostToUserPosts, getUserById, removePostFromUserLikedPosts } from "./users.js";
 import { ObjectId } from "mongodb";
 
 /**
@@ -170,3 +170,37 @@ export const addReply = async (postId, commentId, username, content) => {
   reply._id = reply._id.toString();
   return reply;
 };
+
+export const addLike = async (postId, userId) => {
+  postId = validateId(postId);
+  userId = validateId(userId);
+
+  const posts = await getPostCollection();
+  let post = await posts.findOne({ _id: new ObjectId(postId) });
+  if (!post) throw "Error: Post not found";
+
+  //will throw if user doesnt exist
+  await getUserById(userId);
+  let updatedPost = await posts.updateOne({ _id: new ObjectId(postId) }, {$push: {likes: userId}});
+  if(!updatedPost) throw 'Could not add like';
+  let updatedUser = await addPostToUserLikedPosts(userId, postId);
+  
+  return updatedPost;
+};
+
+export const removeLike = async (postId, userId) => {
+  postId = validateId(postId);
+  userId = validateId(userId);
+
+  const posts = await getPostCollection();
+  let post = await posts.findOne({ _id: new ObjectId(postId) });
+  if (!post) throw "Error: Post not found";
+
+  //will throw if user doesnt exist
+  await getUserById(userId);
+  let updatedPost = await posts.updateOne({ _id: new ObjectId(postId) }, {$pull: {likes: userId}});
+  if(!updatedPost) throw 'Could not remove like';
+  let updatedUser = await removePostFromUserLikedPosts(userId, postId);
+  
+  return updatedPost;
+}

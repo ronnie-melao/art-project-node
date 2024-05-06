@@ -35,7 +35,11 @@ for (let i = 1; i <= 5; i++) {
   await posts.addPost(chris, `A Zorua A day ${i}`, [`/public/images/zorua${i}.jpeg`], "", [], threadID);
 }
 
-
+let sally = await await users.addUser("sally", "Sally", "Seashell", "sally@a.com", "201-123-1324", "I'm sally", "yay art", "D0nt3nter!2", false);
+await posts.addLike(comment.toString(), sally);
+await posts.addLike(replyPost.toString(), sally);
+//check removeLike is working
+await posts.removeLike(replyPost.toString(), sally)
 console.log("Done seeding database");
 
 await closeConnection();

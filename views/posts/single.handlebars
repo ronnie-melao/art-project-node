@@ -2,7 +2,7 @@
     {{#each post}}
     <h1>{{ this.title }}</h1>
 
-    <p>Likes: {{this.likes}}</p>
+    <p>Likes: {{this.likes.length}}</p>
     <div>
         {{#each this.images}}
         {{!-- Need to resize images --}}
