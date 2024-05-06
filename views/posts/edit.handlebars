@@ -1,0 +1,10 @@
+<h1>Edit Post</h1>
+<form>
+    <label for="post-title">Title</label>
+    <input type="text" name="post-title" id="post-title" value={{post.title}}>
+    <label for="post-description">Description</label>
+    <textarea type="text" name="post-description" id="post-description"></textarea>
+    <label for="keywords">Keywords (comma seperated)</label>
+    <input type="text" id="keywords" name="keywords" value={{post.keywords}}>
+    <button id="submitButton" name="submitButton" type="submit" class="button">Save Changes</button>
+</form>
