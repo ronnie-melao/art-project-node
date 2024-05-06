@@ -5,11 +5,17 @@
 <h3>@{{profile.username}}</h3>
 
 {{#if isArtist}}
-<h3>Artists Statement:</h3>
-<p>{{profile.statement}}</p>
+  <h3>Artists Statement:</h3>
+  <p>{{profile.statement}}</p>
 
-<h3>Biography:</h3>
-<p>{{profile.bio}}</p>
+  <h3>Biography:</h3>
+  <p>{{profile.bio}}</p>
+
+  <h3>Reviews:</h3>
+  {{#unless isSelf}}
+    <a href="/review/{{profile.username}}">Add New Review</a>
+  {{/unless}}
+  <p>{{profile.reviews}}</p>
 {{/if}}
 
 {{#if isSelf}}
