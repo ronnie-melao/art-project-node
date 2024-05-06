@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addReview, addUser, getUserByUsername, loginUser, switchAccountType, checkReviewer } from "../data/users.js";
+import { addReview, addUser, getUserByUsername, loginUser, switchAccountType } from "../data/users.js";
 import {
   validateBoolean,
   validateEmail,
@@ -85,7 +85,7 @@ router.route("/register").post(async (req, res) => {
   try {
 
     // converts isArtist to boolean
-    isArtist = isArtist === "true";
+    isArtist = isArtist === "on";
 
     username = validateUsername(username);
     firstName = validateNoNumbers(firstName, { length: [2, 16] });
