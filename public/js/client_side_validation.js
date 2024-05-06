@@ -24,8 +24,9 @@ $(document).on("click", ".cancel-reply", function() {
 });
 
 // Bind submit event to reply forms
-$(".reply-form").submit(function(event) {
+$(document).on("submit", ".reply-form", function(event) {
   event.preventDefault();
+  console.log("in replies")
   let replyFormContainer = $(this).closest(".reply-form-container");
   let replyArea = replyFormContainer.closest(".reply-container").siblings(".reply-area");
   let replyForm = replyFormContainer.find("form");
@@ -89,6 +90,7 @@ let commentForm = $("#comment-form");
 let commentInput = $("#comment");
 let commentArea = $("#comment-area");
 let commentFormErrorDiv = $("#comment-form-error-div");
+
 commentForm.submit(function(event) {
   event.preventDefault();
   commentFormErrorDiv.hide();
@@ -128,16 +130,20 @@ commentForm.submit(function(event) {
         `<div>
           <h3>${responseMessage.newComment.username}</h3>
           <p>${responseMessage.newComment.comment}</p>
-          <a class="reply-link" data-id="${responseMessage.newComment._id}">Reply</a>
-          <div class="reply-form-container" hidden>
-                    <form>
+          <div class="reply-area"></div>
+          <div class="reply-container">
+            <a class="reply-link" data-id="${responseMessage.newComment._id}">Reply</a>
+              <div class="reply-form-container" hidden>
+                    <form class="reply-form">
                         <label for="${responseMessage.newComment._id}">Add a reply:</label>
                         <textarea name="reply" id="${responseMessage.newComment._id}" placeholder="Enter your reply here"></textarea>
-                        <button type="submit" data-id="${responseMessage.newComment._id}">Post Reply</button>
+                        <button type="submit" class="post-reply" data-id="${responseMessage.newComment._id}">Post Reply</button>
                         <button type="button" class="cancel-reply">Cancel</button>
                     </form>
-                </div>
-        </div>`,
+                    <div class="reply-form-error-div" hidden></div>
+              </div>
+            </div>
+          </div>`,
       );
       commentArea.prepend(element);
       commentInput.val("");
