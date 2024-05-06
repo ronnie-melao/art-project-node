@@ -237,4 +237,12 @@ router.route("/commission_request").post(async (req, res) => {
   }
 });
 
+router.route("/liked").get(async (req, res) => {
+  res.render("likedposts", { title: "Liked Posts", user: req.session?.user });
+});
+
+router.route("/settings").get(async (req, res) => {
+  res.render("settings", { title: "Settings", user: req.session?.user });
+});
+
 export default router;
