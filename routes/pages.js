@@ -9,7 +9,7 @@ import {
   validateString,
   validateUsername,
 } from "../data/validators.js";
-import { getMostRecentPosts, getPostById, getTopLikedPosts, getLikedPosts } from "../data/posts.js";
+import { getLikedPosts, getMostRecentPosts, getPostById, getTopLikedPosts } from "../data/posts.js";
 import { postData } from "../data/index.js";
 import { addCommission, getArtistCommissions } from "../data/commissions.js";
 import { getUserCollection } from "../config/mongoCollections.js";
@@ -187,9 +187,11 @@ router.route("/switchProfile").post(async (req, res) => {
     const userId = req.session.user._id;
     let newIsArtist = req.body.newIsArtist;
     let profile = await switchAccountType(userId, newIsArtist);
+    req.session.user.isArtist = newIsArtist;
     res.json({ success: true, profile: profile });
   } catch (e) {
     console.log(e);
+    res.status(401);
   }
 });
 router.route("/commissions").get(async (req, res) => {
