@@ -159,7 +159,8 @@ export const removePostFromUserLikedPosts = async (userId, postId) => {
   const update = await users.updateOne({ _id: new ObjectId(userId)}, { $pull: {likedPosts: postId} });
   if(!update) throw 'Could not remove post from user';
   return update;
-=======
+};
+
 export const addPostToThread = async (userId, threadId, postId) => {
   userId = validateId(userId);
   postId = validateId(postId);
