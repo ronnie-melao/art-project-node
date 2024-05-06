@@ -9,6 +9,8 @@ import {
   validateUsername,
 } from "../data/validators.js";
 import { postData } from "../data/index.js";
+import { getUserCollection } from "../config/mongoCollections.js";
+import { addCommission, getArtistCommissions } from "../data/commissions.js";
 
 let router = new Router();
 
@@ -126,6 +128,44 @@ router.route("/search").post(async (req, res) => {
 router.route("/profile").get(async (req, res) => {
   let page = req.session.user.isArtist ? "artist" : "user";
   res.render(page, { title: "Art Site", user: req.session?.user, isSelf: true });
+});
+
+router.route("/commissions").get(async (req, res) => {
+  let current_username = req.session.user.username;
+  let commissionsArray = getArtistCommissions(current_username);
+  res.render("commissions", { title: "Art Site", script_partial: 'commissions_script', commissionsArray: commissionsArray});
+});
+
+router.route("/commission_request").get(async (req, res) => {
+  res.render("commission_request", { title: "Art Site" });
+});
+
+router.route("/commission_request").post(async (req, res) => {
+  let current_user = req.session.user
+  const userCollection = await getUserCollection();
+  const user = await userCollection.findOne({username: current_user.username})
+  let requesterUsername = user.username;
+
+  let {
+    artistUsername,
+    description,
+    price
+  } = req.body;
+
+  try {
+    if (!description) throw "No description!";
+    if (!price) throw "No price!";
+    description = description.trim();
+    price = price.trim();
+    price = parseInt(price);
+  
+    if (isNaN(price)) throw "Price must be a number!";
+
+    addCommission(artistUsername, requesterUsername, description, price);
+
+  } catch (e) {
+    res.status(400).render("commission_request", {e: e});
+  }
 });
 
 export default router;
