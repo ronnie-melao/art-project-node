@@ -72,13 +72,42 @@ router
       //console.log(post);
       post.hasComments = post.comments.length > 0;
       let isLiked = false;
+      let isSelf = false;
       if(req.session?.user){
         console.log(req.session.user._id, req.params.id)
         isLiked = await checkUserLikedPost(req.session.user._id, req.params.id);
+        console.log('poster id, ', post.poster._id);
+        isSelf = (post.poster._id.toString() === req.session.user._id);
       }
       post.isLiked = isLiked;
+      post.isSelf = isSelf;
       console.log(isLiked);
+      console.log(isSelf);
       res.render("posts/single", { title: post?.title ?? "Post", post: [post], user: req.session?.user});
+    } catch (e) {
+      return res.status(404).render("error", { title: "error", error: e, user: req.session?.user });
+    }
+  });
+
+  router
+  .route("/edit/:id")
+  .get(async (req, res) => {
+    try {
+      req.params.id = validateId(req.params.id, "Id URL Param");
+    } catch (e) {
+      return res.status(400).render("error", { title: "error", error: e });
+    }
+    try {
+      const post = await postData.getPostById(req.params.id);
+      //console.log(post);
+      let isSelf = false;
+      if(req.session?.user){
+        console.log(req.session.user._id, req.params.id)
+        isSelf = post.poster._id.toString() === req.session.user._id;
+      }
+      if(!isSelf) throw 'Not authorized to edit this post';
+      post.isSelf = isSelf;
+      res.render("posts/edit", { title: post?.title ?? "Post", post: post, user: req.session?.user});
     } catch (e) {
       return res.status(404).render("error", { title: "error", error: e, user: req.session?.user });
     }

@@ -114,9 +114,9 @@ export const getOrAddThread = async (userID, threadName) => {
   if (!res) {
     const newThread = { _id: new ObjectId(), name: threadName, posts: [] };
     const users = await getUserCollection();
-    let insertion = await users.updateOne({ _id: new ObjectId(userID) }, { $push: { threads: newThread } });
+    let update = await users.updateOne({ _id: new ObjectId(userID) }, { $push: { threads: newThread } });
     // console.log("Thread", insertion);
-    if (!insertion) {
+    if (!update || update.modifiedCount < 1) {
       throw "Could not add thread";
     }
     return newThread._id.toString();
@@ -152,7 +152,7 @@ export const addPostToUserLikedPosts = async (userId, postId) => {
   const user = await users.findOne({ _id: new ObjectId(userId) });
   if (!user) throw "Error: User not found";
   const update = await users.updateOne({ _id: new ObjectId(userId)}, { $push: {likedPosts: postId} });
-  if(!update) throw 'Could not add post to user';
+  if (!update || update.modifiedCount < 1) throw "Could not add post to user";
   return update;
 };
 
@@ -163,7 +163,7 @@ export const removePostFromUserLikedPosts = async (userId, postId) => {
   const user = await users.findOne({ _id: new ObjectId(userId) });
   if (!user) throw "Error: User not found";
   const update = await users.updateOne({ _id: new ObjectId(userId)}, { $pull: {likedPosts: postId} });
-  if(!update) throw 'Could not remove post from user';
+  if (!update || update.modifiedCount < 1) throw "Could not remove post from user";
   return update;
 };
 
