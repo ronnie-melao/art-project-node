@@ -372,3 +372,85 @@ a.no-dec {
   #outgoing_requests tbody tr:hover {
     background-color: #f0f0f0;
   }
+
+form#edit-post-form {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+form#edit-post-form label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+    color: #444;
+}
+
+/* Style the input fields */
+form#edit-post-form input[type="text"],
+form#edit-post-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+
+form#edit-post-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Style the submit button */
+form#edit-post-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+
+form#edit-post-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Style the client errors list */
+ul.client-errors {
+    margin-top: 20px;
+    list-style: none;
+    padding: 0;
+    color: red;
+}
+
+
+ul.client-errors li {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+
+.error {
+    border: 1px solid red;
+    border-radius: 5px;
+    background-color: #ffe6e6;
+    padding: 10px;
+    margin-bottom: 15px;
+}
