@@ -194,6 +194,16 @@ export const addPostToThread = async (userId, threadId, postId) => {
   return update;
 };
 
+export const checkReviewer = async (reviewee, reviewer) => {
+  reviewee = validateUsername(reviewee);
+  reviewer = validateUsername(reviewer);
+  let revieweeUser = await getUserByUsername(reviewee);
+  for (let i = 0; i < revieweeUser.reviews.length; i++){
+    if (revieweeUser.reviews[i].reviewer === reviewer) return true;
+  }
+  return false;
+}
+
 export const addReview = async (reviewee, reviewText, reviewer) => {
   reviewee = validateUsername(reviewee);
   reviewer = validateUsername(reviewer);
@@ -201,7 +211,10 @@ export const addReview = async (reviewee, reviewText, reviewer) => {
   let revieweeUser = await getUserByUsername(reviewee);
   if (!revieweeUser.isArtist) throw new Error("You cannot write a review for a non-artist account!");
 
-  reviewText = validateString(reviewText, { length: [] });
+  let doubleReview = await checkReviewer(reviewee, reviewer);
+  if (doubleReview) throw new Error ("You cannot write a second review for an account!");
+
+  reviewText = validateString(reviewText, { length: [1, 1024] });
   let datePosted = new Date();
   let dateString = datePosted.toLocaleString();
 
