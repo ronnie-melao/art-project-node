@@ -107,11 +107,65 @@ router
       }
       if(!isSelf) throw 'Not authorized to edit this post';
       post.isSelf = isSelf;
-      res.render("posts/edit", { title: post?.title ?? "Post", post: post, user: req.session?.user});
+      console.log(post);
+      let keywords = "";
+      for(let word of post.keywords){
+        keywords += word + ", "
+      }
+      res.render("posts/edit", { title: post?.title ?? "Post", post: post, keywords: keywords, user: req.session?.user});
     } catch (e) {
       return res.status(404).render("error", { title: "error", error: e, user: req.session?.user });
     }
+  })
+  .post(async (req, res) => {
+    console.log('in post edit');
+    let errors = [];
+    console.log(req.body);
+    let  {title, description, keywords} = req.body;
+    let postId = req.params.id;
+    try {
+      postId = validateId(postId, "Post ID URL Param");
+    } catch (e) {
+      return res.status(400).render("error", { title: "Error", error: e });
+    }
+
+    // validate 
+    title = tryOrPushErr(errors, {title} , validateString, { length: [1, 32] });
+    description = tryOrPushErr(errors, {description} , validateString, { length: [0] });
+    keywords = tryOrPushErr(errors,  {keywords} , validateString, { length: [0] });
+    //images = tryOrPushErr(errors, { images }, validateArray, { validator: validateString });
+
+    // Parameters for error response
+    let p = () => ({ title: "Edit Post", post: { title, description, keywords } });
+
+    if (errors.length > 0) {
+      let error = errorsToString(errors);
+      return res.status(400).render("posts/edit", { error, ...p() });
+    }
+    keywords = getSearchTerms(keywords.split(','));
+    // Fetch the post from the database
+    let post;
+    try {
+      post = await postData.getPostById(postId);
+    } catch (e) {
+      return res.status(404).render("error", { title: "Error", error: e });
+    }
+
+    // Check if user is the author
+    if (req.session?.user?._id !== post.poster._id.toString()) {
+      return res.status(403).render("error", { title: "Unauthorized", error: "You do not have permission to edit this post" });
+    }
+
+    // Update the post
+    try {
+      let updatedPost = await postData.updatePost(postId, req.session.user._id, title, description, keywords);
+      res.redirect(`/posts/${updatedPost}`);
+    } catch (e) {
+      console.error(e);
+      return res.status(500).render("posts/edit", { error: "Internal Server Error", ...p() });
+    }
   });
+  
 
 //AJAX route for posting comment
 router
