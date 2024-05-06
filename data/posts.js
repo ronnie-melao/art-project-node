@@ -88,7 +88,7 @@ export const getTopLikedPosts = async () => {
   let posts = await getPostCollection();
   let results = await posts.find(
     {},
-    { sort: { likes: -1 } },
+    { sort: { likes: -1, timePosted: -1 } },
   ).toArray();
   return await addPosterToPosts(results);
 };
@@ -100,6 +100,18 @@ export const getMostRecentPosts = async () => {
     { sort: { timePosted: -1 } },
   ).toArray();
   return await addPosterToPosts(results);
+};
+
+export const getLikedPosts = async (userId) => {
+  if (!userId) throw new Error("Not logged in, can't access likes.");
+  userId = validateId(userId);
+  let user = await getUserById(userId);
+  let likeIds = user.likedPosts;
+  let likedPostList = [];
+  for (let i = likeIds.length - 1; i >= 0; i--){
+    likedPostList.push(await getPostById(likeIds[i]));
+  }
+  return likedPostList;
 };
 
 //Add comment to a post via the post ID

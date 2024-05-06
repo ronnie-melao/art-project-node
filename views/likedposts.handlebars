@@ -1,2 +1,28 @@
-<h2>My Liked Posts</h2>
-<!-- Make sure only the user can see this page for themselves -->
+{{#if likedPosts}}
+  <h2>My Liked Posts</h2>
+  <div class="results">
+  {{#each likedPosts}}
+      <div class="post search-post">
+        <a href="/posts/{{_id}}" class="postLink no-dec">
+          <h2>{{this.title}}</h2>
+          <div class="post-images">
+            <img src="{{this.images.[0]}}" alt="{{this.title}} thumbnail" class="thumbnail">
+          </div>
+          <p>{{this.description}}</p>
+          <p><em>{{this.formattedTimePosted}}<br><strong>{{this.poster.displayName}}</strong></em></p>
+        </a>
+      </div>
+  {{/each}}
+  </div>
+{{else}}
+  {{#if e}}
+  {{else}}
+  <h2>No liked posts currently. When you like a post, it will show up here!</h2>
+  {{/if}}
+{{/if}}
+
+{{#if e}}
+  <div class="error">
+    <p>{{e}}</p>
+  </div>
+{{/if}}
