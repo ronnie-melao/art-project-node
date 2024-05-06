@@ -380,16 +380,22 @@ if (reviewForm) {
   reviewForm.addEventListener("submit", (event) => {
 
     let reviewText = document.getElementById("reviewText").value;
+    let deleteReview = document.getElementById("deleteReview").checked;
     let reviewErrorDiv = document.getElementById("review_submission_error");
 
     try {
 
       reviewErrorDiv.hidden = true;
 
-      // reviewText input validation
-      reviewText = reviewText.trim();
-      if (typeof (reviewText) !== "string") throw "Your review must be a string.";
-      if (reviewText.length > 1024) throw "Your review must be at most 1024 characters";
+      // deleteReview input validation
+      if (typeof (deleteReview) !== "boolean") throw "You must designate whether you want to delete the review or not.";
+
+      if (deleteReview == false){
+        // reviewText input validation
+        reviewText = reviewText.trim();
+        if (typeof (reviewText) !== "string") throw "Your review must be a string.";
+        if (reviewText.length > 1024) throw "Your review must be at most 1024 characters";
+      }
 
     } catch (e) {
       reviewErrorDiv.hidden = false;

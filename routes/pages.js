@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addReview, addUser, getUserByUsername, loginUser, switchAccountType, checkReviewer } from "../data/users.js";
+import { addReview, addUser, getUserByUsername, loginUser, switchAccountType, checkReviewer, deleteReviewFunction } from "../data/users.js";
 import {
   validateBoolean,
   validateEmail,
@@ -125,7 +125,8 @@ router.route("/review/:username").get(async (req, res) => {
   }
   
   try {
-    res.render("review", { title: "Create Review", profile: profile });
+    let reviewed = await checkReviewer(req.params.username, req.session?.user?.username);
+    res.render("review", { title: "Create Review", profile: profile, reviewed: reviewed });
   }  catch (e) {
     return res.status(401).render("error", { title: "error", error: e , user: req.session?.user });
   }
@@ -133,7 +134,8 @@ router.route("/review/:username").get(async (req, res) => {
 
 router.route("/review/:username").post(async (req, res) => {
   let profile;
-  let { reviewText } = req.body;
+  let { reviewText, deleteReview } = req.body;
+  let reviewed = false;
   
   try {
     profile = await getUserByUsername(req.params.username);
@@ -148,6 +150,11 @@ router.route("/review/:username").post(async (req, res) => {
   }
 
   try {
+    // converts deleteReview to boolean
+    deleteReview = deleteReview === "on" ? true : false;
+    deleteReview = validateBoolean(deleteReview);
+
+    reviewed = await checkReviewer(req.params.username, req.session?.user?.username);
     let isSelf = req.session?.user?.username === req.params.username;
     if (isSelf)
       throw new Error("You cannot write a review for yourself!");
@@ -157,17 +164,27 @@ router.route("/review/:username").post(async (req, res) => {
     if (!isArtist)
       throw new Error("You cannot write a review for a non-artist account!");
 
-    reviewText = validateString(reviewText, { length: [1, 1024] });
+    if (deleteReview){
+      const review = await deleteReviewFunction(req.params.username, req.session.user.username);
 
-    const review = await addReview(req.params.username, reviewText, req.session.user.username);
+      if (review)
+        res.status(200).redirect(`/profile/${req.params.username}`);
+      else
+        throw "The review could not be deleted!";
+    }
+    else {
+      reviewText = validateString(reviewText, { length: [1, 1024] });
 
-    if (review)
-      res.status(200).redirect(`/profile/${req.params.username}`);
-    else
-      throw "The review could not be added!";
+      const review = await addReview(req.params.username, reviewText, req.session.user.username);
+  
+      if (review)
+        res.status(200).redirect(`/profile/${req.params.username}`);
+      else
+        throw "The review could not be added!";
+    }
 
   } catch (e) {
-    res.status(400).render("review", {profile: profile, e });
+    res.status(400).render("review", { title: "Create Review", profile: profile, reviewed: reviewed, e });
   }
 });
 
@@ -188,6 +205,7 @@ router.route("/profile/:username").get(async (req, res) => {
     let isArtist = profile.isArtist;
     let oppositeAccountType = profile.isArtist ? "user" : "artist";
     let isSelf = req.session?.user?.username === req.params.username;
+    let reviewed = await checkReviewer(req.params.username, req.session?.user?.username);
     let posts = [];
     for (let postId of profile.posts) {
       posts.push(await getPostById(postId));
@@ -197,6 +215,7 @@ router.route("/profile/:username").get(async (req, res) => {
       profile: profile,
       isSelf: isSelf,
       isArtist: isArtist,
+      reviewed: reviewed,
       oppositeAccountType: oppositeAccountType,
       user: req.session?.user,
       posts: posts.toReversed(),

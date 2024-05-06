@@ -1,10 +1,19 @@
 <h2> Review for {{profile.username}} </h2>
+{{#if reviewed}}
+  <p>If deleting review, no need to include text. It will not be factored in.</p>
+{{/if}}
 
 <form id="review-form" name="review-form" action="/review/{{profile.username}}" method="POST" class="form">
   <div>
     <label for="reviewText">Review:</label>
     <input type="text" id="reviewText" name="reviewText">
   </div>
+  {{#if reviewed}}
+  <div>
+    <label for="deleteReview">Delete Review? </label>
+    <input type="checkbox" id="deleteReview" name="deleteReview" checked>
+  </div>
+  {{/if}}
   <button type="submit" id="submitButton" name="submitButton" class="button">Submit</button>
 </form>
 
