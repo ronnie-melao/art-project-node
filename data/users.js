@@ -121,3 +121,13 @@ export const getOrAddThread = async (userID, threadName) => {
   }
   return res;
 };
+
+export const switchAccountType = async (userId, newAccountType) =>{
+  userId = validateId(userId);
+  console.log(newAccountType);
+  if(typeof newAccountType !== 'boolean') throw 'newAccountType must be a boolean'
+  const users = await getUserCollection();
+  const update = await users.updateOne({ _id: new ObjectId(userId)}, { $set: {isArtist: newAccountType} });
+  if(!update) throw "Could not update account type";
+  return update;
+}
