@@ -122,7 +122,7 @@ commentForm.submit(function(event){
       })
     }
 
-    //AJAX Call. Gets the returned JSON data, creates the elements, binds the click event to the link and appends the new todo to the page
+    //AJAX Call. Gets the returned JSON data, creates the elements
     $.ajax(requestConfig).then(function (responseMessage) {
       console.log(responseMessage);
 
@@ -401,3 +401,32 @@ $("#create-post-form").on("submit", event => {
     $create_error.prop("hidden", false);
   }
 });
+
+let switchProfileButton = $("#switchProfileButton");
+switchProfileButton.on('click', function(){
+  // Set up AJAX request config
+  console.log("in switch profile");
+  let currentIsArtist = switchProfileButton.data('id');
+  console.log(currentIsArtist);
+  let newIsArtist = !currentIsArtist;
+  let requestConfig = {
+      method: 'POST',
+      url: '/switchProfile',
+      contentType: 'application/json',
+      data: JSON.stringify({
+        newIsArtist: newIsArtist,
+      })
+  };
+
+  // AJAX Call for switching profile
+  $.ajax(requestConfig)
+  .then(function(responseMessage) {
+      console.log(responseMessage);
+      // Reload the page 
+      window.location.reload();
+  })
+  .fail(function(xhr, error) {
+      console.error('Error switching profile:', error);
+      alert('Failed to switch profile');
+  });
+})

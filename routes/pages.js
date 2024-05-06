@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addUser, getUserByUsername, loginUser } from "../data/users.js";
+import { addUser, getUserByUsername, loginUser, switchAccountType } from "../data/users.js";
 import {
   validateBoolean,
   validateEmail,
@@ -137,12 +137,24 @@ router.route("/search").post(async (req, res) => {
 });
 
 router.route("/profile/:username").get(async (req, res) => {
-  let user = await getUserByUsername(req.params.username);
-  let page = user.isArtist ? "artist" : "user";
+  let profile = await getUserByUsername(req.params.username);
+  let isArtist = profile.isArtist;
+  let oppositeAccountType = profile.isArtist ? "user" : "artist";
   let isSelf = req.session?.user?.username === req.params.username;
-  res.render(page, { title: "Art Site", user: user, isSelf: isSelf });
+  res.render('profile', { title: "Art Site", profile: profile, isSelf: isSelf, isArtist: isArtist, oppositeAccountType: oppositeAccountType, user: req.session?.user });
 });
 
+router.route("/switchProfile").post(async (req, res) => {
+  try{
+    const userId = req.session.user._id;
+    let newIsArtist = req.body.newIsArtist;
+    let profile = await switchAccountType(userId, newIsArtist);
+    res.json({ success: true, profile: profile });
+  }
+  catch(e){
+    console.log(e); 
+  }
+});
 router.route("/commissions").get(async (req, res) => {
   let current_username = req.session.user.username;
   let commissionsArray = getArtistCommissions(current_username);
