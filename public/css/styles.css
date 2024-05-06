@@ -55,10 +55,10 @@ header, .header {
 
     #icons {
         margin-left: 50px;
-        width: 100px;
+        width: 200px;
         display: flex;
         height: 20pt;
-        justify-content: center;
+        justify-content: right;
         align-items: center;
     }
 }
