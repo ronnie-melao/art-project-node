@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addReview, addUser, getUserByUsername, loginUser, switchAccountType } from "../data/users.js";
+import { addReview, addUser, getUserByUsername, loginUser, switchAccountType, checkReviewer } from "../data/users.js";
 import {
   validateBoolean,
   validateEmail,
@@ -110,12 +110,39 @@ router.route("/register").post(async (req, res) => {
 });
 
 router.route("/review/:username").get(async (req, res) => {
-  let profile = await getUserByUsername(req.params.username);
-  res.render("review", { title: "Create Review", profile: profile });
+  let profile;
+
+  try {
+    profile = await getUserByUsername(req.params.username);
+  } catch (e) {
+    return res.status(401).render("error", { title: "error", error: "No user found", user: req.session?.user });
+  }
+
+  try {
+    req.session.user.username;
+  } catch (e) {
+    return res.status(401).render("error", { title: "error", error: "Unauthorized", user: req.session?.user });
+  }
+  
+  try {
+    let doubleReview = await checkReviewer(req.params.username, req.session.user.username);
+    if (doubleReview) throw new Error ("You cannot write a second review for an account!");
+  
+    res.render("review", { title: "Create Review", profile: profile });
+  }  catch (e) {
+    return res.status(401).render("error", { title: "error", error: e , user: req.session?.user });
+  }
 });
 
 router.route("/review/:username").post(async (req, res) => {
-  let { reviewText } = req.body;
+  let profile;
+  
+  try {
+    profile = await getUserByUsername(req.params.username);
+    let { reviewText } = req.body;
+  } catch (e) {
+    return res.status(401).render("error", { title: "error", error: e , user: req.session?.user });
+  }
 
   try {
     req.session.user.username;
@@ -133,7 +160,7 @@ router.route("/review/:username").post(async (req, res) => {
     if (!isArtist)
       throw new Error("You cannot write a review for a non-artist account!");
 
-    reviewText = validateString(reviewText, { length: [] });
+    reviewText = validateString(reviewText, { length: [1, 1024] });
 
     const review = await addReview(req.params.username, reviewText, req.session.user.username);
 
@@ -143,7 +170,7 @@ router.route("/review/:username").post(async (req, res) => {
       throw "The review could not be added!";
 
   } catch (e) {
-    res.status(400).render("review", { e });
+    res.status(400).render("review", {profile: profile, e });
   }
 });
 
