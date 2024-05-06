@@ -88,7 +88,7 @@ export const getTopLikedPosts = async () => {
   let posts = await getPostCollection();
   let results = await posts.find(
     {},
-    { sort: { likes: -1 } },
+    { sort: { likes: -1, timePosted: -1 } },
   ).toArray();
   return await addPosterToPosts(results);
 };
@@ -100,6 +100,18 @@ export const getMostRecentPosts = async () => {
     { sort: { timePosted: -1 } },
   ).toArray();
   return await addPosterToPosts(results);
+};
+
+export const getLikedPosts = async (userId) => {
+  if (!userId) throw new Error("Not logged in, can't access likes.");
+  userId = validateId(userId);
+  let user = await getUserById(userId);
+  let likeIds = user.likedPosts;
+  let likedPostList = [];
+  for (let i = likeIds.length - 1; i >= 0; i--){
+    likedPostList.push(await getPostById(likeIds[i]));
+  }
+  return likedPostList;
 };
 
 //Add comment to a post via the post ID
@@ -216,3 +228,37 @@ export const getPostsFromThread = async (userID, threadID) => {
   return await Promise.all(thread.posts.toReversed().map(getPostById));
 };
 
+export const updatePost = async (postId, userId, title, description, keywords) => {
+  let errors = [];
+  postId = tryOrPushErr(errors, { postId }, validateId);
+  userId = tryOrPushErr(errors, { userId }, validateId);
+  title = tryOrPushErr(errors, { title }, validateString, { length: [1, 32] });
+  description = tryOrPushErr(errors, { description }, validateString, { length: [0] });
+  keywords = tryOrPushErr(errors, { keywords }, validateArray, { length: [0], validator: validateString });
+  if (errors.length > 0) {
+    throw errors;
+  }
+  let searchTerms = getSearchTerms(title, description, keywords);
+  // throws if poster is not a user
+  await getUserById(userId);
+  const posts = await getPostCollection();
+  let updatePost = {
+    title,
+    description,
+    keywords,
+    searchTerms,
+    isEdited: true,
+  };
+  updatePost = deepXSS(updatePost);
+  //throws if post doesnt exist
+  let post = await getPostById(postId);
+
+  if(post.poster._id.toString() !== userId) throw 'Not authorized to update this post';
+
+  let updatedInformation = posts.updateOne(
+      { _id: new ObjectId(postId) }, 
+      {$set: {title: title, description: description, keywords: keywords, searchTerms: searchTerms, isEdited: true}}
+      );
+  if (!updatedInformation) throw "Updating failed!";
+  return postId;
+};

@@ -9,7 +9,7 @@ import {
   validateString,
   validateUsername,
 } from "../data/validators.js";
-import { getMostRecentPosts, getPostById, getTopLikedPosts } from "../data/posts.js";
+import { getMostRecentPosts, getPostById, getTopLikedPosts, getLikedPosts } from "../data/posts.js";
 import { postData } from "../data/index.js";
 import { addCommission, getArtistCommissions } from "../data/commissions.js";
 import { getUserCollection } from "../config/mongoCollections.js";
@@ -145,7 +145,6 @@ router.route("/review/:username").post(async (req, res) => {
   } catch (e) {
     res.status(400).render("review", { e });
   }
-  //res.render("review", { title: "Create Review", profile: profile });
 });
 
 router.route("/logout").get(async (req, res) => {
@@ -248,7 +247,26 @@ router.route("/commission_request").post(async (req, res) => {
 });
 
 router.route("/liked").get(async (req, res) => {
-  res.render("likedposts", { title: "Liked Posts", user: req.session?.user });
+  try {
+    if (!req.session.user) throw new Error("Not logged in, can't access likes.");
+    const userId = req.session.user._id;
+    let likedPosts = await getLikedPosts(userId);
+    if (likedPosts) {
+      res.render("likedposts", {
+        title: "Liked Posts",
+        user: req.session?.user,
+        likedPosts: likedPosts
+      });
+    }
+    else {
+      res.render("likedposts", {
+        title: "Liked Posts",
+        user: req.session?.user
+      });
+    }
+  } catch (e) {
+    res.status(400).render("likedposts", { e });
+  }
 });
 
 router.route("/settings").get(async (req, res) => {
