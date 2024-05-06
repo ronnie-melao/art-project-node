@@ -4,7 +4,7 @@
     {{#if this.thread}}
       <a href="/posts/thread/{{this.poster._id}}/{{this.thread}}">View Thread</a><br>
     {{/if}}
-    <p>Likes: {{this.likes}}</p>
+    <p>Likes: {{this.likes.length}}</p>
     <div>
       {{#each this.images}}
       {{!-- Need to resize images --}}

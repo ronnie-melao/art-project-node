@@ -143,6 +143,23 @@ export const addPostToUserPosts = async (userId, postId) => {
   return update;
 };
 
+export const addPostToUserLikedPosts = async (userId, postId) => {
+  userId = validateId(userId);
+  postId = validateId(postId);
+  const users = await getUserCollection();
+  const update = await users.updateOne({ _id: new ObjectId(userId)}, { $push: {likedPosts: postId} });
+  if(!update) throw 'Could not add post to user';
+  return update;
+};
+
+export const removePostFromUserLikedPosts = async (userId, postId) => {
+  userId = validateId(userId);
+  postId = validateId(postId);
+  const users = await getUserCollection();
+  const update = await users.updateOne({ _id: new ObjectId(userId)}, { $pull: {likedPosts: postId} });
+  if(!update) throw 'Could not remove post from user';
+  return update;
+=======
 export const addPostToThread = async (userId, threadId, postId) => {
   userId = validateId(userId);
   postId = validateId(postId);
@@ -186,5 +203,4 @@ export const addReview = async (reviewee, reviewText, reviewer) => {
   });
   if (!update) throw new Error("Could not add post to user");
   return update;
-
 };
