@@ -1,0 +1,48 @@
+<datalist id="threads">
+  {{#each threads}}
+    <option value="{{this}}"></option>
+  {{/each}}
+</datalist>
+<h1>Create a Post</h1>
+<p><span class="red-text">(</span>*<span class="red-text">) required</span></p>
+<form id="create-post-form" action="/posts/create" method="POST" class="form" enctype="multipart/form-data">
+  <table>
+    <tr>
+      <td><label for="post-title">Title*:</label></td>
+      <td><input id="post-title" name="title" type="text"></td>
+    </tr>
+    <tr>
+      <td colspan="2"><p>Upload 1-4 Images*</p></td>
+    </tr>
+    {{#each nums}}
+      <tr class="file{{this}}-div">
+        <td><label for="file{{this}}" class="form file">Image {{this}}:</label></td>
+        <td><input id="file{{this}}" name="file{{this}}" type="file"></td>
+      </tr>
+    {{/each}}
+    <tr>
+      <td><label for="description">Description:</label></td>
+      <td><textarea id="description" name="description"></textarea></td>
+    </tr>
+    <tr>
+      <td><label for="keywords">Keywords<br>(comma seperated):</label></td>
+      <td><input id="keywords" name="keywords" type="text"></td>
+    </tr>
+    <tr>
+      <td><label for="thread">Thread:</label></td>
+      <td><input id="thread" name="thread" type="text" list="threads"></td>
+    </tr>
+  </table>
+    <button id="submitButton" name="submitButton" type="submit" class="button">Submit</button>
+  </form>
+
+
+<div id="create_error" hidden>
+    <p></p>
+  </div>
+
+{{#if error}}
+  <div class="error">
+    <p>{{error}}</p>
+    </div>
+  {{/if}}

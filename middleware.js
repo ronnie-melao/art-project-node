@@ -11,6 +11,12 @@ router.route("*").all(async (req, res, next) => {
   const prettyLoggedIn = req.session?.user ? c.cyanBright("user") : c.blueBright("anon");
   const prettyUrl = c.yellowBright(req.originalUrl);
   console.log(`[${prettyTimestamp}]: {${prettyLoggedIn}} (${prettyMethod}) ${prettyUrl}`);
+  if (req.method === "POST") {
+    // don't log password
+    let { ...body } = req.body;
+    if (body.password) body.password = "****";
+    console.log("req.body:", body);
+  }
   next();
 });
 
@@ -44,5 +50,6 @@ const userOnlyMDWare = async (req, res, next) => {
 };
 router.route("/logout").get(userOnlyMDWare);
 router.route("/profile").get(userOnlyMDWare);
+router.route("/posts/create").all(userOnlyMDWare);
 
 export default router;

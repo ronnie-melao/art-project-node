@@ -19,8 +19,8 @@ $(document).on('click', '.cancel-reply', function() {
   let replyFormContainer = $(this).closest('.reply-form-container');
   let replyForm = replyFormContainer.find('form');
   let replyTextarea = replyForm.find('textarea[name="reply"]');
-  replyTextarea.val(''); 
-  replyFormContainer.hide(); 
+  replyTextarea.val("");
+  replyFormContainer.hide();
 });
 
 // Bind submit event to reply forms
@@ -46,7 +46,7 @@ $('.reply-form').submit(function(event) {
     replyFormErrorDiv.show();
     return;
   }
-  
+
   //if theres a reply make the ajax request 
   if(reply){
     let postId = window.location.pathname.split('/').pop();
@@ -59,7 +59,7 @@ $('.reply-form').submit(function(event) {
         reply: reply,
       })
     }
-  
+
     $.ajax(requestConfig).then(function (responseMessage) {
       console.log(responseMessage);
 
@@ -71,7 +71,7 @@ $('.reply-form').submit(function(event) {
       );
       replyArea.append(element);
       replyInput.val('');
-      replyFormContainer.hide(); 
+      replyFormContainer.hide();
     }).fail(function(xhr, error){
       if (xhr.status === 401) {
         // Redirect to login page if user is not authenticated
@@ -82,7 +82,7 @@ $('.reply-form').submit(function(event) {
       }
     });
   }
-  
+
 });
 
 //comment submission with AJAX
@@ -108,8 +108,8 @@ commentForm.submit(function(event){
     commentFormErrorDiv.show();
     return;
   }
-  
-  
+
+
   if(comment){
     //set up AJAX request config
     let postId = window.location.pathname.split('/').pop();
@@ -133,8 +133,8 @@ commentForm.submit(function(event){
           <a class="reply-link" data-id="${responseMessage.newComment._id}">Reply</a>
           <div class="reply-form-container" hidden>
                     <form>
-                        <label for="reply">Add a reply:</label>
-                        <textarea name="reply" id="reply" placeholder="Enter your reply here"></textarea>
+                        <label for="${responseMessage.newComment._id}">Add a reply:</label>
+                        <textarea name="reply" id="${responseMessage.newComment._id}" placeholder="Enter your reply here"></textarea>
                         <button type="submit" data-id="${responseMessage.newComment._id}">Post Reply</button>
                         <button type="button" class="cancel-reply">Cancel</button>
                     </form>
@@ -260,7 +260,7 @@ if (registerForm) {
         isArtist = true;
       else
         isArtist = false;
-      
+
       // username input validation
       if (!username) throw "Username not found.";
       if (typeof(username) !== 'string') throw "The username must be a string.";
@@ -381,3 +381,23 @@ if (registerForm) {
       }
   });
 }
+let $create_error = $("#create_error");
+
+$("#create-post-form").on("submit", event => {
+  $create_error.prop("hidden", true);
+  let title = $("#post-title").val();
+  let images = [1, 2, 3, 4].map(n => $(`#file${n}`).val());
+  console.log("images:", images);
+  let errors = [];
+  if (title.length < 1 || title.length > 32) {
+    errors.push("The title must be 1-32 characters long.");
+  }
+  if (!images.find(i => i)) {
+    errors.push("No image attached.");
+  }
+  if (errors.length > 0) {
+    event.preventDefault();
+    $create_error.text(errors.join("\n"));
+    $create_error.prop("hidden", false);
+  }
+});

@@ -1,6 +1,12 @@
 import xss from "xss";
 import c from "ansi-colors";
+import heic from "heic-convert";
+import { ObjectId } from "mongodb";
+import path from "node:path";
+import * as fs from "node:fs";
+import { pdf } from "pdf-to-img";
 
+const __dirname = import.meta.dirname;
 /**
  * @param {*} any
  * @return {*}
@@ -80,6 +86,59 @@ export const relativeTime = (date) => {
     }
   }
   return "Just now";
+};
+
+export const convertHEIC = async (file) => {
+  if (file.mimetype === "image/heic") {
+    // adapted from https://www.npmjs.com/package/heic-convert
+    console.log(heic, Object.keys(heic));
+    file.data = await heic({
+      buffer: file.data,
+      format: "JPEG",
+      quality: 1,
+    });
+    file.mimetype = "image/jpeg";
+  }
+  return file;
+};
+
+export const convertPDF = async (file) => {
+  if (file.mimetype === "application/pdf") {
+    try {
+      const dataUrl = `data:application/pdf;base64,${file.data.toString("base64")}`;
+      const doc = await pdf(dataUrl, { scale: 2.0 });
+      if (doc.length > 0) {
+        for await (const page of doc) {
+          console.log(page);
+          file.data = page;
+          file.mimetype = "image/png";
+          break;
+        }
+      } else {
+        console.error("No pages were converted.");
+      }
+    } catch (error) {
+      console.error("Error during PDF conversion:", error);
+      throw "Error during PDF conversion:";
+    }
+  }
+  return file;
+};
+
+export const imageFilesToLinks = async (files) => {
+  let result = [];
+  try {
+    for (let file of files) {
+      let fName = new ObjectId().toString() + "-" + file.mimetype.replace("/", ".");
+      let filePath = path.join(__dirname, "../public/images/", fName);
+      fs.writeFileSync(filePath, file.data);
+      result.push(`/public/images/${fName}`);
+    }
+  } catch (e) {
+    console.log(e);
+    throw "Error uploading image";
+  }
+  return result;
 };
 
 export const DUPLICATE_ID_ERROR_CODE = 11000;

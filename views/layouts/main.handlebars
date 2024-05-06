@@ -22,9 +22,19 @@
     </form>
     <div id="icons">
     {{#if user}}
-      <!-- placeholder -->
-      <a class="icon no-dec" href="/commissions"><img src="/public/icon/commissions.svg" alt="commissions"></a>
-      <a class="icon no-dec" href="/profile"><img src="/public/icon/profile.svg" alt="profile picture"></a>
+      {{#if user.isArtist}}
+        <!-- placeholder -->
+        <a class="icon no-dec" href="/posts/create"><img src="/public/icon/post.svg" alt="create post"></a>
+        <a class="icon no-dec" href="/likedPosts"><img src="/public/icon/mylikes.svg" alt="liked posts"></a>
+        <a class="icon no-dec" href="/commissions/{{user.username}}"><img src="/public/icon/commissions.svg" alt="commissions"></a>
+        <a class="icon no-dec" href="/profile/{{user.username}}"><img src="/public/icon/profile.svg" alt="profile picture"></a>
+        <a class="icon no-dec" href="/settings"><img src="/public/icon/settings.svg" alt="settings"></a>
+      {{else}}
+        <!-- placeholder -->
+        <a class="icon no-dec" href="/commissions/{{user.username}}"><img src="/public/icon/commissions.svg" alt="commissions"></a>
+        <a class="icon no-dec" href="/profile/{{user.username}}"><img src="/public/icon/profile.svg" alt="profile picture"></a>
+        <a class="icon no-dec" href="/settings"><img src="/public/icon/settings.svg" alt="settings"></a>
+      {{/if}}
     {{else}}
       <a href="/login" class="header-link">Sign In</a>
     {{/if}}
