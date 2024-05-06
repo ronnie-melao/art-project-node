@@ -54,7 +54,7 @@ let nick = await users.addUser("npalladino", "Nicholas", "Palladino", "n@a.com",
 let nickjr = await users.addUser("npalladi", "Nicholas", "Palladino", "n@a.com", "201-874-2354", "I'm me, but artist", "", "Bruh123.#", false);
 await users.addReview("npalladino", "Bro's pretty good at this", "npalladi");
 console.log("Added Review successfully!");
-//all combos of bad inputs: reviewing yourself, reviewing non-artist, reviewing non-artist that is you, double reviewing an account
+//all combos of bad inputs: reviewing yourself, reviewing non-artist, reviewing non-artist that is you, double reviewing an account (updates current review)
 try {
   await users.addReview("npalladino", "Bro's actually the best at this", "npalladino");
 } catch (err) {
@@ -70,12 +70,7 @@ try {
 } catch (err) {
   console.log("Encountered expected error:", err);
 }
-try {
-  await users.addReview("npalladino", "Bro's fallen off actually, not that good anymore lol", "npalladi");
-} catch (err) {
-  console.log("Encountered expected error:", err);
-}
-await users.addReview("npalladino", "Bro's fallen off actually, not that good anymore", "chris");
+await users.addReview("npalladino", "Bro's fallen off actually, not that good anymore lol", "npalladi");
 console.log("Added Review successfully!");
 
 console.log("Done seeding database");
