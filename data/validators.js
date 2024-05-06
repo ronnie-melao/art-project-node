@@ -71,7 +71,7 @@ export const validatePassword = (input) => {
     /[0-9]/,
     /[!@#$%^&*();:.,?`~+/=<>\\|-]/,
   ];
-  return validateString(input, { lower: false, conditions });
+  return validateString(input, { length: [8, 32], lower: false, conditions });
 };
 
 export const validateNoNumbers = (input, { conditions: extra = [], ...args } = {}) => {
@@ -81,7 +81,12 @@ export const validateNoNumbers = (input, { conditions: extra = [], ...args } = {
 
 export const validateEmail = (input) => {
   // roughly email format
-  return validateString(input, { conditions: [/^\S+@\S+\.\S+$/] });
+  return validateString(input, { length: [5, 50], conditions: [/^\S+@\S+\.\S+$/] });
+};
+
+export const validatePhoneNumber = (input) => {
+  // no letters in phone number
+  return validateString(input, { length: [0, 30], conditions: [/^[^a-zA-Z]*$/] });
 };
 
 /**

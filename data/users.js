@@ -6,6 +6,7 @@ import {
   validateNoNumbers,
   validateNumber,
   validatePassword,
+  validatePhoneNumber,
   validateString,
   validateUsername,
 } from "./validators.js";
@@ -38,11 +39,12 @@ export const addUser = async (username, firstName, lastName, email, phoneNumber,
   firstName = validateNoNumbers(firstName, { length: [2, 16] });
   lastName = validateNoNumbers(lastName, { length: [2, 16] });
   email = validateEmail(email);
-  phoneNumber = validateString(phoneNumber);
-  bio = validateString(bio, { length: [] });
-  statement = validateString(statement, { length: [] });
+  phoneNumber = validatePhoneNumber(phoneNumber);
+  bio = validateString(bio, { length: [0, 1024] });
+  statement = validateString(statement, { length: [0, 100] });
   plainTextPassword = validatePassword(plainTextPassword);
   isArtist = validateBoolean(isArtist);
+  if (!isArtist && statement.length > 0) throw "Cannot have statement unless you are an artist";
   let dateJoined = new Date().getTime();
   let password = await bcrypt.hash(plainTextPassword, SALT_ROUNDS);
   let user = {
@@ -169,13 +171,20 @@ export const addReview = async (reviewee, reviewText, reviewer) => {
   let review = {
     reviewer: reviewer,
     reviewText: reviewText,
-    reviewDate: dateString
+    reviewDate: dateString,
   };
   review = deepXSS(review);
 
   const users = await getUserCollection();
-  const update = await users.updateOne({username: reviewee}, {$push: {reviews: {$each: [review], $position: 0 }}});
-  if(!update) throw new Error("Could not add post to user");
+  const update = await users.updateOne({ username: reviewee }, {
+    $push: {
+      reviews: {
+        $each: [review],
+        $position: 0,
+      },
+    },
+  });
+  if (!update) throw new Error("Could not add post to user");
   return update;
 
 };

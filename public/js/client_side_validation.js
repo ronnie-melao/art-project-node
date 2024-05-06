@@ -1,7 +1,7 @@
 // Client side validation here, JQuery is available.
 let $search_input = $("#search-input");
 // update bar on load
-$("#search-button").prop("disabled", $search_input.val().length < 1 || $search_input.val().length > 32);
+$("#search-button").prop("disabled", $search_input.val()?.length < 1 || $search_input.val()?.length > 32);
 $search_input.on("input", _ => {
   $("#search-button").prop("disabled", $search_input.val().length < 1 || $search_input.val().length > 32);
 });
@@ -190,9 +190,9 @@ if (loginForm) {
       password = password.trim();
       if (password.length === 0) throw "The password cannot be just empty spaces.";
       if (password.includes(" ")) throw "The password cannot contain any spaces.";
-      if (password.length < 8) throw "The password must be at least 8 characters long.";
+      if (password.length < 8 || password.length > 32) throw "The password must be at 8-32 characters long.";
 
-      const specialCharacters = "!@#$%^&*";
+      const specialCharacters = "!@#$%^&*();:.,?`~+/=<>\\|-";
       let containsSpecialCharacters = false;
       for (let i = 0; i < password.length; i++) {
         if (specialCharacters.includes(password[i])) {
@@ -230,13 +230,11 @@ if (loginForm) {
     }
   });
 }
-;
 
 let registerForm = document.getElementById("signup-form");
 
 if (registerForm) {
   registerForm.addEventListener("submit", (event) => {
-    event.preventDefault();
 
     let username = document.getElementById("username").value;
     let firstName = document.getElementById("firstName").value;
@@ -247,18 +245,12 @@ if (registerForm) {
     let statement = document.getElementById("statement").value;
     let password = document.getElementById("password").value;
     let confirmPassword = document.getElementById("confirmPassword").value;
-    let isArtist = document.getElementById("isArtist").value;
+    let isArtist = document.getElementById("isArtist").checked;
     let registrationErrorDiv = document.getElementById("registration_error");
 
     try {
 
       registrationErrorDiv.hidden = true;
-
-      // converts isArtist to boolean
-      if (isArtist === "true")
-        isArtist = true;
-      else
-        isArtist = false;
 
       // username input validation
       if (!username) throw "Username not found.";
@@ -283,9 +275,9 @@ if (registerForm) {
       password = password.trim();
       if (password.length === 0) throw "The password cannot be just empty spaces.";
       if (password.includes(" ")) throw "The password cannot contain any spaces.";
-      if (password.length < 8) throw "The password must be at least 8 characters long.";
+      if (password.length < 8 || password.length > 32) throw "The password must be at 8-32 characters long.";
 
-      const specialCharacters = "!@#$%^&*";
+      const specialCharacters = "!@#$%^&*();:.,?`~+/=<>\\|-";
       let containsSpecialCharacters = false;
       for (let i = 0; i < password.length; i++) {
         if (specialCharacters.includes(password[i])) {
@@ -325,7 +317,6 @@ if (registerForm) {
       for (let i = 0; i < firstName.length; i++) {
         if (!isNaN(parseInt(firstName[i]))) throw "Your first name cannot include any numbers.";
       }
-      ;
 
       // lastName input validation
       if (!lastName) throw "Last name not found.";
@@ -337,7 +328,6 @@ if (registerForm) {
       for (let i = 0; i < lastName.length; i++) {
         if (!isNaN(parseInt(lastName[i]))) throw "Your last name cannot include any numbers.";
       }
-      ;
 
       // email input validation
       if (!email) throw "Email not found.";
@@ -349,36 +339,31 @@ if (registerForm) {
       if (!(atIndex > 0 && dotIndex > atIndex + 1 && dotIndex < email.length - 1)) throw "Your email is invalid.";
 
       // phoneNumber input validation
-      if (!phoneNumber) throw "Phone number not found.";
       if (typeof (phoneNumber) !== "string") throw "Your phone number must be a string.";
       phoneNumber = phoneNumber.trim();
-      if (phoneNumber.length === 0) throw "Your phone number cannot be just empty spaces.";
-      const numericPhoneNumber = phoneNumber.replace(/\D/g, "");
-      if (!numericPhoneNumber.length === 10) throw "The phone number must be 10 digits.";
+      if (/[a-zA-Z]/.test(phoneNumber)) throw "Your phone number cannot have letters.";
+      if (phoneNumber.length > 30) throw "Your phone number must be at most 30 characters";
 
       // bio input validation
-      if (!bio) throw "Bio not found.";
-      if (typeof (bio) !== "string") throw "Your bio must be a string.";
       bio = bio.trim();
-      if (bio.length === 0) throw "Your bio cannot be just empty spaces.";
+      if (typeof (bio) !== "string") throw "Your bio must be a string.";
+      if (bio.length > 1024) throw "Your bio must be at most 1024 characters";
 
       // statement input validation
-      if (!statement) throw "Statement not found.";
       if (typeof (statement) !== "string") throw "Your statement must be a string.";
       statement = statement.trim();
-      if (statement.length === 0) throw "Your statement cannot be just empty spaces.";
-
+      if (!isArtist && statement.length > 0) throw "You cannot have a statement unless you're an artist.";
+      if (statement.length > 100) throw "Your statement must be at most 100 characters";
       // isArtist input validation
       if (typeof (isArtist) !== "boolean") throw "You must designate whether you are an artist or a user.";
 
       // checking if password and confirm password match
       if (password.trim() !== confirmPassword.trim()) throw "You must confirm the same password!";
 
-      registerForm.submit();
-
     } catch (e) {
       registrationErrorDiv.hidden = false;
       registrationErrorDiv.textContent = e;
+      event.preventDefault();
     }
   });
 }
@@ -403,11 +388,11 @@ $("#create-post-form").on("submit", event => {
   }
 });
 
-let switchProfileButton = $("#switchProfileButton");
-switchProfileButton.on("click", function() {
+let $switchProfileButton = $("#switchProfileButton");
+$switchProfileButton.on("click", function() {
   // Set up AJAX request config
   console.log("in switch profile");
-  let currentIsArtist = switchProfileButton.data("id");
+  let currentIsArtist = $switchProfileButton.data("id");
   console.log(currentIsArtist);
   let newIsArtist = !currentIsArtist;
   let requestConfig = {

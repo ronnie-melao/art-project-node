@@ -5,6 +5,7 @@ import {
   validateEmail,
   validateNoNumbers,
   validatePassword,
+  validatePhoneNumber,
   validateString,
   validateUsername,
 } from "../data/validators.js";
@@ -89,9 +90,9 @@ router.route("/register").post(async (req, res) => {
     firstName = validateNoNumbers(firstName, { length: [2, 16] });
     lastName = validateNoNumbers(lastName, { length: [2, 16] });
     email = validateEmail(email);
-    phoneNumber = validateString(phoneNumber);
-    bio = validateString(bio, { length: [] });
-    statement = validateString(statement, { length: [] });
+    phoneNumber = validatePhoneNumber(phoneNumber);
+    bio = validateString(bio, { length: [0, 1024] });
+    statement = validateString(statement, { length: [0, 100] });
     password = validatePassword(password);
     isArtist = validateBoolean(isArtist);
 
@@ -164,12 +165,9 @@ router.route("/profile/:username").get(async (req, res) => {
     let oppositeAccountType = profile.isArtist ? "user" : "artist";
     let isSelf = req.session?.user?.username === req.params.username;
     let posts = [];
-    console.log(profile.posts);
     for (let postId of profile.posts) {
-      console.log(postId);
       posts.push(await getPostById(postId));
     }
-    console.log(posts);
     res.render("profile", {
       title: "Art Site",
       profile: profile,
@@ -177,7 +175,7 @@ router.route("/profile/:username").get(async (req, res) => {
       isArtist: isArtist,
       oppositeAccountType: oppositeAccountType,
       user: req.session?.user,
-      posts: posts,
+      posts: posts.toReversed(),
     });
   } catch (e) {
     res.status(404).render("error", { error: e });
