@@ -1,55 +1,57 @@
 <article class="post">
-    {{#each post}}
-    <h1>{{ this.title }}</h1>
-
+  {{#each post}}
+    <h1>{{ this.title }}</h1><br>
+    {{#if this.thread}}
+      <a href="/posts/thread/{{this.poster._id}}/{{this.thread}}">View Thread</a><br>
+    {{/if}}
     <p>Likes: {{this.likes.length}}</p>
     <div>
-        {{#each this.images}}
-        {{!-- Need to resize images --}}
-          <img src="{{this}}" class="full-thumbnail" alt="{{this.title}} thumbnail">
-        {{/each}}
-    </div>  
-    <address>Posted by {{this.poster.displayName}}</address>
+      {{#each this.images}}
+      {{!-- Need to resize images --}}
+        <img src="{{this}}" class="full-thumbnail" alt="{{this.title}} thumbnail">
+      {{/each}}
+    </div>
+    <address>Posted by {{this.poster.displayName}} · {{this.formattedTimePosted}}</address>
     <p>{{ this.post.description }}</p>
 
     <h2>Comments</h2>
     <form id="comment-form">
       <label for="comment">Add a comment:</label><br>
       <textarea name="comment" id="comment" placeholder="Enter your comment here"></textarea><br>
-        <button type="submit">Post Comment</button>
+      <button type="submit">Post Comment</button>
     </form>
     <div id="comment-form-error-div" hidden></div>
-    <div id="comment-area">
+  <div id="comment-area">
     {{#if this.hasComments}}
-        {{#each this.comments}}
-            <div>
-                <h3>{{this.username}}</h3>
+      {{#each this.comments}}
+        <div>
+          <h3>{{this.username}}</h3>
+          <p>{{this.comment}}</p>
+          <div class="reply-area">
+            {{#each this.replies}}
+              <div>
+                <h4>{{this.username}}</h4>
                 <p>{{this.comment}}</p>
-                <div class="reply-area">
-                {{#each this.replies}}
-                    <div>
-                        <h4>{{this.username}}</h4>
-                        <p>{{this.comment}}</p>
-                    </div>
-                {{/each}}
-                </div>
-                <div class="reply-container">
-                <a class="reply-link" data-id={{this._id}}>Reply</a>
-                <div class="reply-form-container" hidden>
-                    <form class="reply-form">
-                        <label for={{this._id}}>Add a reply:</label>
-                        <textarea name="reply" id={{this._id}} placeholder="Enter your reply here"></textarea>
-                        <button type="submit" class="post-reply" data-id={{this._id}}>Post Reply</button>
-                        <button type="button" class="cancel-reply">Cancel</button>
-                    </form>
-                    <div class="reply-form-error-div" hidden></div>
-                </div>
-                </div>
+              </div>
+            {{/each}}
+          </div>
+          <div class="reply-container">
+            <a class="reply-link" data-id={{this._id}}>Reply</a>
+            <div class="reply-form-container" hidden>
+              <form class="reply-form">
+                <label for={{this._id}}>Add a reply:</label>
+                <textarea name="reply" id={{this._id}} placeholder="Enter your reply here"></textarea>
+                <button type="submit" class="post-reply" data-id={{this._id}}>Post Reply</button>
+                <button type="button" class="cancel-reply">Cancel</button>
+              </form>
+              <div class="reply-form-error-div" hidden></div>
             </div>
-        {{/each}}
+          </div>
+        </div>
+      {{/each}}
     {{else}}
-        <p>No comments yet.</p>
+      <p>No comments yet.</p>
     {{/if}}
-    {{/each}}
-    </div>
+  {{/each}}
+</div>
 </article>

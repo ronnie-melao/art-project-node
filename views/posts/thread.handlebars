@@ -1,0 +1,18 @@
+<h1>Thread: {{ threadName }}</h1>
+{{#each posts}}
+  <a class="no-dec" href="/posts/{{this._id}}">
+    <article class="post">
+      <h1>{{ this.title }}</h1>
+
+      <p>Likes: {{this.likes}}</p>
+      <div>
+        {{#each this.images}}
+        {{!-- Need to resize images --}}
+          <img src="{{this}}" class="full-thumbnail" alt="{{this.title}} thumbnail">
+        {{/each}}
+      </div>
+      <address>Posted by {{this.poster.displayName}} · {{this.formattedTimePosted}}</address>
+
+      <p>{{ this.post.description }}</p></article>
+  </a>
+{{/each}}

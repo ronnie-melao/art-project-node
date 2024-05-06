@@ -51,5 +51,6 @@ const userOnlyMDWare = async (req, res, next) => {
 router.route("/logout").get(userOnlyMDWare);
 router.route("/profile").get(userOnlyMDWare);
 router.route("/posts/create").all(userOnlyMDWare);
+router.route("/review/:id").all(userOnlyMDWare);
 
 export default router;

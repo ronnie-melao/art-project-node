@@ -32,7 +32,7 @@ export const validateString = (input, { lower = false, length = [1], conditions 
     }
     return res;
   }
-  throw `Not a string! '${JSON.stringify(input)}'`;
+  throw new Error(`Not a string! '${JSON.stringify(input)}'`);
 };
 
 let conditionToPredicate = (condition) => {
@@ -51,7 +51,9 @@ let conditionToPredicate = (condition) => {
  */
 export const validateId = (input, paramName = "") => {
   input = validateString(input);
-  if (!ObjectId.isValid(input)) throw `${paramName && (paramName + ": ")}Not ObjectID: ${input}`;
+  if (!ObjectId.isValid(input)) {
+    throw `${paramName && (paramName + ": ")}Not ObjectID: ${input}`;
+  }
   return input;
 };
 
@@ -69,7 +71,7 @@ export const validatePassword = (input) => {
     /[0-9]/,
     /[!@#$%^&*();:.,?`~+/=<>\\|-]/,
   ];
-  return validateString(input, { lower: false, conditions });
+  return validateString(input, { length: [8, 32], lower: false, conditions });
 };
 
 export const validateNoNumbers = (input, { conditions: extra = [], ...args } = {}) => {
@@ -79,7 +81,12 @@ export const validateNoNumbers = (input, { conditions: extra = [], ...args } = {
 
 export const validateEmail = (input) => {
   // roughly email format
-  return validateString(input, { conditions: [/^\S+@\S+\.\S+$/] });
+  return validateString(input, { length: [5, 50], conditions: [/^\S+@\S+\.\S+$/] });
+};
+
+export const validatePhoneNumber = (input) => {
+  // no letters in phone number
+  return validateString(input, { length: [0, 30], conditions: [/^[^a-zA-Z]*$/] });
 };
 
 /**

@@ -6,6 +6,7 @@ import {
   validateNoNumbers,
   validateNumber,
   validatePassword,
+  validatePhoneNumber,
   validateString,
   validateUsername,
 } from "./validators.js";
@@ -38,11 +39,12 @@ export const addUser = async (username, firstName, lastName, email, phoneNumber,
   firstName = validateNoNumbers(firstName, { length: [2, 16] });
   lastName = validateNoNumbers(lastName, { length: [2, 16] });
   email = validateEmail(email);
-  phoneNumber = validateString(phoneNumber);
-  bio = validateString(bio, { length: [] });
-  statement = validateString(statement, { length: [] });
+  phoneNumber = validatePhoneNumber(phoneNumber);
+  bio = validateString(bio, { length: [0, 1024] });
+  statement = validateString(statement, { length: [0, 100] });
   plainTextPassword = validatePassword(plainTextPassword);
   isArtist = validateBoolean(isArtist);
+  if (!isArtist && statement.length > 0) throw "Cannot have statement unless you are an artist";
   let dateJoined = new Date().getTime();
   let password = await bcrypt.hash(plainTextPassword, SALT_ROUNDS);
   let user = {
@@ -113,7 +115,7 @@ export const getOrAddThread = async (userID, threadName) => {
     const newThread = { _id: new ObjectId(), name: threadName, posts: [] };
     const users = await getUserCollection();
     let insertion = await users.updateOne({ _id: new ObjectId(userID) }, { $push: { threads: newThread } });
-    console.log("Thread", insertion);
+    // console.log("Thread", insertion);
     if (!insertion) {
       throw "Could not add thread";
     }
@@ -122,13 +124,13 @@ export const getOrAddThread = async (userID, threadName) => {
   return res;
 };
 
-export const switchAccountType = async (userId, newAccountType) =>{
+export const switchAccountType = async (userId, newAccountType) => {
   userId = validateId(userId);
   console.log(newAccountType);
-  if(typeof newAccountType !== 'boolean') throw 'newAccountType must be a boolean'
+  if (typeof newAccountType !== "boolean") throw "newAccountType must be a boolean";
   const users = await getUserCollection();
-  const update = await users.updateOne({ _id: new ObjectId(userId)}, { $set: {isArtist: newAccountType} });
-  if(!update) throw "Could not update account type";
+  const update = await users.updateOne({ _id: new ObjectId(userId) }, { $set: { isArtist: newAccountType } });
+  if (!update || update.modifiedCount < 1) throw "Could not update account type";
   return update;
 };
 
@@ -136,8 +138,8 @@ export const addPostToUserPosts = async (userId, postId) => {
   userId = validateId(userId);
   postId = validateId(postId);
   const users = await getUserCollection();
-  const update = await users.updateOne({ _id: new ObjectId(userId)}, { $push: {posts: postId} });
-  if(!update) throw 'Could not add post to user';
+  const update = await users.updateOne({ _id: new ObjectId(userId) }, { $push: { posts: postId } });
+  if (!update || update.modifiedCount < 1) throw "Could not add post to user";
   return update;
 };
 
@@ -156,5 +158,49 @@ export const removePostFromUserLikedPosts = async (userId, postId) => {
   const users = await getUserCollection();
   const update = await users.updateOne({ _id: new ObjectId(userId)}, { $pull: {likedPosts: postId} });
   if(!update) throw 'Could not remove post from user';
+  return update;
+=======
+export const addPostToThread = async (userId, threadId, postId) => {
+  userId = validateId(userId);
+  postId = validateId(postId);
+  threadId = validateId(threadId);
+  console.log("Adding", userId, threadId, postId);
+  const users = await getUserCollection();
+  const update = await users.updateOne(
+    { _id: new ObjectId(userId), "threads._id": new ObjectId(threadId) },
+    { $push: { "threads.$.posts": postId } },
+  );
+  if (!update || update.modifiedCount < 1) throw "Could not add post to thread";
+  return update;
+};
+
+export const addReview = async (reviewee, reviewText, reviewer) => {
+  reviewee = validateUsername(reviewee);
+  reviewer = validateUsername(reviewer);
+  if (reviewee === reviewer) throw new Error("You cannot write a review for yourself!");
+  let revieweeUser = await getUserByUsername(reviewee);
+  if (!revieweeUser.isArtist) throw new Error("You cannot write a review for a non-artist account!");
+
+  reviewText = validateString(reviewText, { length: [] });
+  let datePosted = new Date();
+  let dateString = datePosted.toLocaleString();
+
+  let review = {
+    reviewer: reviewer,
+    reviewText: reviewText,
+    reviewDate: dateString,
+  };
+  review = deepXSS(review);
+
+  const users = await getUserCollection();
+  const update = await users.updateOne({ username: reviewee }, {
+    $push: {
+      reviews: {
+        $each: [review],
+        $position: 0,
+      },
+    },
+  });
+  if (!update) throw new Error("Could not add post to user");
   return update;
 };

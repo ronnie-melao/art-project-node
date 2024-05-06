@@ -1,21 +1,22 @@
 import { tryOrPushErr, validateArray, validateId, validateString, validateUsername } from "./validators.js";
 import { getPostCollection } from "../config/mongoCollections.js";
 import { deepXSS, getSearchTerms, relativeTime } from "./util.js";
-import { addPostToUserLikedPosts, addPostToUserPosts, getUserById, removePostFromUserLikedPosts } from "./users.js";
+import { addPostToThread, addPostToUserPosts, getUserById, addPostToUserLikedPosts, removePostFromUserLikedPosts} from "./users.js";
 import { ObjectId } from "mongodb";
 
 /**
  * Makes a post given the parameters within an object
  * Errors are thrown in an array, that array lists all the errors.
  */
-export const addPost = async (poster, title, images, description, keywords, thread = "") => {
+export const addPost = async (poster, title, images, description, keywords, threadID = "") => {
   let errors = [];
   poster = tryOrPushErr(errors, { poster }, validateId);
   title = tryOrPushErr(errors, { title }, validateString, { length: [1, 32] });
   images = tryOrPushErr(errors, { images }, validateArray, { validator: validateString });
   description = tryOrPushErr(errors, { description }, validateString, { length: [0] });
   keywords = tryOrPushErr(errors, { keywords }, validateArray, { length: [0], validator: validateString });
-  thread = tryOrPushErr(errors, { thread }, validateString, { length: [0] });
+  threadID = tryOrPushErr(errors, { threadID }, validateString, { length: [0] });
+  if (threadID) validateId(threadID);
   if (errors.length > 0) {
     throw errors;
   }
@@ -30,7 +31,7 @@ export const addPost = async (poster, title, images, description, keywords, thre
     images,
     description,
     keywords,
-    thread,
+    thread: threadID,
     timePosted,
     searchTerms,
     likes: [],
@@ -40,7 +41,10 @@ export const addPost = async (poster, title, images, description, keywords, thre
   post = deepXSS(post);
   const newInsertInformation = await posts.insertOne(post);
   if (!newInsertInformation.insertedId) throw "Posting failed!";
-  await addPostToUserPosts(poster, newInsertInformation.insertedId.toString())
+  await addPostToUserPosts(poster, newInsertInformation.insertedId.toString());
+  if (threadID) {
+    await addPostToThread(poster, threadID, newInsertInformation.insertedId.toString());
+  }
   return newInsertInformation.insertedId;
 };
 
@@ -49,7 +53,7 @@ const addPosterToPosts = async (posts) => {
   let users = new Set();
   for (const post of posts) {
     post.formattedTimePosted = relativeTime(post.timePosted);
-    users.add(post.poster);
+    users.add(post.poster.toString());
   }
   users = Array.from(users);
   users = await Promise.all(users.map(getUserById));
@@ -204,3 +208,11 @@ export const removeLike = async (postId, userId) => {
   
   return updatedPost;
 }
+
+export const getPostsFromThread = async (userID, threadID) => {
+  let user = await getUserById(userID);
+  let thread = user.threads.find(thread => thread._id.toString() === threadID);
+  if (!thread) throw "Could not find thread";
+  return await Promise.all(thread.posts.toReversed().map(getPostById));
+};
+

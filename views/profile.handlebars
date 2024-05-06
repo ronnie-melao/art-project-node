@@ -5,17 +5,28 @@
 <h3>@{{profile.username}}</h3>
 
 {{#if isArtist}}
-<h3>Artists Statement:</h3>
-<p>{{profile.statement}}</p>
+  <h3>Artists Statement:</h3>
+  <p>{{profile.statement}}</p>
 
-<h3>Biography:</h3>
-<p>{{profile.bio}}</p>
+  <h3>Biography:</h3>
+  <p>{{profile.bio}}</p>
+
+  <h3>Reviews:</h3>
+  {{#unless isSelf}}
+    <a href="/review/{{profile.username}}">Add New Review</a>
+  {{/unless}}
+  {{#each profile.reviews}}
+    <div class="review">
+      <p><em>{{this.reviewer}}:</em> {{this.reviewText}}</p>
+      <p class="reviewDate"><em>{{this.reviewDate}}</em></p>
+    </div>
+  {{/each}}
 {{/if}}
 
 {{#if isSelf}}
   <br><a href="/posts/create">Create New Post</a>
   <br><a href="/likedPosts">View My Liked Posts</a>
-  <br><a>Request a Commission</a>
+  <br><a href="/commission_request">Request a Commission</a>
   <br><button id="switchProfileButton" data-id="{{profile.isArtist}}">Switch to {{oppositeAccountType}}</button>
   {{!-- <br><a href="/settings">Preferences</a> --}}
   <br><a href="/logout">Log Out</a>
@@ -24,10 +35,10 @@
 {{#if isArtist}}
   <h3>Artist Posts:</h3>
   {{#each posts}}
-    <div>
+    <div class="post">
       <a href="/posts/{{this._id}}" class="postLink no-dec">
-      <img src="{{this.images.[0]}}" class="full-thumbnail" alt="{{this.title}} thumbnail">
-      <p>{{this.title}}</p>
+        <img src="{{this.images.[0]}}" class="full-thumbnail" alt="{{this.title}} thumbnail">
+        <p>{{this.title}}</p>
       </a>
     </div>
   {{/each}}
