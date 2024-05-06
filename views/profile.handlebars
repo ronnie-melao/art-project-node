@@ -16,7 +16,11 @@
 
   <h3>Reviews:</h3>
   {{#unless isSelf}}
-    <a href="/review/{{profile.username}}">Add New Review</a>
+    {{#if reviewed}}
+      <a href="/review/{{profile.username}}">Edit Your Review</a>
+    {{else}}
+      <a href="/review/{{profile.username}}">Add New Review</a>
+    {{/if}}
   {{/unless}}
   {{#each profile.reviews}}
     <div class="review">

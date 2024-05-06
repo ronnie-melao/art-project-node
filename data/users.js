@@ -194,6 +194,8 @@ export const addPostToThread = async (userId, threadId, postId) => {
 };
 
 export const checkReviewer = async (reviewee, reviewer) => {
+  //true if same, false if not or undef
+  if (!reviewer) return false;
   reviewee = validateUsername(reviewee);
   reviewer = validateUsername(reviewer);
   let revieweeUser = await getUserByUsername(reviewee);
@@ -213,7 +215,7 @@ export const addReview = async (reviewee, reviewText, reviewer) => {
   reviewText = validateString(reviewText, { length: [1, 1024] });
 
   let doubleReview = await checkReviewer(reviewee, reviewer);
-  if (doubleReview) await deleteReview(reviewee, reviewText, reviewer);
+  if (doubleReview) await deleteReviewFunction(reviewee, reviewer);
 
   let datePosted = new Date();
   let dateString = datePosted.toLocaleString();
@@ -238,21 +240,15 @@ export const addReview = async (reviewee, reviewText, reviewer) => {
   return update;
 };
 
-export const deleteReview = async (reviewee, reviewText, reviewer) => {
+export const deleteReviewFunction = async (reviewee, reviewer) => {
   reviewee = validateUsername(reviewee);
   reviewer = validateUsername(reviewer);
   if (reviewee === reviewer) throw new Error("You cannot write a review for yourself!");
   let revieweeUser = await getUserByUsername(reviewee);
   if (!revieweeUser.isArtist) throw new Error("You cannot write a review for a non-artist account!");
 
-  reviewText = validateString(reviewText, { length: [1, 1024] });
-  let datePosted = new Date();
-  let dateString = datePosted.toLocaleString();
-
   let review = {
-    reviewer: reviewer,
-    reviewText: reviewText,
-    reviewDate: dateString,
+    reviewer: reviewer
   };
   review = deepXSS(review);
 
@@ -260,6 +256,6 @@ export const deleteReview = async (reviewee, reviewText, reviewer) => {
   const update = await users.updateOne({ username: reviewee }, {
     $pull: { reviews: { reviewer: review.reviewer } }
   });
-  if (!update) throw new Error("Could not add review to user");
+  if (!update) throw new Error("Could not delete review from user");
   return update;
 };

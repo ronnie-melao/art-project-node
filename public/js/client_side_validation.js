@@ -380,16 +380,22 @@ if (reviewForm) {
   reviewForm.addEventListener("submit", (event) => {
 
     let reviewText = document.getElementById("reviewText").value;
+    let deleteReview = document.getElementById("deleteReview").checked;
     let reviewErrorDiv = document.getElementById("review_submission_error");
 
     try {
 
       reviewErrorDiv.hidden = true;
 
-      // reviewText input validation
-      reviewText = reviewText.trim();
-      if (typeof (reviewText) !== "string") throw "Your review must be a string.";
-      if (reviewText.length > 1024) throw "Your review must be at most 1024 characters";
+      // deleteReview input validation
+      if (typeof (deleteReview) !== "boolean") throw "You must designate whether you want to delete the review or not.";
+
+      if (deleteReview == false){
+        // reviewText input validation
+        reviewText = reviewText.trim();
+        if (typeof (reviewText) !== "string") throw "Your review must be a string.";
+        if (reviewText.length > 1024) throw "Your review must be at most 1024 characters";
+      }
 
     } catch (e) {
       reviewErrorDiv.hidden = false;
@@ -484,4 +490,55 @@ likeButton.on('click', function(){
         alert("Failed to like post");
       }
     });
-})
+});
+
+let editPostForm = document.getElementById("edit-post-form");
+if(editPostForm){
+  console.log('here');
+  
+
+  editPostForm.addEventListener("submit", (event) =>{
+    let postTitle = document.getElementById('post-title').value;
+  let postDescription = document.getElementById('post-description').value;
+  let keywords = document.getElementById('keywords').value;
+  let clientErrors = document.getElementById('client-errors');
+  let errorsDiv = document.getElementById('error');
+
+    console.log('edit form submission fired');
+    errors = [];
+    clientErrors.innerHTML = "";
+    clientErrors.hidden = true;
+    if(errorsDiv) errorsDiv.hidden = true;
+    try{
+      if(!postTitle) throw 'Title not found';
+      if(typeof postTitle !== 'string') throw 'Title must be a string';
+      postTitle = postTitle.trim();
+      if(postTitle.length === 0) throw 'Title cannot be blank or empty spaces';
+    }
+    catch(e){
+      errors.push(e);
+    }
+    try{
+      if(!postDescription) throw 'Description not found';
+      if(typeof postDescription !== 'string') throw 'Description must be a string';
+      postDescription = postDescription.trim();
+      if(postDescription.length === 0) throw 'Description cannot be blank or empty spaces';
+    }
+    catch(e){
+      errors.push(e);
+    }
+    if(errors.length > 0){
+      event.preventDefault()
+      clientErrors.hidden = false;
+      for(let e of errors){
+          const message = typeof e === 'string' ? e : e.message;
+          let li = document.createElement('li');
+          li.classList.add('error');
+          li.innerHTML = message;
+          clientErrors.append(li);
+      }
+      editPostForm.appendChild(clientErrors);
+    }
+  })
+};
+
