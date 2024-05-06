@@ -17,8 +17,8 @@
   {{/unless}}
   {{#each profile.reviews}}
     <div class="review">
-      <p><em>{{this.reviewer}}: {{this.reviewDate}}</em></p>
-      <p>{{this.reviewText}}</p>
+      <p><em>{{this.reviewer}}:</em> {{this.reviewText}}</p>
+      <p class="reviewDate"><em>{{this.reviewDate}}</em></p>
     </div>
   {{/each}}
 {{/if}}

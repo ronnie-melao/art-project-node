@@ -80,6 +80,10 @@ header, .header {
     }
 }
 
+.reviewDate {
+    font-size: 13px;
+}
+
 a.no-dec {
     text-decoration: none;
     color: inherit;

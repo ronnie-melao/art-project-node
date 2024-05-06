@@ -159,6 +159,8 @@ export const addReview = async (reviewee, reviewText, reviewer) => {
   reviewee = validateUsername(reviewee);
   reviewer = validateUsername(reviewer);
   if (reviewee === reviewer) throw new Error("You cannot write a review for yourself!");
+  let revieweeUser = await getUserByUsername(reviewee);
+  if (!revieweeUser.isArtist) throw new Error("You cannot write a review for a non-artist account!");
 
   reviewText = validateString(reviewText, { length: [] });
   let datePosted = new Date();

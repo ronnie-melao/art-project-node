@@ -35,6 +35,29 @@ for (let i = 1; i <= 5; i++) {
   await posts.addPost(chris, `A Zorua A day ${i}`, [`/public/images/zorua${i}.jpeg`], "", [], threadID);
 }
 
+let nick = await users.addUser("npalladino", "Nicholas", "Palladino", "n@a.com", "201-874-2354", "I'm me, for sure", "yuh", "Bruh123.#", true);
+let nickjr = await users.addUser("npalladi", "Nicholas", "Palladino", "n@a.com", "201-874-2354", "I'm me, but artist", "yippee", "Bruh123.#", false);
+await users.addReview("npalladino", "Bro's pretty good at this", "npalladi");
+console.log("Added Review successfully!");
+//all combos of bad inputs: reviewing yourself, reviewing non-artist, reviewing non-artist that is you
+try {
+  await users.addReview("npalladino", "Bro's actually the best at this", "npalladino");
+} catch (err) {
+  console.log("Encountered expected error:", err);
+}
+try {
+  await users.addReview("npalladi", "Bro isn't even an artist but he's THE BEST EVER", "npalladi");
+} catch (err) {
+  console.log("Encountered expected error:", err);
+}
+try {
+  await users.addReview("npalladi", "Bro isn't even an artist but he's good", "npalladino");
+} catch (err) {
+  console.log("Encountered expected error:", err);
+}
+await users.addReview("npalladino", "Bro's fallen off actually, not that good anymore", "npalladi");
+console.log("Added Review successfully!");
+
 
 console.log("Done seeding database");
 
