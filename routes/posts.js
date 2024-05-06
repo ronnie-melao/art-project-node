@@ -2,8 +2,8 @@ import { Router } from "express";
 import { postData } from "../data/index.js";
 import { errorsToString, tryOrPushErr, validateId, validateString } from "../data/validators.js";
 import { convertHEIC, convertPDF, deepXSS, getSearchTerms, imageFilesToLinks } from "../data/util.js";
-import { addPost, getPostsFromThread } from "../data/posts.js";
-import { getOrAddThread, getThreads, getUserById } from "../data/users.js";
+import { addLike, addPost, getPostsFromThread, removeLike } from "../data/posts.js";
+import { checkUserLikedPost, getOrAddThread, getThreads, getUserById } from "../data/users.js";
 
 let router = new Router();
 
@@ -71,7 +71,14 @@ router
       const post = await postData.getPostById(req.params.id);
       //console.log(post);
       post.hasComments = post.comments.length > 0;
-      res.render("posts/single", { title: post?.title ?? "Post", post: [post], user: req.session?.user });
+      let isLiked = false;
+      if(req.session?.user){
+        console.log(req.session.user._id, req.params.id)
+        isLiked = await checkUserLikedPost(req.session.user._id, req.params.id);
+      }
+      post.isLiked = isLiked;
+      console.log(isLiked);
+      res.render("posts/single", { title: post?.title ?? "Post", post: [post], user: req.session?.user});
     } catch (e) {
       return res.status(404).render("error", { title: "error", error: e, user: req.session?.user });
     }
@@ -106,7 +113,7 @@ router
 
 //AJAX route for posting replies
 router
-  .route("/:id/comment/:commentId/reply") //I need to make sure I can write it like this
+  .route("/:id/comment/:commentId/reply") 
   .post(async (req, res) => {
     try {
       req.session.user.username;
@@ -132,6 +139,41 @@ router
 
   });
 
+//AJAX route for liking a post
+router
+  .route("/:id/like") 
+  .post(async (req, res) => {
+    try {
+      req.session.user._id;
+    } catch (e) {
+      return res.status(401).render("error", { title: "error", error: "Unauthorized", user: req.session?.user });
+    }
+    try {
+      req.params.id = validateId(req.params.id, "Id URL Param");
+      req.session.user._id = validateId(req.session.user._id, "User ID");
+    } catch (e) {
+      console.log('failed here');
+      return res.status(400).render("error", { title: "error", error: e });
+    }
+    try{
+      let postId = req.params.id;
+      let userId = req.session.user._id;
+      let likedState = await checkUserLikedPost(userId, postId);
+      let updatedPost;
+      if(likedState){
+        updatedPost = await removeLike(postId, userId);
+      }
+      else{
+        updatedPost = await addLike(postId, userId);
+      }
+      let newLikedState = !likedState
+      res.json({ success: true, post: updatedPost, newLikedState: newLikedState });
+    }
+    catch(e){
+      console.log('no here');
+      return res.status(400).render("error", { title: "error", error: e, user: req.session?.user });
+    }
+  });
 router
   .route("/thread/:userId/:threadId")
   .get(async (req, res) => {

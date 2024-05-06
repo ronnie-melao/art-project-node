@@ -36,14 +36,14 @@ for (let i = 1; i <= 5; i++) {
 }
 
 
-let sally = await await users.addUser("sally", "Sally", "Seashell", "sally@a.com", "201-123-1324", "I'm sally", "yay art", "D0nt3nter!2", false);
+let sally = await users.addUser("sally", "Sally", "Seashell", "sally@a.com", "201-123-1324", "I'm sally", "", "D0nt3nter!2", false);
 await posts.addLike(comment.toString(), sally);
 await posts.addLike(replyPost.toString(), sally);
 //check removeLike is working
 await posts.removeLike(replyPost.toString(), sally)
 
 let nick = await users.addUser("npalladino", "Nicholas", "Palladino", "n@a.com", "201-874-2354", "I'm me, for sure", "yuh", "Bruh123.#", true);
-let nickjr = await users.addUser("npalladi", "Nicholas", "Palladino", "n@a.com", "201-874-2354", "I'm me, but artist", "yippee", "Bruh123.#", false);
+let nickjr = await users.addUser("npalladi", "Nicholas", "Palladino", "n@a.com", "201-874-2354", "I'm me, but artist", "", "Bruh123.#", false);
 await users.addReview("npalladino", "Bro's pretty good at this", "npalladi");
 console.log("Added Review successfully!");
 //all combos of bad inputs: reviewing yourself, reviewing non-artist, reviewing non-artist that is you

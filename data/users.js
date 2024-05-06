@@ -138,6 +138,8 @@ export const addPostToUserPosts = async (userId, postId) => {
   userId = validateId(userId);
   postId = validateId(postId);
   const users = await getUserCollection();
+  const user = await users.findOne({ _id: new ObjectId(userId) });
+  if (!user) throw "Error: User not found";
   const update = await users.updateOne({ _id: new ObjectId(userId) }, { $push: { posts: postId } });
   if (!update || update.modifiedCount < 1) throw "Could not add post to user";
   return update;
@@ -147,6 +149,8 @@ export const addPostToUserLikedPosts = async (userId, postId) => {
   userId = validateId(userId);
   postId = validateId(postId);
   const users = await getUserCollection();
+  const user = await users.findOne({ _id: new ObjectId(userId) });
+  if (!user) throw "Error: User not found";
   const update = await users.updateOne({ _id: new ObjectId(userId)}, { $push: {likedPosts: postId} });
   if(!update) throw 'Could not add post to user';
   return update;
@@ -156,10 +160,26 @@ export const removePostFromUserLikedPosts = async (userId, postId) => {
   userId = validateId(userId);
   postId = validateId(postId);
   const users = await getUserCollection();
+  const user = await users.findOne({ _id: new ObjectId(userId) });
+  if (!user) throw "Error: User not found";
   const update = await users.updateOne({ _id: new ObjectId(userId)}, { $pull: {likedPosts: postId} });
   if(!update) throw 'Could not remove post from user';
   return update;
-=======
+};
+
+export const checkUserLikedPost = async (userId, postId) => {
+  console.log('in data')
+  postId = validateId(postId);
+  userId = validateId(userId);
+  console.log('here');
+  const users = await getUserCollection();
+  const user = await users.findOne({ _id: new ObjectId(userId) });
+  if (!user) throw "Error: User not found";
+  const findOne = await users.findOne({ _id: new ObjectId(userId), likedPosts: postId });
+  console.log(findOne);
+  return findOne !== null;
+};
+
 export const addPostToThread = async (userId, threadId, postId) => {
   userId = validateId(userId);
   postId = validateId(postId);
