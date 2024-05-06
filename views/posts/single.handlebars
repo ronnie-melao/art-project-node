@@ -6,7 +6,7 @@
     <div>
         {{#each this.images}}
         {{!-- Need to resize images --}}
-          <img src={{this}} class="thumbnail" alt="{{this.title}} thumbnail">
+          <img src="{{this}}" class="full-thumbnail" alt="{{this.title}} thumbnail">
         {{/each}}
     </div>  
     <address>Posted by {{this.poster.displayName}}</address>

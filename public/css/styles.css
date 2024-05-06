@@ -91,6 +91,13 @@ a.no-dec {
     object-fit: cover;
 }
 
+.full-thumbnail {
+    width: 400px;
+    height: 225px;
+    object-fit: contain;
+    background: black;
+}
+
 .post {
     border: gray 1px solid;
     border-radius: 15px;

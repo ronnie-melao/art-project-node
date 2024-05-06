@@ -8,9 +8,8 @@ import {
   validateString,
   validateUsername,
 } from "../data/validators.js";
-import { getTopLikedPosts, getMostRecentPosts } from "../data/posts.js";
+import { getMostRecentPosts, getTopLikedPosts } from "../data/posts.js";
 import { postData } from "../data/index.js";
-import { getUserCollection } from "../config/mongoCollections.js";
 import { addCommission, getArtistCommissions } from "../data/commissions.js";
 
 let router = new Router();
@@ -24,7 +23,7 @@ router.route("/").get(async (req, res) => {
   } catch (e) {
     // Handle errors appropriately
     console.error(e);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send("Internal Server Error");
   }
 
 });
@@ -147,23 +146,24 @@ router.route("/profile/:username").get(async (req, res) => {
 router.route("/commissions").get(async (req, res) => {
   let current_username = req.session.user.username;
   let commissionsArray = getArtistCommissions(current_username);
-  res.render("commissions", { title: "Art Site", script_partial: 'commissions_script', commissionsArray: commissionsArray});
+  res.render("commissions", {
+    title: "Art Site",
+    user: req.session?.user,
+    script_partial: "commissions_script",
+    commissionsArray: commissionsArray,
+  });
 });
 
 router.route("/commission_request").get(async (req, res) => {
-  res.render("commission_request", { title: "Art Site" });
+  res.render("commission_request", { title: "Art Site", user: req.session?.user });
 });
 
 router.route("/commission_request").post(async (req, res) => {
-  let current_user = req.session.user
-  const userCollection = await getUserCollection();
-  const user = await userCollection.findOne({username: current_user.username})
-  let requesterUsername = user.username;
-
+  let requesterUsername = req.session.user?.username;
   let {
     artistUsername,
     description,
-    price
+    price,
   } = req.body;
 
   try {
@@ -171,14 +171,18 @@ router.route("/commission_request").post(async (req, res) => {
     if (!price) throw "No price!";
     description = description.trim();
     price = price.trim();
-    price = parseInt(price);
-  
+    price = parseFloat(price);
+
     if (isNaN(price)) throw "Price must be a number!";
 
-    addCommission(artistUsername, requesterUsername, description, price);
-
   } catch (e) {
-    res.status(400).render("commission_request", {e: e});
+    res.status(400).render("commission_request", { e: e, user: req.session?.user });
+  }
+  try {
+    await addCommission(artistUsername, requesterUsername, description, price);
+  } catch (e) {
+    console.log(e);
+    res.status(500).render("commission_request", { e: "Internal Server Error", user: req.session?.user });
   }
 });
 
