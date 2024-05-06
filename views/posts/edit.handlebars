@@ -8,8 +8,7 @@
     <input type="text" id="keywords" name="keywords" value="{{keywords}}">
     <button id="submitButton" name="submitButton" type="submit" class="button">Save Changes</button>
 </form>
-<div id="edit-error-div" hidden></div>
-
+<ul id="client-errors" class="client-errors" hidden>
 {{#if error}}
   <div class="error">
     <p>{{error}}</p>

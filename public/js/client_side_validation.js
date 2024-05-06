@@ -484,4 +484,55 @@ likeButton.on('click', function(){
         alert("Failed to like post");
       }
     });
-})
+});
+
+let editPostForm = document.getElementById("edit-post-form");
+if(editPostForm){
+  console.log('here');
+  
+
+  editPostForm.addEventListener("submit", (event) =>{
+    let postTitle = document.getElementById('post-title').value;
+  let postDescription = document.getElementById('post-description').value;
+  let keywords = document.getElementById('keywords').value;
+  let clientErrors = document.getElementById('client-errors');
+  let errorsDiv = document.getElementById('error');
+
+    console.log('edit form submission fired');
+    errors = [];
+    clientErrors.innerHTML = "";
+    clientErrors.hidden = true;
+    if(errorsDiv) errorsDiv.hidden = true;
+    try{
+      if(!postTitle) throw 'Title not found';
+      if(typeof postTitle !== 'string') throw 'Title must be a string';
+      postTitle = postTitle.trim();
+      if(postTitle.length === 0) throw 'Title cannot be blank or empty spaces';
+    }
+    catch(e){
+      errors.push(e);
+    }
+    try{
+      if(!postDescription) throw 'Description not found';
+      if(typeof postDescription !== 'string') throw 'Description must be a string';
+      postDescription = postDescription.trim();
+      if(postDescription.length === 0) throw 'Description cannot be blank or empty spaces';
+    }
+    catch(e){
+      errors.push(e);
+    }
+    if(errors.length > 0){
+      event.preventDefault()
+      clientErrors.hidden = false;
+      for(let e of errors){
+          const message = typeof e === 'string' ? e : e.message;
+          let li = document.createElement('li');
+          li.classList.add('error');
+          li.innerHTML = message;
+          clientErrors.append(li);
+      }
+      editPostForm.appendChild(clientErrors);
+    }
+  })
+};
+

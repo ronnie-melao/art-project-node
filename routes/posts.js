@@ -129,15 +129,19 @@ router
     }
 
     // validate 
-    title = tryOrPushErr(errors, {title} , validateString, { length: [1, 32] });
-    description = tryOrPushErr(errors, {description} , validateString, { length: [0] });
-    keywords = tryOrPushErr(errors,  {keywords} , validateString, { length: [0] });
-    //images = tryOrPushErr(errors, { images }, validateArray, { validator: validateString });
-
+      title = tryOrPushErr(errors, {title} , validateString, { length: [1, 32] });
+      description = tryOrPushErr(errors, {description} , validateString, { length: [0] });
+      keywords = tryOrPushErr(errors,  {keywords} , validateString, { length: [0] });
+      title = tryOrPushErr(errors, {title} , deepXSS);
+      description = tryOrPushErr(errors, {description} , deepXSS);
+      keywords = tryOrPushErr(errors,  {keywords} , deepXSS );
+      //images = tryOrPushErr(errors, { images }, validateArray, { validator: validateString });  
+  
     // Parameters for error response
-    let p = () => ({ title: "Edit Post", post: { title, description, keywords } });
-
+    let p = () => ({ title: "Edit Post", post: { title, description}, keywords, user: req.session?.user});
+    console.log(errors);
     if (errors.length > 0) {
+      console.log('in the errors');
       let error = errorsToString(errors);
       return res.status(400).render("posts/edit", { error, ...p() });
     }
