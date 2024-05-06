@@ -17,6 +17,13 @@ try {
 await posts.addPost(id, "Post", ["https://i.imgur.com/MMjejSF.jpeg"], "caption", ["keyword"]);
 await posts.addPost(id, "YouTube thumbnails", ["https://img.youtube.com/vi/77PsqaWzwG0/0.jpg", "https://img.youtube.com/vi/QsnkNYnsn2c/0.jpg"], "caption", ["keyword"]);
 
+//Updating posts, i
+let simone = await users.addUser("simone", "Simone", "Martini", "simone@a.com", "201-123-1324", "I am a self taught artist.", "Looking to inspire others", "Testing12!", true);
+let simonePost = await posts.addPost(simone, "Saint James Major", ['https://media.nga.gov/iiif/c05d6828-ce1c-4333-8ec6-b79ba3472fef/full/!384,384/0/default.jpg'], "Tempura", ["portrait"] );
+await posts.updatePost(simonePost.toString(), simone, "Saint James Major", "Tempura on panel", ["portrait"]);
+let simonePost2 = await posts.addPost(simone, "Saint", ["https://media.nga.gov/iiif/ce6b3e55-a43c-4555-949d-f6bf60600bce/full/!384,384/0/default.jpg"], "Tempura on panel", [], "");
+await posts.updatePost(simonePost2.toString(), simone, "Saint Judas Thaddeus", "Tempura on panel", ["portrait"]);
+
 //Post with comments
 let comment = await posts.addPost(id, "Comment Post", ["https://img.youtube.com/vi/77PsqaWzwG0/0.jpg", "https://img.youtube.com/vi/QsnkNYnsn2c/0.jpg"], "caption", ["keyword"]);
 await posts.addComment(comment.toString(), "User1", "This is really great work.");

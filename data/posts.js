@@ -216,3 +216,37 @@ export const getPostsFromThread = async (userID, threadID) => {
   return await Promise.all(thread.posts.toReversed().map(getPostById));
 };
 
+export const updatePost = async (postId, userId, title, description, keywords) => {
+  let errors = [];
+  postId = tryOrPushErr(errors, { postId }, validateId);
+  userId = tryOrPushErr(errors, { userId }, validateId);
+  title = tryOrPushErr(errors, { title }, validateString, { length: [1, 32] });
+  description = tryOrPushErr(errors, { description }, validateString, { length: [0] });
+  keywords = tryOrPushErr(errors, { keywords }, validateArray, { length: [0], validator: validateString });
+  if (errors.length > 0) {
+    throw errors;
+  }
+  let searchTerms = getSearchTerms(title, description, keywords);
+  // throws if poster is not a user
+  await getUserById(userId);
+  const posts = await getPostCollection();
+  let updatePost = {
+    title,
+    description,
+    keywords,
+    searchTerms,
+    isEdited: true,
+  };
+  updatePost = deepXSS(updatePost);
+  //throws if post doesnt exist
+  let post = await getPostById(postId);
+
+  if(post.poster._id.toString() !== userId) throw 'Not authorized to update this post';
+
+  let updatedInformation = posts.updateOne(
+      { _id: new ObjectId(postId) }, 
+      {$set: {title: title, description: description, keywords: keywords, searchTerms: searchTerms, isEdited: true}}
+      );
+  if (!updatedInformation) throw "Updating failed!";
+  return postId;
+};
