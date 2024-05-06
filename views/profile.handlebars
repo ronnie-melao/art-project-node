@@ -22,7 +22,12 @@
 {{/if}}
 
 {{#if isArtist}}
-<div>
-
-</div>
+  {{#each posts}}
+    <div>
+      <a href="/posts/{{this._id}}" class="postLink no-dec">
+      <img src="{{this.images.[0]}}" class="full-thumbnail" alt="{{this.title}} thumbnail">
+      <p>{{this.title}}</p>
+      </a>
+    </div>
+  {{/each}}
 {{/if}}

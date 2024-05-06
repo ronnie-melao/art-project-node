@@ -132,7 +132,7 @@ export const switchAccountType = async (userId, newAccountType) =>{
   return update;
 };
 
-export const addPostToPosts = async (userId, postId) => {
+export const addPostToUserPosts = async (userId, postId) => {
   userId = validateId(userId);
   postId = validateId(postId);
   const users = await getUserCollection();

@@ -8,7 +8,7 @@ import {
   validateString,
   validateUsername,
 } from "../data/validators.js";
-import { getMostRecentPosts, getTopLikedPosts } from "../data/posts.js";
+import { getMostRecentPosts, getPostById, getTopLikedPosts } from "../data/posts.js";
 import { postData } from "../data/index.js";
 import { addCommission, getArtistCommissions } from "../data/commissions.js";
 
@@ -137,11 +137,23 @@ router.route("/search").post(async (req, res) => {
 });
 
 router.route("/profile/:username").get(async (req, res) => {
-  let profile = await getUserByUsername(req.params.username);
-  let isArtist = profile.isArtist;
-  let oppositeAccountType = profile.isArtist ? "user" : "artist";
-  let isSelf = req.session?.user?.username === req.params.username;
-  res.render('profile', { title: "Art Site", profile: profile, isSelf: isSelf, isArtist: isArtist, oppositeAccountType: oppositeAccountType, user: req.session?.user });
+  try{
+    let profile = await getUserByUsername(req.params.username);
+    let isArtist = profile.isArtist;
+    let oppositeAccountType = profile.isArtist ? "user" : "artist";
+    let isSelf = req.session?.user?.username === req.params.username;
+    let posts = [];
+    console.log(profile.posts);
+    for(let postId of profile.posts){
+      console.log(postId)
+      posts.push(await getPostById(postId));
+    }
+    console.log(posts);
+    res.render('profile', { title: "Art Site", profile: profile, isSelf: isSelf, isArtist: isArtist, oppositeAccountType: oppositeAccountType, user: req.session?.user, posts:posts });
+  }
+  catch(e){
+    res.status(404).render('error', {error: e})
+  }
 });
 
 router.route("/switchProfile").post(async (req, res) => {
