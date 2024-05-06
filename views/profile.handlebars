@@ -1,15 +1,18 @@
-<h2>Artist Page</h2>
-
-<h3>{{profile.firstName}} {{profile.lastName}}</h3>
-
-<h3>@{{profile.username}}</h3>
-
+<h2>{{#if isArtist}}Artist{{else}}User{{/if}} Page</h2>
+<div class="profile-box">
+  <strong>{{profile.firstName}} {{profile.lastName}}</strong><br>
+  {{#if isArtist}}🖌️{{/if}}{{profile.username}}
+</div>
 {{#if isArtist}}
-  <h3>Artists Statement:</h3>
-  <p>{{profile.statement}}</p>
+  {{#if profile.statement}}
+    <h3>Artists Statement:</h3>
+    <p>{{profile.statement}}</p>
+  {{/if}}
+  {{#if profile.bio}}
+    <h3>Biography:</h3>
+    <p>{{profile.bio}}</p>
+  {{/if}}
 
-  <h3>Biography:</h3>
-  <p>{{profile.bio}}</p>
 
   <h3>Reviews:</h3>
   {{#unless isSelf}}
@@ -20,6 +23,8 @@
       <p><em>{{this.reviewer}}:</em> {{this.reviewText}}</p>
       <p class="reviewDate"><em>{{this.reviewDate}}</em></p>
     </div>
+  {{else}}
+    <div>No Reviews</div>
   {{/each}}
 {{/if}}
 
@@ -41,5 +46,7 @@
         <p>{{this.title}}</p>
       </a>
     </div>
+  {{else}}
+    <div>No Posts</div>
   {{/each}}
 {{/if}}
