@@ -9,17 +9,18 @@ import { pdf } from "pdf-to-img";
 const __dirname = import.meta.dirname;
 /**
  * @param {*} any
+ * @param {boolean} noMercy
  * @return {*}
  */
-export const deepXSS = (any) => {
+export const deepXSS = (any, noMercy = false) => {
   if (any == null) return any;
   if (typeof any === "string") {
-    return xss(any);
+    return xss(any, noMercy ? { whiteList: {} } : undefined);
   }
   if (Array.isArray(any)) {
     let result = [];
     any.forEach(el => {
-      result.push(deepXSS(el));
+      result.push(deepXSS(el, noMercy));
     });
     return result;
   }
@@ -29,7 +30,7 @@ export const deepXSS = (any) => {
     }
     let result = {};
     for (let [key, val] of Object.entries(any)) {
-      result[xss(key)] = deepXSS(val);
+      result[key] = deepXSS(val, noMercy);
     }
     return result;
   }

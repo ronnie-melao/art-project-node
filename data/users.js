@@ -65,7 +65,6 @@ export const addUser = async (username, firstName, lastName, email, phoneNumber,
     incomingCommissions: [],
     outgoingCommissions: [],
   };
-  user = deepXSS(user);
   const users = await getUserCollection();
   // mongoDB will fail if duplicate name
   let newInsertInformation;

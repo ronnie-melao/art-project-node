@@ -81,8 +81,7 @@ router
       }
       post.isLiked = isLiked;
       post.isSelf = isSelf;
-      console.log(isLiked);
-      console.log(isSelf);
+      post.comments.reverse();
       res.render("posts/single", { title: post?.title ?? "Post", post: [post], user: req.session?.user});
     } catch (e) {
       return res.status(404).render("error", { title: "error", error: e, user: req.session?.user });
@@ -184,10 +183,10 @@ router
 
     try {
       let postId = req.params.id;
-      let cleanComment = deepXSS(req.body.comment);
+      let comment = req.body.comment;
       let username = req.session.user.username;
-      let postComment = await postData.addComment(postId, username, cleanComment);
-      res.json({ success: true, newComment: postComment });
+      let postComment = await postData.addComment(postId, username, comment);
+      res.json({ success: true, newComment: deepXSS(postComment, true) });
     } catch (e) {
       return res.status(400).render("error", { title: "error", error: e, user: req.session?.user });
     }
@@ -212,10 +211,10 @@ router
     try {
       let postId = req.params.id;
       let commentId = req.params.commentId;
-      let cleanReply = deepXSS(req.body.reply);
+      let reply = req.body.reply;
       let username = req.session.user.username;
-      let postReply = await postData.addReply(postId, commentId, username, cleanReply);
-      res.json({ success: true, newReply: postReply });
+      let postReply = await postData.addReply(postId, commentId, username, reply);
+      res.json({ success: true, newReply: deepXSS(postReply, true) });
     } catch (e) {
       return res.status(400).render("error", { title: "error", error: e, user: req.session?.user });
     }
