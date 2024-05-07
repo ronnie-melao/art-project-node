@@ -377,6 +377,7 @@ if (registerForm) {
 let commissionRequestForm = document.getElementById("commission_request-form");
 
 if (commissionRequestForm) {
+  let commissionErrorDiv = document.getElementById("commissionErrorDiv");
   commissionRequestForm.addEventListener("submit", (event) => {
 
     let artistUsername = document.getElementById("artistUsername").value;
@@ -393,6 +394,8 @@ if (commissionRequestForm) {
       description = description.trim();
       price = price.trim();
       price = parseFloat(price);
+      if (artistUsername.length > 16) throw "Username too long";
+      if (description.length > 1000) throw "Description can't be over 1000 characters";
 
       if (description.includes("<") || description.includes(">")) {
         throw "Write a new description!";
@@ -401,6 +404,8 @@ if (commissionRequestForm) {
       if (isNaN(price)) throw "Price must be a number!";
 
     } catch (e) {
+      commissionErrorDiv.hidden = false;
+      commissionErrorDiv.textContent = e;
       event.preventDefault();
     }
   });

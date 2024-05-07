@@ -1,22 +1,19 @@
 import { getCommissionCollection, getUserCollection } from "../config/mongoCollections.js";
 import { validateString } from "./validators.js";
-import xss from "xss";
+import { deepXSS } from "./util.js";
 
 export const addCommission = async (artistUsername, requesterUsername, description, price) => {
   if (!artistUsername) throw "No artist!";
   if (!description) throw "No description!";
   if (!price) throw "No price!";
   if (!requesterUsername) throw "You are not signed in!";
-  description = description.trim();
-
-  description = validateString(description);
+  description = validateString(description, { length: [1, 1000] });
   if (isNaN(price)) throw "Price must be a number!";
 
-  description = validateString(description);
     if (description.includes("<") || description.includes(">")) {
       throw "Write a new description!";
     }
-    description = xss(description);
+  description = deepXSS(description, true);
 
   if (artistUsername === requesterUsername) throw "You cannot request commissions to yourself!";
 

@@ -21,7 +21,7 @@ import { getLikedPosts, getMostRecentPosts, getPostById, getTopLikedPosts } from
 import { postData } from "../data/index.js";
 import { addCommission, getArtistCommissions, getRequestedCommissions } from "../data/commissions.js";
 import { getUserCollection } from "../config/mongoCollections.js";
-import xss from "xss";
+import { deepXSS } from "../data/util.js";
 
 let router = new Router();
 
@@ -297,11 +297,11 @@ router.route("/commission_request").post(async (req, res) => {
     price = price.trim();
     price = parseFloat(price);
 
-    description = validateString(description);
+    description = validateString(description, { length: [1, 1000] });
     if (description.includes("<") || description.includes(">")) {
       throw "Write a new description!";
     }
-    description = xss(description);
+    description = deepXSS(description, true);
    
     if (isNaN(price)) throw "Price must be a number!";
 
