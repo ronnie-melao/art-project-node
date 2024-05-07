@@ -71,7 +71,7 @@ function populateOutgoingCommissionsTable() {
   outgoingCommissionsArray.forEach((request, index) => {
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td>${request.requesterUsername}</td>
+      <td>${request.artistUsername}</td>
       <td>${request.description}</td>
       <td>$${request.price}</td>
       <td>${request.status}</td>
