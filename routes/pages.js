@@ -309,7 +309,7 @@ router.route("/commission_request").post(async (req, res) => {
     if (!existingArtist || !existingArtist.isArtist) throw "This artist does not exist!";
 
   } catch (e) {
-    res.status(400).render("commission_request", {
+    return res.status(400).render("commission_request", {
       e: e,
       user: req.session?.user
     });
