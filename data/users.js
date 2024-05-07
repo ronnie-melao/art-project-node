@@ -81,19 +81,17 @@ export const addUser = async (username, firstName, lastName, email, phoneNumber,
 };
 
 export const loginUser = async (username, password) => {
-  username = validateUsername(username);
-  password = validatePassword(password);
 
   const users = await getUserCollection();
   const user = await users.findOne({ username });
-  if (user == null) throw new Error("Either the username or password is invalid.");
+  if (user == null) throw new Error("Invalid username or password. Please try again.");
 
   // comparing password to database
   let passwordMatch = await bcrypt.compare(password, user.password);
   if (passwordMatch) {
     return user;
   } else {
-    throw new Error("Either the username or password is invalid.");
+    throw new Error("Invalid username or password. Please try again.");
   }
 };
 

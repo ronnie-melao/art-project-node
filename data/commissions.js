@@ -11,6 +11,12 @@ export const addCommission = async (artistUsername, requesterUsername, descripti
   description = validateString(description);
   if (isNaN(price)) throw "Price must be a number!";
 
+  description = validateString(description);
+    if (description.includes("<") || description.includes(">")) {
+      throw "Write a new description!";
+    }
+    description = xss(description);
+
   if (artistUsername === requesterUsername) throw "You cannot request commissions to yourself!";
 
   const users = await getUserCollection();

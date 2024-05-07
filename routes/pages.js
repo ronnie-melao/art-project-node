@@ -21,6 +21,7 @@ import { getLikedPosts, getMostRecentPosts, getPostById, getTopLikedPosts } from
 import { postData } from "../data/index.js";
 import { addCommission, getArtistCommissions, getRequestedCommissions } from "../data/commissions.js";
 import { getUserCollection } from "../config/mongoCollections.js";
+import xss from "xss";
 
 let router = new Router();
 
@@ -51,19 +52,16 @@ router.route("/login").post(async (req, res) => {
 
   try {
 
-    username = validateUsername(username);
-    password = validatePassword(password);
-
     const user = await loginUser(username, password);
 
-    if (!user) throw "User is not in the database!";
+    if (!user) throw "Invalid username or password. Please try again.";
     req.session.user = { ...user };
     res.redirect("/profile/" + user.username);
 
   } catch (e) {
     if (e.message === "Either the username or password is invalid.") {
       res.status(400).render("login", {
-        e: "Please register before logging in.",
+        e: "Invalid username or password. Please try again.",
         user: req.session?.user,
       });
     } else {
@@ -300,9 +298,14 @@ router.route("/commission_request").post(async (req, res) => {
     price = parseFloat(price);
 
     description = validateString(description);
+    if (description.includes("<") || description.includes(">")) {
+      throw "Write a new description!";
+    }
+    description = xss(description);
+   
     if (isNaN(price)) throw "Price must be a number!";
 
-    if (artistUsername === requesterUsername) throw "You cannot request commissions to yourself!";
+    if (artistUsername === requesterUsername) throw "No XSS for you!";
 
     const users = await getUserCollection();
     const existingArtist = await users.findOne({ username: artistUsername });

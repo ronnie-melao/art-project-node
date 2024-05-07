@@ -173,60 +173,60 @@ if (loginForm) {
     try {
       loginErrorDiv.hidden = true;
 
-      // username input validation
-      if (!username) throw "Username not found.";
-      if (typeof (username) !== "string") throw "The username must be a string.";
-      username = username.trim();
-      if (username.length === 0) throw "The username cannot be just empty spaces.";
-      if (username.length < 2) throw "The username must be at least 2 characters long.";
-      if (username.length > 16) throw "The username must be at most 16 characters long.";
-      if (username.includes(" ")) throw "The username cannot contain any spaces.";
-      for (let char of username) {
-        // Check if the character is not a letter or a number
-        if (!((char >= "a" && char <= "z") ||
-          (char >= "A" && char <= "Z") ||
-          (char >= "0" && char <= "9"))) {
-          throw "The username must only contain letters and numbers.";
-        }
-      }
+      // // username input validation
+      // if (!username) throw "Username not found.";
+      // if (typeof (username) !== "string") throw "The username must be a string.";
+      // username = username.trim();
+      // if (username.length === 0) throw "The username cannot be just empty spaces.";
+      // if (username.length < 2) throw "The username must be at least 2 characters long.";
+      // if (username.length > 16) throw "The username must be at most 16 characters long.";
+      // if (username.includes(" ")) throw "The username cannot contain any spaces.";
+      // for (let char of username) {
+      //   // Check if the character is not a letter or a number
+      //   if (!((char >= "a" && char <= "z") ||
+      //     (char >= "A" && char <= "Z") ||
+      //     (char >= "0" && char <= "9"))) {
+      //     throw "The username must only contain letters and numbers.";
+      //   }
+      // }
 
-      // password input validation
-      if (!password) throw "Password not found.";
-      if (typeof (password) !== "string") throw "The password must be a string.";
-      password = password.trim();
-      if (password.length === 0) throw "The password cannot be just empty spaces.";
-      if (password.includes(" ")) throw "The password cannot contain any spaces.";
-      if (password.length < 8 || password.length > 32) throw "The password must be at 8-32 characters long.";
+      // // password input validation
+      // if (!password) throw "Password not found.";
+      // if (typeof (password) !== "string") throw "The password must be a string.";
+      // password = password.trim();
+      // if (password.length === 0) throw "The password cannot be just empty spaces.";
+      // if (password.includes(" ")) throw "The password cannot contain any spaces.";
+      // if (password.length < 8 || password.length > 32) throw "The password must be at 8-32 characters long.";
 
-      const specialCharacters = "!@#$%^&*();:.,?`~+/=<>\\|-";
-      let containsSpecialCharacters = false;
-      for (let i = 0; i < password.length; i++) {
-        if (specialCharacters.includes(password[i])) {
-          containsSpecialCharacters = true;
-          break;
-        }
-      }
-      if (!containsSpecialCharacters) throw "The password must contain at least one special character.";
+      // const specialCharacters = "!@#$%^&*();:.,?`~+/=<>\\|-";
+      // let containsSpecialCharacters = false;
+      // for (let i = 0; i < password.length; i++) {
+      //   if (specialCharacters.includes(password[i])) {
+      //     containsSpecialCharacters = true;
+      //     break;
+      //   }
+      // }
+      // if (!containsSpecialCharacters) throw "The password must contain at least one special character.";
 
-      const numbers = "0123456789";
-      let containsNumbers = false;
-      for (let i = 0; i < password.length; i++) {
-        if (numbers.includes(password[i])) {
-          containsNumbers = true;
-          break;
-        }
-      }
-      if (!containsNumbers) throw "The password must contain at least one number.";
+      // const numbers = "0123456789";
+      // let containsNumbers = false;
+      // for (let i = 0; i < password.length; i++) {
+      //   if (numbers.includes(password[i])) {
+      //     containsNumbers = true;
+      //     break;
+      //   }
+      // }
+      // if (!containsNumbers) throw "The password must contain at least one number.";
 
-      const uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      let containsUppercaseLetters = false;
-      for (let i = 0; i < password.length; i++) {
-        if (uppercaseLetters.includes(password[i])) {
-          containsUppercaseLetters = true;
-          break;
-        }
-      }
-      if (!containsUppercaseLetters) throw "The password must contain at least one uppercase letter.";
+      // const uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      // let containsUppercaseLetters = false;
+      // for (let i = 0; i < password.length; i++) {
+      //   if (uppercaseLetters.includes(password[i])) {
+      //     containsUppercaseLetters = true;
+      //     break;
+      //   }
+      // }
+      // if (!containsUppercaseLetters) throw "The password must contain at least one uppercase letter.";
 
       loginForm.submit();
 
