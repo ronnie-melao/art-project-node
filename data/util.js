@@ -142,5 +142,12 @@ export const imageFilesToLinks = async (files) => {
   return result;
 };
 
+export const removeImageIfLocal = async (file) => {
+  if (typeof file !== "string") return;
+  if (!file.startsWith("/public") || !file.includes("image")) return;
+  let filePath = path.join(__dirname, "..", file);
+  fs.unlinkSync(filePath);
+};
+
 export const DUPLICATE_ID_ERROR_CODE = 11000;
 export const SALT_ROUNDS = 12;
