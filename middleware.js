@@ -52,7 +52,6 @@ router.route("/logout").get(userOnlyMDWare);
 router.route("/profile").get(userOnlyMDWare);
 router.route("/switchProfile").all(userOnlyMDWare);
 router.route("/liked").all(userOnlyMDWare);
-router.route("/settings").all(userOnlyMDWare);
 router.route("/commissions").all(userOnlyMDWare);
 router.route("/commission_request").all(userOnlyMDWare);
 router.route("/review/:id").all(userOnlyMDWare);
