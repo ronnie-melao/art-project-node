@@ -256,8 +256,13 @@ router.route("/switchProfile").post(async (req, res) => {
 });
 router.route("/commissions").get(async (req, res) => {
   try {
+    let commissionsArray;
     let current_username = req.session.user.username;
-    let commissionsArray = await getArtistCommissions(current_username);
+    if (req.session.user.isArtist === true) {
+      commissionsArray = await getArtistCommissions(current_username);
+    } else {
+      commissionsArray = false;
+    }
     let outgoingCommissionsArray = await getRequestedCommissions(current_username);
     res.render("commissions", {
       title: "Art Site",
