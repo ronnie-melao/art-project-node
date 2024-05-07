@@ -1,6 +1,7 @@
 import { closeConnection, dbConnection } from "../config/mongoConnection.js";
 import * as users from "../data/users.js";
 import * as posts from "../data/posts.js";
+import * as commissions from "../data/commissions.js";
 
 const db = await dbConnection();
 await db.dropDatabase();
@@ -57,6 +58,8 @@ for (let i = 1; i <= 5; i++) {
   await posts.addPost(chris, `A Zorua A day ${i}`, [`/public/images/zorua${i}.jpeg`], "", [], threadID);
 }
 
+//add commission request
+let williamCommission = await commissions.addCommission('william', 'sally', 'Looking for a fun piece of art. Surprise me.', 1000);
 
 //Like functionality
 let sally = await users.addUser("sally", "Sally", "Seashell", "sally@a.com", "201-123-1324", "I'm sally", "", "D0nt3nter!2", false);
