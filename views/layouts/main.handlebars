@@ -28,7 +28,8 @@
         {{/if}}
         <a class="icon no-dec" href="/liked"><img src="/public/icon/mylikes.svg" alt="liked posts"
                                                   title="Liked Posts"></a>
-        <a class="icon no-dec" href="/commissions"><img src="/public/icon/commissions.svg"
+        <a class="icon no-dec{{#if user.hasPending}} red-outline{{/if}}" href="/commissions"><img
+          src="/public/icon/commissions.svg"
                                                         alt="commissions" title="Commissions"></a>
         <a class="icon no-dec" href="/commission_request"><img src="/public/icon/commission_req.svg"
                                                                alt="commission request" title="Commission Request"></a>
