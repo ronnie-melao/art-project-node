@@ -65,7 +65,7 @@ router
     try {
       req.params.id = validateId(req.params.id, "Id URL Param");
     } catch (e) {
-      return res.status(400).render("error", { title: "error", error: e });
+      return res.status(400).render("error", { title: "error", error: e, user: req.session?.user });
     }
     try {
       const post = await postData.getPostById(req.params.id);
@@ -94,7 +94,7 @@ router
     try {
       req.params.id = validateId(req.params.id, "Id URL Param");
     } catch (e) {
-      return res.status(400).render("error", { title: "error", error: e });
+      return res.status(400).render("error", { title: "error", error: e, user: req.session?.user });
     }
     try {
       const post = await postData.getPostById(req.params.id);
@@ -125,7 +125,7 @@ router
     try {
       postId = validateId(postId, "Post ID URL Param");
     } catch (e) {
-      return res.status(400).render("error", { title: "Error", error: e });
+      return res.status(400).render("error", { title: "Error", error: e, user: req.session?.user });
     }
 
     // validate 
@@ -151,12 +151,16 @@ router
     try {
       post = await postData.getPostById(postId);
     } catch (e) {
-      return res.status(404).render("error", { title: "Error", error: e });
+      return res.status(404).render("error", { title: "Error", error: e, user: req.session?.user });
     }
 
     // Check if user is the author
     if (req.session?.user?._id !== post.poster._id.toString()) {
-      return res.status(403).render("error", { title: "Unauthorized", error: "You do not have permission to edit this post" });
+      return res.status(403).render("error", {
+        title: "Unauthorized",
+        error: "You do not have permission to edit this post",
+        user: req.session?.user,
+      });
     }
 
     // Update the post
@@ -210,7 +214,7 @@ router
       req.params.id = validateId(req.params.id, "Id URL Param");
       req.params.commentId = validateId(req.params.commentId, "Id Comment URL Param");
     } catch (e) {
-      return res.status(400).render("error", { title: "error", error: e });
+      return res.status(400).render("error", { title: "error", error: e, user: req.session?.user });
     }
     try {
       let postId = req.params.id;
@@ -239,7 +243,7 @@ router
       req.session.user._id = validateId(req.session.user._id, "User ID");
     } catch (e) {
       console.log('failed here');
-      return res.status(400).render("error", { title: "error", error: e });
+      return res.status(400).render("error", { title: "error", error: e, user: req.session?.user });
     }
     try{
       let postId = req.params.id;

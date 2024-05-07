@@ -39,7 +39,7 @@ router.route("/").get(async (req, res) => {
 });
 
 router.route("/login").get(async (req, res) => {
-  res.render("login", { title: "Art Site", layout: "login" });
+  res.render("login", { title: "Art Site", layout: "login", user: req.session?.user });
 });
 
 router.route("/login").post(async (req, res) => {
@@ -64,16 +64,20 @@ router.route("/login").post(async (req, res) => {
     if (e.message === "Either the username or password is invalid.") {
       res.status(400).render("login", {
         e: "Please register before logging in.",
+        user: req.session?.user,
       });
     } else {
-      res.status(400).render("login", { e: "Invalid username or password. Please try again." });
+      res.status(400).render("login", {
+        e: "Invalid username or password. Please try again.",
+        user: req.session?.user,
+      });
     }
   }
 
 });
 
 router.route("/register").get(async (req, res) => {
-  res.render("register", { title: "Art Site", layout: "login" });
+  res.render("register", { title: "Art Site", layout: "login", user: req.session?.user });
 });
 
 router.route("/register").post(async (req, res) => {
@@ -113,7 +117,7 @@ router.route("/register").post(async (req, res) => {
       throw "That username is already taken! Please try another one.";
 
   } catch (e) {
-    res.status(400).render("register", { e });
+    res.status(400).render("register", { e, user: req.session?.user });
   }
 });
 
@@ -131,12 +135,12 @@ router.route("/review/:username").get(async (req, res) => {
   } catch (e) {
     return res.status(401).render("error", { title: "error", error: "Unauthorized", user: req.session?.user });
   }
-  
+
   try {
     let reviewed = await checkReviewer(req.params.username, req.session?.user?.username);
-    res.render("review", { title: "Create Review", profile: profile, reviewed: reviewed });
-  }  catch (e) {
-    return res.status(401).render("error", { title: "error", error: e , user: req.session?.user });
+    res.render("review", { title: "Create Review", profile: profile, reviewed: reviewed, user: req.session?.user });
+  } catch (e) {
+    return res.status(401).render("error", { title: "error", error: e, user: req.session?.user });
   }
 });
 
@@ -144,11 +148,11 @@ router.route("/review/:username").post(async (req, res) => {
   let profile;
   let { reviewText, deleteReview } = req.body;
   let reviewed = false;
-  
+
   try {
     profile = await getUserByUsername(req.params.username);
   } catch (e) {
-    return res.status(401).render("error", { title: "error", error: e , user: req.session?.user });
+    return res.status(401).render("error", { title: "error", error: e, user: req.session?.user });
   }
 
   try {
@@ -159,7 +163,7 @@ router.route("/review/:username").post(async (req, res) => {
 
   try {
     // converts deleteReview to boolean
-    deleteReview = deleteReview === "on" ? true : false;
+    deleteReview = deleteReview === "on";
     deleteReview = validateBoolean(deleteReview);
 
     reviewed = await checkReviewer(req.params.username, req.session?.user?.username);
@@ -172,19 +176,18 @@ router.route("/review/:username").post(async (req, res) => {
     if (!isArtist)
       throw new Error("You cannot write a review for a non-artist account!");
 
-    if (deleteReview){
+    if (deleteReview) {
       const review = await deleteReviewFunction(req.params.username, req.session.user.username);
 
       if (review)
         res.status(200).redirect(`/profile/${req.params.username}`);
       else
         throw "The review could not be deleted!";
-    }
-    else {
+    } else {
       reviewText = validateString(reviewText, { length: [1, 1024] });
 
       const review = await addReview(req.params.username, reviewText, req.session.user.username);
-  
+
       if (review)
         res.status(200).redirect(`/profile/${req.params.username}`);
       else
@@ -192,7 +195,13 @@ router.route("/review/:username").post(async (req, res) => {
     }
 
   } catch (e) {
-    res.status(400).render("review", { title: "Create Review", profile: profile, reviewed: reviewed, e });
+    res.status(400).render("review", {
+      title: "Create Review",
+      profile: profile,
+      reviewed: reviewed,
+      e,
+      user: req.session?.user,
+    });
   }
 });
 
@@ -229,7 +238,7 @@ router.route("/profile/:username").get(async (req, res) => {
       posts: posts.toReversed(),
     });
   } catch (e) {
-    res.status(404).render("error", { error: e });
+    res.status(404).render("error", { error: e, user: req.session?.user });
   }
 });
 
@@ -258,7 +267,8 @@ router.route("/commissions").get(async (req, res) => {
       outgoingCommissionsArray: JSON.stringify(outgoingCommissionsArray)
     });
   } catch (e) {
-    res.status(500).render("commissions", {e: "Internal Server Error"});
+    console.log(e);
+    res.status(500).render("commissions", { e: "Internal Server Error", user: req.session?.user });
   }
 });
 
@@ -285,9 +295,9 @@ router.route("/commission_request").post(async (req, res) => {
 
     description = validateString(description);
     if (isNaN(price)) throw "Price must be a number!";
-    
+
     const users = await getUserCollection();
-    const existingArtist = await users.findOne({username: artistUsername});
+    const existingArtist = await users.findOne({ username: artistUsername });
     if (!existingArtist) throw "This artist does not exist!";
 
   } catch (e) {
@@ -310,17 +320,16 @@ router.route("/liked").get(async (req, res) => {
       res.render("likedposts", {
         title: "Liked Posts",
         user: req.session?.user,
-        likedPosts: likedPosts
+        likedPosts: likedPosts,
       });
-    }
-    else {
+    } else {
       res.render("likedposts", {
         title: "Liked Posts",
-        user: req.session?.user
+        user: req.session?.user,
       });
     }
   } catch (e) {
-    res.status(400).render("likedposts", { e });
+    res.status(400).render("likedposts", { e, user: req.session?.user });
   }
 });
 

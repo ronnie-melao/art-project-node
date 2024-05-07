@@ -26,7 +26,7 @@ $(document).on("click", ".cancel-reply", function() {
 // Bind submit event to reply forms
 $(document).on("submit", ".reply-form", function(event) {
   event.preventDefault();
-  console.log("in replies")
+  console.log("in replies");
   let replyFormContainer = $(this).closest(".reply-form-container");
   let replyArea = replyFormContainer.closest(".reply-container").siblings(".reply-area");
   let replyForm = replyFormContainer.find("form");
@@ -390,11 +390,12 @@ if (reviewForm) {
       // deleteReview input validation
       if (typeof (deleteReview) !== "boolean") throw "You must designate whether you want to delete the review or not.";
 
-      if (deleteReview == false){
+      if (deleteReview === false) {
         // reviewText input validation
         reviewText = reviewText.trim();
         if (typeof (reviewText) !== "string") throw "Your review must be a string.";
-        if (reviewText.length > 1024) throw "Your review must be at most 1024 characters";
+        if (reviewText.length < 1) throw "Your review must have at least 1 character";
+        if (reviewText.length > 1024) throw "Your review must have at most 1024 characters";
       }
 
     } catch (e) {
@@ -456,10 +457,10 @@ $switchProfileButton.on("click", function() {
 });
 
 let likeButton = $("#like-button");
-likeButton.on('click', function(){
+likeButton.on("click", function() {
   // Set up AJAX request config
   console.log("in like button");
-  let postId = likeButton.data('id');
+  let postId = likeButton.data("id");
   let requestConfig = {
     method: "POST",
     url: "/posts/" + postId + "/like",
@@ -470,22 +471,20 @@ likeButton.on('click', function(){
   $.ajax(requestConfig)
     .then(function(responseMessage) {
       console.log(responseMessage);
-      
-      let likeCountElement = $('#like-count');
-      likeCountElement.text('Liked by ' + responseMessage.post.likes.length);
-      if(responseMessage.newLikedState){
-        likeButton.html('<img class="icon-like" src="/public/icon/like.svg" alt="Liked" title="Unlike" id="like-button-is-liked">');
-      }
-      else{
-        likeButton.html('<img class="icon-like" src="/public/icon/mylikes.svg" alt="Not Liked" title="Like" id="like-button-is-not-liked">');
+
+      let likeCountElement = $("#like-count");
+      likeCountElement.text("Liked by " + responseMessage.post.likes.length);
+      if (responseMessage.newLikedState) {
+        likeButton.html("<img class=\"icon-like\" src=\"/public/icon/like.svg\" alt=\"Liked\" title=\"Unlike\" id=\"like-button-is-liked\">");
+      } else {
+        likeButton.html("<img class=\"icon-like\" src=\"/public/icon/mylikes.svg\" alt=\"Not Liked\" title=\"Like\" id=\"like-button-is-not-liked\">");
       }
     })
     .fail(function(xhr, error) {
       if (xhr.status === 401) {
         // Redirect to login page if user is not authenticated
         window.location.href = "/login";
-      }
-      else{
+      } else {
         console.error("Error liking post:", error);
         alert("Failed to like post");
       }
@@ -493,52 +492,50 @@ likeButton.on('click', function(){
 });
 
 let editPostForm = document.getElementById("edit-post-form");
-if(editPostForm){
-  console.log('here');
-  
+if (editPostForm) {
+  console.log("here");
 
-  editPostForm.addEventListener("submit", (event) =>{
-    let postTitle = document.getElementById('post-title').value;
-  let postDescription = document.getElementById('post-description').value;
-  let keywords = document.getElementById('keywords').value;
-  let clientErrors = document.getElementById('client-errors');
-  let errorsDiv = document.getElementById('error');
 
-    console.log('edit form submission fired');
+  editPostForm.addEventListener("submit", (event) => {
+    let postTitle = document.getElementById("post-title").value;
+    let postDescription = document.getElementById("post-description").value;
+    let keywords = document.getElementById("keywords").value;
+    let clientErrors = document.getElementById("client-errors");
+    let errorsDiv = document.getElementById("error");
+
+    console.log("edit form submission fired");
     errors = [];
     clientErrors.innerHTML = "";
     clientErrors.hidden = true;
-    if(errorsDiv) errorsDiv.hidden = true;
-    try{
-      if(!postTitle) throw 'Title not found';
-      if(typeof postTitle !== 'string') throw 'Title must be a string';
+    if (errorsDiv) errorsDiv.hidden = true;
+    try {
+      if (!postTitle) throw "Title not found";
+      if (typeof postTitle !== "string") throw "Title must be a string";
       postTitle = postTitle.trim();
-      if(postTitle.length === 0) throw 'Title cannot be blank or empty spaces';
-    }
-    catch(e){
+      if (postTitle.length === 0) throw "Title cannot be blank or empty spaces";
+    } catch (e) {
       errors.push(e);
     }
-    try{
-      if(!postDescription) throw 'Description not found';
-      if(typeof postDescription !== 'string') throw 'Description must be a string';
+    try {
+      if (!postDescription) throw "Description not found";
+      if (typeof postDescription !== "string") throw "Description must be a string";
       postDescription = postDescription.trim();
-      if(postDescription.length === 0) throw 'Description cannot be blank or empty spaces';
-    }
-    catch(e){
+      if (postDescription.length === 0) throw "Description cannot be blank or empty spaces";
+    } catch (e) {
       errors.push(e);
     }
-    if(errors.length > 0){
-      event.preventDefault()
+    if (errors.length > 0) {
+      event.preventDefault();
       clientErrors.hidden = false;
-      for(let e of errors){
-          const message = typeof e === 'string' ? e : e.message;
-          let li = document.createElement('li');
-          li.classList.add('error');
-          li.innerHTML = message;
-          clientErrors.append(li);
+      for (let e of errors) {
+        const message = typeof e === "string" ? e : e.message;
+        let li = document.createElement("li");
+        li.classList.add("error");
+        li.innerHTML = message;
+        clientErrors.append(li);
       }
       editPostForm.appendChild(clientErrors);
     }
-  })
-};
+  });
+}
 

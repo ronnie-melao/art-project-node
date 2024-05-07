@@ -1,19 +1,20 @@
-<h1>{{#if isArtist}}Artist{{else}}User{{/if}} Page</h1>
+<h1>{{#if profile.isArtist}}Artist{{else}}User{{/if}} Page</h1>
 <div class="profile-box">
   <strong>{{profile.firstName}} {{profile.lastName}}</strong><br>
   {{#if isArtist}}🖌️{{/if}}{{profile.username}}
 </div>
-{{#if isArtist}}
+{{#if profile.isArtist}}
   {{#if profile.statement}}
     <h3>Artists Statement:</h3>
     <p>{{profile.statement}}</p>
   {{/if}}
+{{/if}}
   {{#if profile.bio}}
     <h3>Biography:</h3>
     <p>{{profile.bio}}</p>
   {{/if}}
 
-
+{{#if profile.isArtist}}
   <h3>Reviews:</h3>
   {{#unless isSelf}}
     {{#if reviewed}}
@@ -33,9 +34,6 @@
 {{/if}}
 
 {{#if isSelf}}
-  <br><a href="/posts/create">Create New Post</a>
-  <br><a href="/likedPosts">View My Liked Posts</a>
-  <br><a href="/commission_request">Request a Commission</a>
   <br><button id="switchProfileButton" data-id="{{profile.isArtist}}">Switch to {{oppositeAccountType}}</button>
   {{!-- <br><a href="/settings">Preferences</a> --}}
   <br><a href="/logout">Log Out</a>

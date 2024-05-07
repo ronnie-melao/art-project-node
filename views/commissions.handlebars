@@ -1,6 +1,6 @@
-<h2>Incoming Commissions Requests</h2>
-
-<table id="incoming_requests">
+{{#if user.isArtist}}
+  <h1>Incoming Commissions Requests</h1>
+  <table id="incoming_requests">
   <thead>
   <tr>
     <th>Name</th>
@@ -13,10 +13,10 @@
   <!-- Table rows will go here -->
   </tbody>
 </table>
+{{/if}}
 
 
-
-<h2>Outgoing Commissions Requests</h2>
+<h1>Outgoing Commissions Requests</h1>
 
 <table id="outgoing_requests">
   <thead>

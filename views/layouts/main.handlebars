@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>{{title}}</title>
+  <title>{{#if title}}{{title}}{{else}}Art Site{{/if}}</title>
   <link rel="stylesheet" href="/public/css/styles.css">
   <link rel="icon" href="/public/icon/logo.svg">
 </head>
@@ -25,13 +25,13 @@
         {{#if user.isArtist}}
           <a class="icon no-dec" href="/posts/create"><img src="/public/icon/post.svg" alt="create post"
                                                            title="Create Post"></a>
-          <a class="icon no-dec" href="/commissions"><img src="/public/icon/commissions.svg"
-                                                          alt="commissions" title="Commissions"></a>
         {{/if}}
-        <a class="icon no-dec" href="/commission_request"><img src="/public/icon/commission_req.svg"
-                                                               alt="commission request" title="Commission Request"></a>
         <a class="icon no-dec" href="/liked"><img src="/public/icon/mylikes.svg" alt="liked posts"
                                                   title="Liked Posts"></a>
+        <a class="icon no-dec" href="/commissions"><img src="/public/icon/commissions.svg"
+                                                        alt="commissions" title="Commissions"></a>
+        <a class="icon no-dec" href="/commission_request"><img src="/public/icon/commission_req.svg"
+                                                               alt="commission request" title="Commission Request"></a>
         <a class="icon no-dec" href="/profile/{{user.username}}"><img src="/public/icon/profile.svg"
                                                                       alt="profile" title="Profile"></a>
         <a class="icon no-dec" href="/settings"><img src="/public/icon/settings.svg" alt="settings"
