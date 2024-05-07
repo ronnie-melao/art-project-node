@@ -288,4 +288,29 @@ router
     }
   });
 
+// Delete a post
+router
+  .route("/delete/:id")
+  .post(async (req, res) => {
+    let postId = req.params.id;
+    try {
+      postId = validateId(postId, "Post ID URL Param");
+    } catch (e) {
+      return res.status(400).render("error", { title: "Error", error: e });
+    }
+
+    try {
+      const post = await postData.getPostById(postId);
+      if (req.session?.user?._id !== post.poster._id.toString()) {
+        return res.status(403).render("error", { title: "Unauthorized", error: "You do not have permission to delete this post" });
+      }
+
+      await deletePostById(postId, req.session.user._id);
+      res.redirect("/posts");
+    } catch (e) {
+      console.error(e);
+      return res.status(500).render("error", { title: "Error", error: "Failed to delete the post" });
+    }
+  });
+
 export default router;

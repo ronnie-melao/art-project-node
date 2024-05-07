@@ -1,7 +1,7 @@
 import { tryOrPushErr, validateArray, validateId, validateString, validateUsername } from "./validators.js";
 import { getPostCollection } from "../config/mongoCollections.js";
 import { deepXSS, getSearchTerms, relativeTime } from "./util.js";
-import { addPostToThread, addPostToUserPosts, getUserById, addPostToUserLikedPosts, removePostFromUserLikedPosts} from "./users.js";
+import { addPostToThread, addPostToUserPosts, getUserById, addPostToUserLikedPosts, removePostFromUserLikedPosts, removePostFromUserPosts, removePostFromUserThreads} from "./users.js";
 import { ObjectId } from "mongodb";
 
 /**
@@ -262,3 +262,40 @@ export const updatePost = async (postId, userId, title, description, keywords) =
   if (!updatedInformation) throw "Updating failed!";
   return postId;
 };
+
+export const deletePost = async (postId, userId) =>{
+  let errors = [];
+  postId = tryOrPushErr(errors, { postId }, validateId);
+  userId = tryOrPushErr(errors, { userId }, validateId);
+  if (errors.length > 0) {
+    throw errors;
+  }
+  
+  // throws if poster is not a user
+  await getUserById(userId);
+  const posts = await getPostCollection();
+  //throws if post doesnt exist
+  let post = await getPostById(postId);
+  if(post.poster._id.toString() !== userId) throw 'Not authorized to update this post';
+
+  //remove postID from user's posts
+  const user = await getUserById(userId); //throws if user doesnt exist
+  await removePostFromUserPosts(userId, postId);
+
+  //remove postID from all users' liked posts
+  for (const likedUserId of post.likes) {
+      await removePostFromUserLikedPosts(likedUserId, postId);
+  }
+  
+
+  //remove postID from related threads
+  await removePostFromUserThreads(userId, postId, post.thread);
+
+  //remove images from storage
+
+
+  //remove post from database
+  const deleteResult = await posts.deleteOne({ _id: new ObjectId(postId) });
+  if (!deleteResult || deleteResult.deletedCount < 1) throw "Deleting post failed";
+
+}

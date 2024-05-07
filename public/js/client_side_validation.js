@@ -542,3 +542,16 @@ if(editPostForm){
   })
 };
 
+const deleteForm = document.getElementById("delete-post-form");
+if(deleteForm){
+  deleteForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    // Display a confirmation prompt
+    const confirmed = confirm("Are you sure you want to delete this post?");
+    if (confirmed) {
+      // Submit the form if confirmed
+      deleteForm.submit();
+    }
+  })
+};
