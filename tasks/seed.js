@@ -24,7 +24,7 @@ await posts.updatePost(simonePost.toString(), simone, "Saint James Major", "Temp
 let simonePost2 = await posts.addPost(simone, "Saint", ["https://media.nga.gov/iiif/ce6b3e55-a43c-4555-949d-f6bf60600bce/full/!384,384/0/default.jpg"], "Tempura on panel", [], "");
 await posts.updatePost(simonePost2.toString(), simone, "Saint Judas Thaddeus", "Tempura on panel", ["portrait"]);
 let simonePost3 = await posts.addPost(simone, "Test Delete", ["https://media.nga.gov/iiif/ce6b3e55-a43c-4555-949d-f6bf60600bce/full/!384,384/0/default.jpg"], "Tempura on panel", [], "");
-await posts.deletePost(simonePost3.toString(), simone);
+await posts.deletePostById(simonePost3.toString(), simone);
 
 //Post with comments
 let comment = await posts.addPost(id, "Comment Post", ["https://img.youtube.com/vi/77PsqaWzwG0/0.jpg", "https://img.youtube.com/vi/QsnkNYnsn2c/0.jpg"], "caption", ["keyword"]);
