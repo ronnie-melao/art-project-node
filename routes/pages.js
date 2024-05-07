@@ -19,7 +19,7 @@ import {
 } from "../data/validators.js";
 import { getLikedPosts, getMostRecentPosts, getPostById, getTopLikedPosts } from "../data/posts.js";
 import { postData } from "../data/index.js";
-import { addCommission, getArtistCommissions } from "../data/commissions.js";
+import { addCommission, getArtistCommissions, getRequestedCommissions } from "../data/commissions.js";
 import { getUserCollection } from "../config/mongoCollections.js";
 
 let router = new Router();
@@ -249,11 +249,13 @@ router.route("/commissions").get(async (req, res) => {
   try {
     let current_username = req.session.user.username;
     let commissionsArray = await getArtistCommissions(current_username);
+    let outgoingCommissionsArray = await getRequestedCommissions(current_username);
     res.render("commissions", {
       title: "Art Site",
       user: req.session?.user,
       script_partial: "commissions_script",
-      commissionsArray: JSON.stringify(commissionsArray)
+      commissionsArray: JSON.stringify(commissionsArray),
+      outgoingCommissionsArray: JSON.stringify(outgoingCommissionsArray)
     });
   } catch (e) {
     res.status(500).render("commissions", {e: "Internal Server Error"});

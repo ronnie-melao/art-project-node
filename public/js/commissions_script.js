@@ -52,3 +52,25 @@ document.querySelectorAll('select').forEach(select => {
     }
   });
 });
+
+
+function populateOutgoingCommissionsTable() {
+  const tableBody = document.querySelector("#outgoing_requests tbody");
+  // Clear existing rows
+  tableBody.innerHTML = "";
+
+  // Iterate over outgoingCommissionsArray and create table rows
+  outgoingCommissionsArray.forEach((request, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${request.requesterUsername}</td>
+      <td>${request.description}</td>
+      <td>$${request.price}</td>
+      <td>${request.status}</td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+
+if (outgoingCommissionsArray.length > 0)
+  populateOutgoingCommissionsTable();
