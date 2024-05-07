@@ -1,5 +1,6 @@
 import { getCommissionCollection, getUserCollection } from "../config/mongoCollections.js";
 import { validateString } from "./validators.js";
+import xss from "xss";
 
 export const addCommission = async (artistUsername, requesterUsername, description, price) => {
   if (!artistUsername) throw "No artist!";
