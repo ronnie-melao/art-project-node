@@ -38,20 +38,37 @@ const nonUsersOnlyMDWare = async (req, res, next) => {
     next();
   }
 };
-router.route("/login").get(nonUsersOnlyMDWare);
-router.route("/register").get(nonUsersOnlyMDWare);
+router.route("/login").all(nonUsersOnlyMDWare);
+router.route("/register").all(nonUsersOnlyMDWare);
 const userOnlyMDWare = async (req, res, next) => {
-
   if (req.session?.user) {
     next();
   } else {
     res.redirect("/login");
   }
 };
+
 router.route("/logout").get(userOnlyMDWare);
 router.route("/profile").get(userOnlyMDWare);
-router.route("/posts/create").all(userOnlyMDWare);
+router.route("/switchProfile").all(userOnlyMDWare);
+router.route("/liked").all(userOnlyMDWare);
+router.route("/commissions").all(userOnlyMDWare);
+router.route("/commission_request").all(userOnlyMDWare);
 router.route("/review/:id").all(userOnlyMDWare);
-router.route("/posts/edit").all(userOnlyMDWare);
+
+const artistOnlyMDWare = async (req, res, next) => {
+  if (!req.session?.user) {
+    res.redirect("/login");
+  } else if (!req.session.user.isArtist) {
+    res.status(403).render("error", { error: "You must be an artist to access this page!", user: req.session?.user });
+  } else {
+    next();
+  }
+};
+
+router.route("/posts/create").all(artistOnlyMDWare);
+router.route("/posts/edit").all(artistOnlyMDWare);
+router.route("/posts/delete").all(artistOnlyMDWare);
+router.route("/commissions/change-status").all(artistOnlyMDWare);
 
 export default router;

@@ -19,7 +19,7 @@ import {
 } from "../data/validators.js";
 import { getLikedPosts, getMostRecentPosts, getPostById, getTopLikedPosts } from "../data/posts.js";
 import { postData } from "../data/index.js";
-import { addCommission, getArtistCommissions } from "../data/commissions.js";
+import { addCommission, getArtistCommissions, getRequestedCommissions } from "../data/commissions.js";
 import { getUserCollection } from "../config/mongoCollections.js";
 
 let router = new Router();
@@ -39,7 +39,7 @@ router.route("/").get(async (req, res) => {
 });
 
 router.route("/login").get(async (req, res) => {
-  res.render("login", { title: "Art Site", layout: "login" });
+  res.render("login", { title: "Art Site", layout: "login", user: req.session?.user });
 });
 
 router.route("/login").post(async (req, res) => {
@@ -64,16 +64,20 @@ router.route("/login").post(async (req, res) => {
     if (e.message === "Either the username or password is invalid.") {
       res.status(400).render("login", {
         e: "Please register before logging in.",
+        user: req.session?.user,
       });
     } else {
-      res.status(400).render("login", { e: "Invalid username or password. Please try again." });
+      res.status(400).render("login", {
+        e: "Invalid username or password. Please try again.",
+        user: req.session?.user,
+      });
     }
   }
 
 });
 
 router.route("/register").get(async (req, res) => {
-  res.render("register", { title: "Art Site", layout: "login" });
+  res.render("register", { title: "Art Site", layout: "login", user: req.session?.user });
 });
 
 router.route("/register").post(async (req, res) => {
@@ -113,7 +117,7 @@ router.route("/register").post(async (req, res) => {
       throw "That username is already taken! Please try another one.";
 
   } catch (e) {
-    res.status(400).render("register", { e });
+    res.status(400).render("register", { e, user: req.session?.user });
   }
 });
 
@@ -131,12 +135,12 @@ router.route("/review/:username").get(async (req, res) => {
   } catch (e) {
     return res.status(401).render("error", { title: "error", error: "Unauthorized", user: req.session?.user });
   }
-  
+
   try {
     let reviewed = await checkReviewer(req.params.username, req.session?.user?.username);
-    res.render("review", { title: "Create Review", profile: profile, reviewed: reviewed });
-  }  catch (e) {
-    return res.status(401).render("error", { title: "error", error: e , user: req.session?.user });
+    res.render("review", { title: "Create Review", profile: profile, reviewed: reviewed, user: req.session?.user });
+  } catch (e) {
+    return res.status(401).render("error", { title: "error", error: e, user: req.session?.user });
   }
 });
 
@@ -144,11 +148,11 @@ router.route("/review/:username").post(async (req, res) => {
   let profile;
   let { reviewText, deleteReview } = req.body;
   let reviewed = false;
-  
+
   try {
     profile = await getUserByUsername(req.params.username);
   } catch (e) {
-    return res.status(401).render("error", { title: "error", error: e , user: req.session?.user });
+    return res.status(401).render("error", { title: "error", error: e, user: req.session?.user });
   }
 
   try {
@@ -159,7 +163,7 @@ router.route("/review/:username").post(async (req, res) => {
 
   try {
     // converts deleteReview to boolean
-    deleteReview = deleteReview === "on" ? true : false;
+    deleteReview = deleteReview === "on";
     deleteReview = validateBoolean(deleteReview);
 
     reviewed = await checkReviewer(req.params.username, req.session?.user?.username);
@@ -172,19 +176,18 @@ router.route("/review/:username").post(async (req, res) => {
     if (!isArtist)
       throw new Error("You cannot write a review for a non-artist account!");
 
-    if (deleteReview){
+    if (deleteReview) {
       const review = await deleteReviewFunction(req.params.username, req.session.user.username);
 
       if (review)
         res.status(200).redirect(`/profile/${req.params.username}`);
       else
         throw "The review could not be deleted!";
-    }
-    else {
+    } else {
       reviewText = validateString(reviewText, { length: [1, 1024] });
 
       const review = await addReview(req.params.username, reviewText, req.session.user.username);
-  
+
       if (review)
         res.status(200).redirect(`/profile/${req.params.username}`);
       else
@@ -192,7 +195,13 @@ router.route("/review/:username").post(async (req, res) => {
     }
 
   } catch (e) {
-    res.status(400).render("review", { title: "Create Review", profile: profile, reviewed: reviewed, e });
+    res.status(400).render("review", {
+      title: "Create Review",
+      profile: profile,
+      reviewed: reviewed,
+      e,
+      user: req.session?.user,
+    });
   }
 });
 
@@ -229,7 +238,7 @@ router.route("/profile/:username").get(async (req, res) => {
       posts: posts.toReversed(),
     });
   } catch (e) {
-    res.status(404).render("error", { error: e });
+    res.status(404).render("error", { error: e, user: req.session?.user });
   }
 });
 
@@ -247,16 +256,24 @@ router.route("/switchProfile").post(async (req, res) => {
 });
 router.route("/commissions").get(async (req, res) => {
   try {
+    let commissionsArray;
     let current_username = req.session.user.username;
-    let commissionsArray = await getArtistCommissions(current_username);
+    if (req.session.user.isArtist === true) {
+      commissionsArray = await getArtistCommissions(current_username);
+    } else {
+      commissionsArray = false;
+    }
+    let outgoingCommissionsArray = await getRequestedCommissions(current_username);
     res.render("commissions", {
       title: "Art Site",
       user: req.session?.user,
       script_partial: "commissions_script",
-      commissionsArray: JSON.stringify(commissionsArray)
+      commissionsArray: JSON.stringify(commissionsArray),
+      outgoingCommissionsArray: JSON.stringify(outgoingCommissionsArray)
     });
   } catch (e) {
-    res.status(500).render("commissions", {e: "Internal Server Error"});
+    console.log(e);
+    res.status(500).render("commissions", { e: "Internal Server Error", user: req.session?.user });
   }
 });
 
@@ -276,6 +293,7 @@ router.route("/commission_request").post(async (req, res) => {
     if (!artistUsername) throw "No artist!";
     if (!description) throw "No description!";
     if (!price) throw "No price!";
+    if (!requesterUsername) throw "You are not signed in!";
     artistUsername = artistUsername.trim();
     description = description.trim();
     price = price.trim();
@@ -283,20 +301,26 @@ router.route("/commission_request").post(async (req, res) => {
 
     description = validateString(description);
     if (isNaN(price)) throw "Price must be a number!";
-    
+
+    if (artistUsername === requesterUsername) throw "You cannot request commissions to yourself!";
+
     const users = await getUserCollection();
-    const existingArtist = await users.findOne({username: artistUsername});
-    if (!existingArtist) throw "This artist does not exist!";
+    const existingArtist = await users.findOne({ username: artistUsername });
+    if (!existingArtist || !existingArtist.isArtist) throw "This artist does not exist!";
 
   } catch (e) {
-    res.status(400).render("commission_request", { e: e, user: req.session?.user });
+    return res.status(400).render("commission_request", {
+      e: e,
+      user: req.session?.user
+    });
   }
   try {
     await addCommission(artistUsername, requesterUsername, description, price);
   } catch (e) {
     console.log(e);
-    res.status(500).render("commission_request", { e: "Internal Server Error", user: req.session?.user });
+    return res.status(500).render("commission_request", { e: "Internal Server Error", user: req.session?.user });
   }
+  res.redirect("/commissions");
 });
 
 router.route("/liked").get(async (req, res) => {
@@ -308,22 +332,17 @@ router.route("/liked").get(async (req, res) => {
       res.render("likedposts", {
         title: "Liked Posts",
         user: req.session?.user,
-        likedPosts: likedPosts
+        likedPosts: likedPosts,
       });
-    }
-    else {
+    } else {
       res.render("likedposts", {
         title: "Liked Posts",
-        user: req.session?.user
+        user: req.session?.user,
       });
     }
   } catch (e) {
-    res.status(400).render("likedposts", { e });
+    res.status(400).render("likedposts", { e, user: req.session?.user });
   }
-});
-
-router.route("/settings").get(async (req, res) => {
-  res.render("settings", { title: "Settings", user: req.session?.user });
 });
 
 export default router;

@@ -5,14 +5,17 @@ export const addCommission = async (artistUsername, requesterUsername, descripti
   if (!artistUsername) throw "No artist!";
   if (!description) throw "No description!";
   if (!price) throw "No price!";
+  if (!requesterUsername) throw "You are not signed in!";
   description = description.trim();
 
   description = validateString(description);
   if (isNaN(price)) throw "Price must be a number!";
 
+  if (artistUsername === requesterUsername) throw "You cannot request commissions to yourself!";
+
   const users = await getUserCollection();
   const existingArtist = await users.findOne({username: artistUsername});
-  if (!existingArtist) throw "This artist does not exist!";
+  if (!existingArtist || !existingArtist.isArtist) throw "This artist does not exist!";
 
   const commissions = await getCommissionCollection();
   let commission = {
@@ -35,4 +38,12 @@ export const getArtistCommissions = async (artistUsername) => {
   const artistCommissions = commissions.find({ artistUsername: artistUsername });
   const commissionsArray = await artistCommissions.toArray();
   return commissionsArray;
+};
+
+export const getRequestedCommissions = async (requesterUsername) => {
+  if (!requesterUsername) throw "No requester associated!";
+  const commissions = await getCommissionCollection();
+  const outgoingCommissions = commissions.find({ requesterUsername: requesterUsername });
+  const outgoingCommissionsArray = await outgoingCommissions.toArray();
+  return outgoingCommissionsArray;
 };
