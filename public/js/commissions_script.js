@@ -12,7 +12,7 @@ if (commissionsArray) {
           <td>${request.description}</td>
           <td>$${request.price}</td>
           <td>
-          <select id="status_${index}" commission-id="${request._id}">
+          <select id="status_${index}" data-id="${request._id}">
           <option value="Pending" ${request.status === "Pending" ? "selected" : ""}>Pending</option>
           <option value="Accepted" ${request.status === "Accepted" ? "selected" : ""}>Accepted</option>
           <option value="Denied" ${request.status === "Denied" ? "selected" : ""}>Denied</option>
@@ -37,7 +37,7 @@ if (commissionsArray) {
 
   document.querySelectorAll('select').forEach(select => {
     select.addEventListener('change', async event => {
-      const commissionId = event.target.getAttribute('commission-id')
+      const commissionId = event.target.getAttribute('data-id')
       const newStatus = event.target.value;
       
       try {
