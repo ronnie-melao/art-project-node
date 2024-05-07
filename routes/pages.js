@@ -293,6 +293,7 @@ router.route("/commission_request").post(async (req, res) => {
     if (!artistUsername) throw "No artist!";
     if (!description) throw "No description!";
     if (!price) throw "No price!";
+    if (!requesterUsername) throw "You are not signed in!";
     artistUsername = artistUsername.trim();
     description = description.trim();
     price = price.trim();
@@ -301,12 +302,17 @@ router.route("/commission_request").post(async (req, res) => {
     description = validateString(description);
     if (isNaN(price)) throw "Price must be a number!";
 
+    if (artistUsername === requesterUsername) throw "You cannot request commissions to yourself!";
+
     const users = await getUserCollection();
     const existingArtist = await users.findOne({ username: artistUsername });
     if (!existingArtist) throw "This artist does not exist!";
 
   } catch (e) {
-    res.status(400).render("commission_request", { e: e, user: req.session?.user });
+    res.status(400).render("commission_request", {
+      e: e,
+      user: req.session?.user
+    });
   }
   try {
     await addCommission(artistUsername, requesterUsername, description, price);
