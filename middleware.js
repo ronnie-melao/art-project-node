@@ -4,6 +4,18 @@ import { prettyHttpMethod } from "./data/util.js";
 
 const router = Router();
 
+
+router.route("*").all((req, res, next) => {
+  // If the user posts to the server with a property called _method, rewrite the request's method
+  // To be that method; so if they post _method=PUT you can now allow browsers to POST to a route that gets
+  // rewritten in this middleware to a PUT route
+  if (req?.body._method) {
+    req.method = req.body._method;
+    delete req.body._method;
+  }
+  next();
+});
+
 // Log all requests
 router.route("*").all(async (req, res, next) => {
   const prettyTimestamp = c.magentaBright(new Date().toUTCString());
@@ -20,16 +32,7 @@ router.route("*").all(async (req, res, next) => {
   next();
 });
 
-router.route("*").all((req, res, next) => {
-  // If the user posts to the server with a property called _method, rewrite the request's method
-  // To be that method; so if they post _method=PUT you can now allow browsers to POST to a route that gets
-  // rewritten in this middleware to a PUT route
-  if (req?.body._method) {
-    req.method = req.body._method;
-    delete req.body._method;
-  }
-  next();
-});
+
 
 const nonUsersOnlyMDWare = async (req, res, next) => {
   if (req.session?.user) {
@@ -68,7 +71,7 @@ const artistOnlyMDWare = async (req, res, next) => {
 
 router.route("/posts/create").all(artistOnlyMDWare);
 router.route("/posts/edit").all(artistOnlyMDWare);
-router.route("/posts/delete").all(artistOnlyMDWare);
+router.route("/posts/delete/:id").all(artistOnlyMDWare);
 router.route("/commissions/change-status").all(artistOnlyMDWare);
 
 export default router;

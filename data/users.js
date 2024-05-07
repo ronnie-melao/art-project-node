@@ -191,6 +191,20 @@ export const addPostToThread = async (userId, threadId, postId) => {
   return update;
 };
 
+export const removePostFromUserThreads = async (userId, postId, threadId) => {
+  userId = validateId(userId);
+  postId = validateId(postId);
+  threadId = validateId(threadId);
+
+  const users = await getUserCollection();
+  const update = await users.updateOne(
+      { _id: new ObjectId(userId), "threads._id": new ObjectId(threadId) },
+      { $pull: { "threads.$.posts": postId } }
+  );
+  if (!update || update.modifiedCount < 1) throw "Could not remove post from user's threads";
+  return update;
+};
+
 export const checkReviewer = async (reviewee, reviewer) => {
   //true if same, false if not or undef
   if (!reviewer) return false;
@@ -257,3 +271,17 @@ export const deleteReviewFunction = async (reviewee, reviewer) => {
   if (!update) throw new Error("Could not delete review from user");
   return update;
 };
+
+export const removePostFromUserPosts = async (userId, postId) => {
+  userId = validateId(userId);
+  postId = validateId(postId);
+
+  const users = await getUserCollection();
+  const update = await users.updateOne(
+      { _id: new ObjectId(userId) },
+      { $pull: { posts: postId } }
+  );
+  if (!update || update.modifiedCount < 1) throw "Could not remove post from user's posts";
+  return update;
+};
+

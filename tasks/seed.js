@@ -23,6 +23,8 @@ let simonePost = await posts.addPost(simone, "Saint James Major", ['https://medi
 await posts.updatePost(simonePost.toString(), simone, "Saint James Major", "Tempura on panel", ["portrait"]);
 let simonePost2 = await posts.addPost(simone, "Saint", ["https://media.nga.gov/iiif/ce6b3e55-a43c-4555-949d-f6bf60600bce/full/!384,384/0/default.jpg"], "Tempura on panel", [], "");
 await posts.updatePost(simonePost2.toString(), simone, "Saint Judas Thaddeus", "Tempura on panel", ["portrait"]);
+let simonePost3 = await posts.addPost(simone, "Test Delete", ["https://media.nga.gov/iiif/ce6b3e55-a43c-4555-949d-f6bf60600bce/full/!384,384/0/default.jpg"], "Tempura on panel", [], "");
+await posts.deletePost(simonePost3.toString(), simone);
 
 //Post with comments
 let comment = await posts.addPost(id, "Comment Post", ["https://img.youtube.com/vi/77PsqaWzwG0/0.jpg", "https://img.youtube.com/vi/QsnkNYnsn2c/0.jpg"], "caption", ["keyword"]);
@@ -43,7 +45,7 @@ for (let i = 1; i <= 5; i++) {
 }
 
 
-
+//Like functionality
 let sally = await users.addUser("sally", "Sally", "Seashell", "sally@a.com", "201-123-1324", "I'm sally", "", "D0nt3nter!2", false);
 await posts.addLike(comment.toString(), sally);
 await posts.addLike(replyPost.toString(), sally);
