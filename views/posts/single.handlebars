@@ -17,6 +17,8 @@
     {{#if this.isSelf}}
         <a href="/posts/edit/{{this._id}}">Edit Post</a>
         <form id="delete-post-form" action="/posts/delete/{{this._id}}" method="POST">
+          <label for="delete-button-method" hidden></label><input id="delete-button-method" name="_method"
+                                                                  value="DELETE" type="text" hidden>
         <button type="submit" id="delete-button">Delete Post</button>
       </form>
     {{/if}}
@@ -27,7 +29,8 @@
         <img src="{{this}}" class="full-thumbnail" alt="{{this.title}} thumbnail">
       {{/each}}
     </div>
-    <address>Posted by {{this.poster.displayName}} · {{this.formattedTimePosted}}</address>
+    <address>Posted by <a class="no-dec" href="/profile/{{this.poster.username}}">{{this.poster.displayName}}</a>
+      · {{this.formattedTimePosted}}</address>
     <p>{{ this.description }}</p>
 
     <h2>Comments</h2>

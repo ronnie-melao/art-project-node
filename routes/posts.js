@@ -2,7 +2,7 @@ import { Router } from "express";
 import { postData } from "../data/index.js";
 import { errorsToString, tryOrPushErr, validateId, validateString } from "../data/validators.js";
 import { convertHEIC, convertPDF, deepXSS, getSearchTerms, imageFilesToLinks } from "../data/util.js";
-import { addLike, addPost, getPostsFromThread, removeLike } from "../data/posts.js";
+import { addLike, addPost, deletePostById, getPostsFromThread, removeLike } from "../data/posts.js";
 import { checkUserLikedPost, getOrAddThread, getThreads, getUserById } from "../data/users.js";
 
 let router = new Router();
@@ -295,7 +295,7 @@ router
 // Delete a post
 router
   .route("/delete/:id")
-  .post(async (req, res) => {
+  .delete(async (req, res) => {
     let postId = req.params.id;
     try {
       postId = validateId(postId, "Post ID URL Param");
@@ -310,7 +310,7 @@ router
       }
 
       await deletePostById(postId, req.session.user._id);
-      res.redirect("/posts");
+      res.redirect("/profile/" + req.session.user.username);
     } catch (e) {
       console.error(e);
       return res.status(500).render("error", { title: "Error", error: "Failed to delete the post" });
