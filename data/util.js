@@ -144,7 +144,7 @@ export const imageFilesToLinks = async (files) => {
 
 export const removeImageIfLocal = async (file) => {
   if (typeof file !== "string") return;
-  if (!file.startsWith("/public") || !file.includes("image")) return;
+  if (!file.startsWith("/public") || !file.includes("-image.")) return;
   let filePath = path.join(__dirname, "..", file);
   fs.unlinkSync(filePath);
 };
