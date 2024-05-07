@@ -12,7 +12,7 @@ export const addCommission = async (artistUsername, requesterUsername, descripti
 
   const users = await getUserCollection();
   const existingArtist = await users.findOne({username: artistUsername});
-  if (!existingArtist) throw "This artist does not exist!";
+  if (!existingArtist || !existingArtist.isArtist) throw "This artist does not exist!";
 
   const commissions = await getCommissionCollection();
   let commission = {
