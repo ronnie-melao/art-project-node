@@ -5,10 +5,13 @@ export const addCommission = async (artistUsername, requesterUsername, descripti
   if (!artistUsername) throw "No artist!";
   if (!description) throw "No description!";
   if (!price) throw "No price!";
+  if (!requesterUsername) throw "You are not signed in!";
   description = description.trim();
 
   description = validateString(description);
   if (isNaN(price)) throw "Price must be a number!";
+
+  if (artistUsername === requesterUsername) throw "You cannot request commissions to yourself!";
 
   const users = await getUserCollection();
   const existingArtist = await users.findOne({username: artistUsername});

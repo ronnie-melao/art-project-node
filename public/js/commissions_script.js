@@ -27,6 +27,13 @@ if (commissionsArray) {
   if (commissionsArray.length > 0)
     populateCommissionsTable();
 
+  if (commissionsArray.length === 0) {
+    const p = document.createElement("p");
+    p.textContent = "There are no incoming commission requests.";
+    const incomingDiv = document.getElementById("incoming_div");
+    incomingDiv.appendChild(p);
+  }
+
 
   document.querySelectorAll('select').forEach(select => {
     select.addEventListener('change', async event => {
@@ -75,3 +82,10 @@ function populateOutgoingCommissionsTable() {
 
 if (outgoingCommissionsArray.length > 0)
   populateOutgoingCommissionsTable();
+
+if (outgoingCommissionsArray.length === 0) {
+  const p = document.createElement("p");
+  p.textContent = "There are no outgoing commission requests.";
+  const incomingDiv = document.getElementById("outgoing_div");
+  incomingDiv.appendChild(p);
+}
