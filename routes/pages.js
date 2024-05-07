@@ -305,7 +305,7 @@ router.route("/commission_request").post(async (req, res) => {
    
     if (isNaN(price)) throw "Price must be a number!";
 
-    if (artistUsername === requesterUsername) throw "No XSS for you!";
+    if (artistUsername === requesterUsername) throw "You cannot commission yourself!";
 
     const users = await getUserCollection();
     const existingArtist = await users.findOne({ username: artistUsername });
