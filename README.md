@@ -1,5 +1,9 @@
 # Art Project
 
+By: Andrew Turcan, Lauren Ingraham, Nicholas Palladino, Ronnie Melao
+
+Pledge: I pledge my honor that I have abided by the Stevens Honor System.
+
 ## Getting Started
 
 Clone the repo
