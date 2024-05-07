@@ -306,7 +306,7 @@ router.route("/commission_request").post(async (req, res) => {
 
     const users = await getUserCollection();
     const existingArtist = await users.findOne({ username: artistUsername });
-    if (!existingArtist) throw "This artist does not exist!";
+    if (!existingArtist || !existingArtist.isArtist) throw "This artist does not exist!";
 
   } catch (e) {
     res.status(400).render("commission_request", {
@@ -318,8 +318,9 @@ router.route("/commission_request").post(async (req, res) => {
     await addCommission(artistUsername, requesterUsername, description, price);
   } catch (e) {
     console.log(e);
-    res.status(500).render("commission_request", { e: "Internal Server Error", user: req.session?.user });
+    return res.status(500).render("commission_request", { e: "Internal Server Error", user: req.session?.user });
   }
+  res.redirect("/commissions");
 });
 
 router.route("/liked").get(async (req, res) => {
