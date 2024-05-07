@@ -305,6 +305,10 @@ a.no-dec {
     color: red;
 }
 
+.red-outline {
+    outline: red 2px solid;
+}
+
 /* Style for commission request form */
 #commission_request-form {
     width: 300px;

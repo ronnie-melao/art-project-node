@@ -82,6 +82,7 @@ router
       post.isLiked = isLiked;
       post.isSelf = isSelf;
       post.comments.reverse();
+      post.commentCount = post.comments.length;
       res.render("posts/single", { title: post?.title ?? "Post", post: [post], user: req.session?.user});
     } catch (e) {
       return res.status(404).render("error", { title: "error", error: e, user: req.session?.user });

@@ -5,17 +5,17 @@
 </div>
 {{#if profile.isArtist}}
   {{#if profile.statement}}
-    <h3>Artists Statement:</h3>
+    <h2>Artists Statement:</h2>
     <p>{{profile.statement}}</p>
   {{/if}}
 {{/if}}
   {{#if profile.bio}}
-    <h3>Biography:</h3>
+    <h2>Biography:</h2>
     <p>{{profile.bio}}</p>
   {{/if}}
 
 {{#if profile.isArtist}}
-  <h3>Reviews:</h3>
+  <h2>Reviews:</h2>
   {{#unless isSelf}}
     {{#if reviewed}}
       <a href="/review/{{profile.username}}">Edit Your Review</a>
@@ -37,9 +37,16 @@
   <br><button id="switchProfileButton" data-id="{{profile.isArtist}}">Switch to {{oppositeAccountType}}</button>
   <br><a href="/logout">Log Out</a>
 {{/if}}
+<div>
+  <h2>Contact</h2>
+  <p>Email: {{profile.email}}</p>
+  {{#if profile.phoneNumber}}
+    <p>Phone-number: {{profile.phoneNumber}}</p>
+  {{/if}}
+</div>
 
 {{#if isArtist}}
-  <h3>Artist Posts:</h3>
+  <h2>Artist Posts:</h2>
   {{#each posts}}
     <div class="post">
       <a href="/posts/{{this._id}}" class="postLink no-dec">

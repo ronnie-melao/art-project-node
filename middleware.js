@@ -1,6 +1,7 @@
 import c from "ansi-colors";
 import { Router } from "express";
 import { prettyHttpMethod } from "./data/util.js";
+import { getArtistCommissions } from "./data/commissions.js";
 
 const router = Router();
 
@@ -68,6 +69,17 @@ const artistOnlyMDWare = async (req, res, next) => {
     next();
   }
 };
+
+router.route("*").all(async (req, res, next) => {
+  if (req.session?.user?.isArtist) {
+    try {
+      let commis = await getArtistCommissions(req.session.user.username);
+      req.session.user.hasPending = commis.find(c => c.status === "Pending") != null;
+    } catch (ignored) {
+    }
+  }
+  next();
+});
 
 router.route("/posts/create").all(artistOnlyMDWare);
 router.route("/posts/edit").all(artistOnlyMDWare);
